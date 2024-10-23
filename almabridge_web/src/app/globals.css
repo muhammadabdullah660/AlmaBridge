@@ -26,8 +26,8 @@ body {
   }
 }
 
-.signup-button{
-  background-color: #00BBD4; /* Blue background */
+.signup-button {
+  background-color: #0d9488; /* Blue background */
   color: #fff; /* White text */
   font-family: Arial, sans-serif;
   font-size: 14px;
@@ -38,7 +38,7 @@ body {
   cursor: pointer;
 }
 
-.signin{
+.signin {
   color: #fff;
   font-size: 14px;
   font-weight: bold;
@@ -46,7 +46,7 @@ body {
   transition: color 0.3s ease-in-out;
 }
 
-.button{
+.button {
   font-size: 14px;
   border-radius: 25px;
 }
