@@ -1,0 +1,43 @@
+# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
+
+# Frontend ignores
+
+# dependencies
+almabridge_web/node_modules/
+almabridge_web/.pnp
+almabridge_web/.pnp.js
+almabridge_web/.yarn/install-state.gz
+
+# testing
+almabridge_web/coverage
+
+# next.js
+almabridge_web/.next/
+almabridge_web/out/
+
+# production
+almabridge_web/build
+
+# misc
+almabridge_web/.DS_Store
+almabridge_web/*.pem
+
+# debug
+almabridge_web/npm-debug.log*
+almabridge_web/yarn-debug.log*
+almabridge_web/yarn-error.log*
+
+# local env files
+almabridge_web/.env*.local
+
+# vercel
+almabridge_web/.vercel
+
+# typescript
+almabridge_web/*.tsbuildinfo
+almabridge_web/next-env.d.ts
+
+# Backend ignores
+
+# Ignore backend dependencies in express_services
+backend/express_services/node_modules/
