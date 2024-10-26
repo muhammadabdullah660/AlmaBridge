@@ -1,0 +1,612 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --background: #ffffff;
+  --foreground: #171717;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #0a0a0a;
+    --foreground: #ededed;
+  }
+}
+
+body {
+  color: var(--foreground);
+  background: black;
+  font-family: 'GeistVF', 'GeistMonoVF', sans-serif;
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+}
+
+.signup-button {
+  background-color: #00BDD6;
+  /* Blue background */
+  color: #fff;
+  /* White text */
+  font-family: Arial, sans-serif;
+  font-size: 16px;
+  font-weight: bold;
+  border: none;
+  border-radius: 20px;
+  padding: 10px 15px;
+  cursor: pointer;
+}
+
+.signin {
+  color: #00BDD6;
+  font-size: 16px;
+  font-weight: bold;
+  text-decoration: none;
+  transition: color 0.3s ease-in-out;
+}
+
+.button {
+  font-size: 14px;
+  border-radius: 25px;
+}
+
+.notifbutton {
+  background-color: #ffffff !important;
+  margin-left: 10px;
+  color: #000000;
+  font-weight: 600;
+  border-radius: 40px;
+}
+
+.comingHeading {
+  background: linear-gradient(to right, #ebebeb,
+      #105fc7, #00BDD6, #d6d6d6);
+  -webkit-text-fill-color: transparent;
+  -webkit-background-clip: text;
+  font-weight: 700;
+  font-size: 60px;
+}
+
+.text-6xl {
+  line-height: normal;
+}
+
+.inputEmail {
+  /* background-color: white; */
+  /* backdrop-filter: blur(16px) !important; */
+  padding: 15px;
+  width: 354px;
+}
+
+.inputEmail {
+
+  font-size: 16px;
+  border-radius: none;
+  border: none;
+  /* Light border for frosted effect */
+  background-color: rgba(255, 255, 255, 0.1);
+  /* Semi-transparent background */
+  backdrop-filter: blur(10px);
+  /* Creates the glass-like blur effect */
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+  /* Subtle shadow to make it pop */
+  color: white;
+  /* Text color */
+  outline: none;
+}
+
+.inputEmail::placeholder {
+  color: rgba(255, 255, 255, 0.6);
+  /* Transparent placeholder text */
+}
+
+.inputdiv {
+  padding: 10px;
+}
+
+.card-container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.card {
+  width: 300px;
+  height: 280px;
+  background-color: #191919;
+  color: #fff;
+  text-align: center;
+  padding: 20px;
+  margin: 20px;
+  border-radius: 10px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+}
+
+.card i {
+  font-size: 40px;
+  margin-bottom: 20px;
+}
+
+.card h3 {
+  font-size: 18px;
+  margin-bottom: 10px;
+  color: #737b8a;
+  font-weight: 600;
+}
+
+.card p {
+  margin-bottom: 20px;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.card a {
+  display: block;
+  text-decoration: none;
+  color: #00BDD6;
+  padding: 10px 20px;
+  /* background-color: #007bff; */
+  border-radius: 5px;
+}
+
+@media (max-width: 768px) {
+  .card-container {
+    justify-content: flex-start;
+  }
+  .card {
+    width: 100%;
+  }
+}
+
+.text-container {
+  background-color: #1A1A1A;
+  /* Dark background similar to your design */
+  color: #fff;
+  padding: 60px 80px;
+  text-align: center;
+  font-family: 'Arial', sans-serif;
+  /* You can adjust to match your font */
+}
+
+.highlight-text {
+  font-size: 1.8rem;
+  font-weight: 400;
+  line-height: 1.5;
+}
+
+.highlight {
+  color: #00CFFD;
+  /* Use your preferred highlight color */
+  font-weight: bold;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  h1 {
+    font-size: 1.8rem;
+    /* Adjust font-size for smaller screens */
+  }
+}
+
+/* Main container */
+.metrics-section {
+  background-color: black;
+  /* Dark background */
+  color: #fff;
+  text-align: center;
+  padding: 50px 20px;
+  font-family: 'Arial', sans-serif;
+}
+
+/* Heading section */
+.metrics-heading {
+  margin-bottom: 40px;
+}
+
+.metrics-heading .badge {
+  background: linear-gradient(to right, #ebebeb,
+      #105fc7, #00BDD6, #d6d6d6);
+  -webkit-text-fill-color: transparent;
+  -webkit-background-clip: text;
+  padding: 6px 12px;
+  border-radius: 12px;
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.metrics-heading h2 {
+  font-size: 2rem;
+  margin-top: 15px;
+  color: #fff;
+  font-weight: 400;
+}
+
+/* Metrics container */
+.metrics-container {
+  display: flex;
+  justify-content: space-evenly;
+  align-items: center;
+  gap: 40px;
+  flex-wrap: wrap;
+  /* Makes it responsive */
+}
+
+.metric-item {
+  flex: 1;
+  max-width: 250px;
+}
+
+.metric-number {
+  display: block;
+  font-size: 3rem;
+  font-weight: bold;
+  color: #00CFFD;
+  /* Bright blue for numbers */
+}
+
+.metric-text {
+  font-size: 1rem;
+  color: #CFCFCF;
+  /* Light gray for descriptive text */
+  margin-top: 10px;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .metrics-container {
+    flex-direction: column;
+  }
+
+  .metric-number {
+    font-size: 2.5rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .metrics-heading h2 {
+    font-size: 1.5rem;
+  }
+
+  .metric-number {
+    font-size: 2rem;
+  }
+
+  .metric-text {
+    font-size: 0.9rem;
+  }
+}
+
+.team-section {
+  text-align: center;
+  padding: 50px;
+  background-color: #191919;
+}
+
+.team-members {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.team-member {
+  width: 300px;
+  text-align: center;
+  margin: 20px;
+}
+
+.team-member img {
+  width: 100px;
+  height: 100px;
+  border-radius: 0%;
+}
+
+.team-member h3 {
+  font-size: 24px;
+  margin-top: 10px;
+  color: white;
+}
+
+.team-member p {
+  margin-bottom: 10px;
+  color: white;
+}
+
+.team-section h2 {
+  font-size: 40px;
+  font-weight: 600;
+  color: #00BDD6;
+  padding: 50px;
+}
+
+.bg-metric {
+  color: white;
+}
+
+.text-insights {
+  color: #424955;
+}
+
+.input-footer {
+  background-color: #191919;
+  border-top: none;
+  border-left: none;
+  border-right: none;
+  border-bottom: 1px solid white;
+}
+
+.english-dropdown {
+  background-color: white;
+  border-radius: 5px;
+  border: none;
+  color: black;
+  width: 230px;
+  padding: 5px;
+}
+
+.banner {
+  background: linear-gradient(to right, #ebebeb,
+      #105fc7, #00BDD6, #d6d6d6);
+  background-size: cover;
+  background-position: center;
+  /* height:300px; */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: #fff;
+  border-radius: 30px;
+}
+
+.banner-content {
+  text-align: center;
+  color: #ffffff !important;
+  padding: 50px 30px;
+  display: flex;
+}
+
+.banner-content h1 {
+  font-size: 30px;
+  margin-bottom: 20px;
+  font-weight: 600;
+}
+
+.banner-content p {
+  font-size: 16px;
+  margin-bottom: 30px;
+}
+
+.register-button {
+  
+  font-size: 14px;
+  color: white;
+  padding: 8px 20px; 
+  border: none;
+  border-radius: 20px; 
+  background: linear-gradient(to right, #105fc7, #00BDD6); /* Adjust gradient colors as needed */
+  text-transform: uppercase;
+  font-weight: bold;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  height: 40px; /* Set a specific height to control thickness */
+
+}
+
+
+/* updated */
+@media screen and (max-width: 768px) and (min-width: 501px) {
+  .register-button {
+      font-size: 14px; /* Adjust font size as needed */
+      padding: 10px 10px; /* Adjust padding as needed */
+  }
+}
+
+@media screen and (max-width: 500px) {
+  .register-button {
+      font-size: 12px; /* Adjust font size as needed */
+      padding: 2px 1px; /* Adjust padding as needed */
+  }
+}
+
+
+
+
+
+@media (max-width: 768px) {
+
+  .banner-content h1 {
+    font-size: 25px;
+  }
+
+  .banner-content p {
+    font-size: 16px;
+  }
+  .banner-container{
+    padding: 150px;
+  }
+}
+
+
+.image-container {
+  display: flex;
+  justify-content: center;
+  align-content: center;
+  margin-bottom: 10px;
+}
+
+.banner-container {
+  padding: 80px 80px;
+  
+}
+
+.banner-para {
+  text-align: left;
+  padding-right: 20px;
+}
+
+@media (max-width: 500px) {
+  .banner-content {
+    display: block;
+  }
+  .banner-container {
+    padding: 80px 20px;
+    
+  }
+
+}
+.faq-heading{
+  margin-top: 50px;
+  text-align: center;
+}
+.faq-heading .faq-badge {
+  background: linear-gradient(to right, #ebebeb,
+      #105fc7, #00BDD6, #d6d6d6);
+  -webkit-text-fill-color: transparent;
+  -webkit-background-clip: text;
+  padding: 6px 12px;
+  border-radius: 12px;
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+.faq-heading h1{
+  color: #00BDD6;
+  font-size: 40px;
+  font-weight: 600;
+}
+/* Assuming you have Tailwind CSS installed and configured */
+
+/* Additional styles (optional): */
+.details {
+  border-radius: 0.5rem;
+}
+.details[open] {
+  background-color: #606060;
+}
+.faq-container{
+  margin-top: 50px;
+  margin-bottom: 50px;
+  /* padding: 20px; */
+  color: #ffffff;
+  background-color: #191919;
+}
+.icons-fws{
+  width:40px;
+  height:40px;
+  padding: 5px;
+}
+
+
+/* Media query for tablets and small screens */
+@media (max-width: 768px) {
+  .comingHeading {
+    font-size: 40px; /* Reduce the size of the heading */
+  }
+
+  .signup-button {
+    padding: 8px 12px; /* Adjust padding for smaller screens */
+    font-size: 12px;
+  }
+
+  .signin {
+    font-size: 12px;
+  }
+
+  .inputEmail {
+    width: 100%; /* Make the input field full-width */
+    font-size: 14px;
+    padding: 10px;
+  }
+
+  .highlight-text {
+    font-size: 1.5rem; /* Adjust the text size for smaller screens */
+  }
+
+  .metric-number {
+    font-size: 2.5rem; /* Reduce the font size of metric numbers */
+  }
+
+  .banner-content h1 {
+    font-size: 28px; /* Reduce banner heading size */
+  }
+
+  .banner-content p {
+    font-size: 16px; /* Adjust banner paragraph size */
+  }
+
+  .faq-heading h1 {
+    font-size: 32px; /* Adjust FAQ heading size */
+  }
+
+  .card {
+    width: 100%; /* Make cards full-width on smaller screens */
+    height: auto;
+    padding: 15px;
+  }
+
+  .details {
+    font-size: 14px; /* Adjust FAQ details text size */
+  }
+
+  .metrics-section {
+    padding: 30px 15px; /* Adjust padding for metrics section */
+  }
+}
+
+/* Media query for mobile phones */
+@media (max-width: 480px) {
+  .comingHeading {
+    font-size: 30px; /* Further reduce heading size for mobile */
+  }
+
+  .signup-button {
+    padding: 6px 10px; /* Further adjust padding for mobile */
+    font-size: 11px;
+  }
+
+  .signin {
+    font-size: 10px;
+  }
+
+  .highlight-text {
+    font-size: 1.2rem; /* Further adjust highlight text */
+  }
+
+  .metric-number {
+    font-size: 2rem; /* Further reduce the metric number size */
+  }
+
+  .banner-content h1 {
+    font-size: 24px; /* Adjust banner heading size */
+  }
+
+  .banner-content p {
+    font-size: 14px; /* Further adjust paragraph size */
+  }
+
+  .faq-heading h1 {
+    font-size: 28px; /* Further reduce FAQ heading size */
+  }
+
+  .card {
+    height: auto;
+    padding: 10px;
+  }
+
+  .team-member h3 {
+    font-size: 20px; /* Adjust team member name size */
+  }
+
+  .team-member p {
+    font-size: 14px; /* Adjust team member role text size */
+  }
+
+  .banner-container {
+    padding: 40px 20px; /* Adjust banner padding for mobile */
+  }
+}
+
