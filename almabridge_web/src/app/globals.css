@@ -17,7 +17,7 @@
 body {
   color: var(--foreground);
   background: black;
-  font-family: 'Inter', sans-serif;
+  font-family: 'GeistVF', 'GeistMonoVF', sans-serif;
 }
 
 @layer utilities {
@@ -32,18 +32,18 @@ body {
   color: #fff;
   /* White text */
   font-family: Arial, sans-serif;
-  font-size: 14px;
+  font-size: 16px;
   font-weight: bold;
   border: none;
-  /* border-radius: 20px; */
+  border-radius: 20px;
   padding: 10px 15px;
   cursor: pointer;
 }
 
 .signin {
   color: #00BDD6;
-  font-size: 14px;
-  font-weight: 500;
+  font-size: 16px;
+  font-weight: bold;
   text-decoration: none;
   transition: color 0.3s ease-in-out;
 }
@@ -58,7 +58,7 @@ body {
   margin-left: 10px;
   color: #000000;
   font-weight: 600;
-
+  border-radius: 40px;
 }
 
 .comingHeading {
@@ -156,7 +156,6 @@ body {
   .card-container {
     justify-content: flex-start;
   }
-
   .card {
     width: 100%;
   }
@@ -301,7 +300,7 @@ body {
 .team-member img {
   width: 100px;
   height: 100px;
-  border-radius: 50%;
+  border-radius: 0%;
 }
 
 .team-member h3 {
@@ -379,29 +378,59 @@ body {
 }
 
 .register-button {
-  background-color: white;
-  color: black;
-  padding: 15px 30px;
+  
+  font-size: 14px;
+  color: white;
+  padding: 8px 20px; 
   border: none;
-  border-radius: 5px;
+  border-radius: 20px; 
+  background: linear-gradient(to right, #105fc7, #00BDD6); /* Adjust gradient colors as needed */
+  text-transform: uppercase;
+  font-weight: bold;
+  text-align: center;
   cursor: pointer;
-  /* width: 200px; */
-  height: 70px;
+  transition: all 0.3s ease;
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  height: 40px; /* Set a specific height to control thickness */
+
 }
+
+
+/* updated */
+@media screen and (max-width: 768px) and (min-width: 501px) {
+  .register-button {
+      font-size: 14px; /* Adjust font size as needed */
+      padding: 10px 10px; /* Adjust padding as needed */
+  }
+}
+
+@media screen and (max-width: 500px) {
+  .register-button {
+      font-size: 12px; /* Adjust font size as needed */
+      padding: 2px 1px; /* Adjust padding as needed */
+  }
+}
+
+
+
+
 
 @media (max-width: 768px) {
 
   .banner-content h1 {
-    font-size: 30px;
+    font-size: 25px;
   }
 
   .banner-content p {
-    font-size: 20px;
+    font-size: 16px;
   }
   .banner-container{
     padding: 150px;
   }
 }
+
 
 .image-container {
   display: flex;
@@ -428,7 +457,6 @@ body {
     padding: 80px 20px;
     
   }
-
 
 }
 .faq-heading{
@@ -471,3 +499,114 @@ body {
   height:40px;
   padding: 5px;
 }
+
+
+/* Media query for tablets and small screens */
+@media (max-width: 768px) {
+  .comingHeading {
+    font-size: 40px; /* Reduce the size of the heading */
+  }
+
+  .signup-button {
+    padding: 8px 12px; /* Adjust padding for smaller screens */
+    font-size: 12px;
+  }
+
+  .signin {
+    font-size: 12px;
+  }
+
+  .inputEmail {
+    width: 100%; /* Make the input field full-width */
+    font-size: 14px;
+    padding: 10px;
+  }
+
+  .highlight-text {
+    font-size: 1.5rem; /* Adjust the text size for smaller screens */
+  }
+
+  .metric-number {
+    font-size: 2.5rem; /* Reduce the font size of metric numbers */
+  }
+
+  .banner-content h1 {
+    font-size: 28px; /* Reduce banner heading size */
+  }
+
+  .banner-content p {
+    font-size: 16px; /* Adjust banner paragraph size */
+  }
+
+  .faq-heading h1 {
+    font-size: 32px; /* Adjust FAQ heading size */
+  }
+
+  .card {
+    width: 100%; /* Make cards full-width on smaller screens */
+    height: auto;
+    padding: 15px;
+  }
+
+  .details {
+    font-size: 14px; /* Adjust FAQ details text size */
+  }
+
+  .metrics-section {
+    padding: 30px 15px; /* Adjust padding for metrics section */
+  }
+}
+
+/* Media query for mobile phones */
+@media (max-width: 480px) {
+  .comingHeading {
+    font-size: 30px; /* Further reduce heading size for mobile */
+  }
+
+  .signup-button {
+    padding: 6px 10px; /* Further adjust padding for mobile */
+    font-size: 11px;
+  }
+
+  .signin {
+    font-size: 10px;
+  }
+
+  .highlight-text {
+    font-size: 1.2rem; /* Further adjust highlight text */
+  }
+
+  .metric-number {
+    font-size: 2rem; /* Further reduce the metric number size */
+  }
+
+  .banner-content h1 {
+    font-size: 24px; /* Adjust banner heading size */
+  }
+
+  .banner-content p {
+    font-size: 14px; /* Further adjust paragraph size */
+  }
+
+  .faq-heading h1 {
+    font-size: 28px; /* Further reduce FAQ heading size */
+  }
+
+  .card {
+    height: auto;
+    padding: 10px;
+  }
+
+  .team-member h3 {
+    font-size: 20px; /* Adjust team member name size */
+  }
+
+  .team-member p {
+    font-size: 14px; /* Adjust team member role text size */
+  }
+
+  .banner-container {
+    padding: 40px 20px; /* Adjust banner padding for mobile */
+  }
+}
+
