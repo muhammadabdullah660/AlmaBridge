@@ -150,12 +150,17 @@ export default function Header() {
           <h2>Meet the Team</h2>
           <div className="team-members">
             <div className="team-member">
+              <div className="image-container">
               <img src="image1.jpg" alt="Zoya Naveed" />
+                </div>
+              
               <h3>Zoya Naveed</h3>
               <p>DEVELOPER</p>
             </div>
             <div className="team-member">
-              <img src="image2.jpg" alt="Zoya Naveed" />
+              <div className="image-container">
+              <img src="/assets/f.jpg" alt="Fatima Awais" />
+              </div>
               <h3>Fatima Awais</h3>
               <p>DEVELOPER</p>
             </div>
@@ -163,12 +168,17 @@ export default function Header() {
           </div>
           <div className="team-members">
             <div className="team-member">
-              <img src="image1.jpg" alt="Zoya Naveed" />
+              <div className="image-container">
+              <img src="image1.jpg" alt="Muhammad Abdullah" />
+                </div>
               <h3>Muhammad Abdullah</h3>
               <p>DEVELOPER</p>
             </div>
             <div className="team-member">
-              <img src="image2.jpg" alt="Zoya Naveed" />
+              <div className="image-container">
+              <img src="image2.jpg" alt="Shahzaib Ijaz" />
+
+                </div>
               <h3>Shahzaib Ijaz</h3>
               <p>DEVELOPER</p>
             </div>
@@ -240,8 +250,8 @@ export default function Header() {
               <div className="banner">
                 <div className="banner-content">
                   <div className="banner-para">
-                    <h1>BECOME A PART OF ALMABRIDGE</h1>
-                    <p>Discover why hiring managers prefer Hirevision over the competition and what makes it the easiest, most powerful video interviewing platform on the market.</p>
+                    <h1 className="text-3xl md:text-2xl sm:text-xl">BECOME A PART OF ALMABRIDGE</h1>
+                    <p className="text-lg md:text-md sm:text-sm">Discover why hiring managers prefer Hirevision over the competition and what makes it the easiest, most powerful video interviewing platform on the market.</p>
                   </div>
                   <button className="register-button">Register Now →</button>
                 </div>
