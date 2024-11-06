@@ -4,22 +4,22 @@ export const teamMembers: TeamMember[] = [
   {
     name: "Muhammad Abdullah",
     position: "Lead Developer",
-    img: "/assets/me.jpg",
+    img: "/assets/me.webp",
   },
   {
     name: "Fatima Awais",
     position: "Lead Developer",
-    img: "/assets/fatima.jpg",
+    img: "/assets/fatima.webp",
   },
   {
     name: "Shahzaib Ijaz",
     position: "Lead Developer",
-    img: "/assets/shahzaib.jpeg",
+    img: "/assets/shahzaib.webp",
   },
   {
     name: "Zoya Naveed",
     position: "Lead Developer",
-    img: "/assets/zoya.jpeg",
+    img: "/assets/zoya.webp",
   },
 ];
 
