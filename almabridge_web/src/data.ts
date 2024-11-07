@@ -29,7 +29,7 @@ export const teamMembers: TeamMember[] = [
 //   { iconPath: "/path/to/youtube/icon.svg", color: "#e82e2e" },
 //   { iconPath: "/path/to/linkedin/icon.svg", color: "#2e6fe8" },
 // ];
-
+// test
 // export const metrics: Metric[] = [
 //   { number: "0%", label: "Candidate match rate" },
 //   { number: "0", label: "Students" },
