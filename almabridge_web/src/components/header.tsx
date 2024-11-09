@@ -230,8 +230,10 @@ export default function Header() {
           </div>
         </section>
 
-        <section className="team-section">
-          <h2>Meet the Team</h2>
+        {/*Meet the team*/}
+
+        <section className="team-section text-center py-12 bg-[#191919]">
+          <h2 className="text-3xl font-semibold text-[#00BDD6] mb-8">Meet the Team</h2>
           <div className="flex justify-center items-center py-12 px-4">
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8 max-w-6xl mx-auto">
               {teamMembers.map((member) => (
