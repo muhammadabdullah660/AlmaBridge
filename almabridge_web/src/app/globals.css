@@ -2,6 +2,40 @@
 @tailwind components;
 @tailwind utilities;
 
+@font-face {
+  font-family: "thiccboi";
+  src: url("/fonts/THICCCBOI-Regular.woff2") format("woff2");
+  font-weight: 400; /* Normal weight */
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "thiccboi";
+  src: url("/fonts/THICCCBOI-Bold.woff2") format("woff2");
+  font-weight: 700; /* Bold weight */
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "thiccboi";
+  src: url("/fonts/THICCCBOI-Light.woff2") format("woff2");
+  font-weight: 300; /* Light weight */
+  font-style: normal;
+}
+
+p {
+  font-family: "thiccboi";
+  font-weight: 00; /* Bold */
+}
+h1 h2 {
+  font-family: "thiccboi";
+  font-weight: 700; /* Bold */
+}
+h3 h4 h5 h6 {
+  font-family: "thiccboi";
+  font-weight: 400; /* Bold */
+}
+
 :root {
   --background: #ffffff;
   --foreground: #171717;
@@ -17,7 +51,7 @@
 body {
   color: var(--foreground);
   background: black;
-  font-family: 'GeistVF', 'GeistMonoVF', sans-serif;
+  font-family: "thiccboi", sans-serif;
 }
 
 @layer utilities {
@@ -39,7 +73,7 @@ body {
 }
 
 .signin {
-  color: #00BDD6;
+  color: #00bdd6;
   font-size: 16px;
   font-weight: bold;
   text-decoration: none;
@@ -60,8 +94,7 @@ body {
 }*/
 
 .comingHeading {
-  background: linear-gradient(to right, #ebebeb,
-      #105fc7, #00BDD6, #d6d6d6);
+  background: linear-gradient(to right, #ebebeb, #105fc7, #00bdd6, #d6d6d6);
   -webkit-text-fill-color: transparent;
   -webkit-background-clip: text;
   font-weight: 700;
@@ -78,7 +111,6 @@ body {
 }
 
 .inputEmail {
-
   font-size: 16px;
   border-radius: none;
   border: none;
@@ -136,7 +168,7 @@ body {
 .card a {
   display: block;
   text-decoration: none;
-  color: #00BDD6;
+  color: #00bdd6;
   padding: 10px 20px;
   border-radius: 5px;
 }*/
@@ -151,12 +183,12 @@ body {
 }
 
 .text-container {
-  background-color: #1A1A1A;
+  background-color: #1a1a1a;
   /* Dark background similar to your design */
   color: #fff;
   padding: 60px 80px;
   text-align: center;
-  font-family: 'Arial', sans-serif;
+  font-family: "Arial", sans-serif;
   /* You can adjust to match your font */
 }
 
@@ -167,7 +199,7 @@ body {
 }
 
 .highlight {
-  color: #00CFFD;
+  color: #00cffd;
   /* Use your preferred highlight color */
   font-weight: bold;
 }
@@ -187,7 +219,7 @@ body {
   color: #fff;
   text-align: center;
   padding: 50px 20px;
-  font-family: 'Arial', sans-serif;
+  font-family: "Arial", sans-serif;
 }
 
 /* 
@@ -196,8 +228,7 @@ body {
 }
 
 .metrics-heading .badge {
-  background: linear-gradient(to right, #ebebeb,
-      #105fc7, #00BDD6, #d6d6d6);
+  background: linear-gradient(to right, #ebebeb, #105fc7, #00bdd6, #d6d6d6);
   -webkit-text-fill-color: transparent;
   -webkit-background-clip: text;
   padding: 6px 12px;
@@ -303,7 +334,7 @@ body {
 .team-section h2 {
   font-size: 40px;
   font-weight: 600;
-  color: #00BDD6;
+  color: #00bdd6;
   padding: 50px;
 }*/
 
@@ -333,8 +364,7 @@ body {
 }
 /* 
 .banner {
-  background: linear-gradient(to right, #ebebeb,
-      #105fc7, #00BDD6, #d6d6d6);
+  background: linear-gradient(to right, #ebebeb, #105fc7, #00bdd6, #d6d6d6);
   background-size: cover;
   background-position: center;
   display: flex;
@@ -363,10 +393,9 @@ body {
 }
 
 .register-button {
-  
   font-size: 14px;
   color: white;
-  padding: 8px 20px; 
+  padding: 8px 20px;
   border: none;
   border-radius: 20px; 
   background: linear-gradient(to right, #105fc7, #00BDD6); 
@@ -382,24 +411,22 @@ body {
 
 }*/
 
-
 /* updated */
 @media screen and (max-width: 768px) and (min-width: 501px) {
   .register-button {
-      font-size: 14px; /* Adjust font size as needed */
-      padding: 10px 10px; /* Adjust padding as needed */
+    font-size: 14px; /* Adjust font size as needed */
+    padding: 10px 10px; /* Adjust padding as needed */
   }
 }
 
 @media screen and (max-width: 500px) {
   .register-button {
-      font-size: 12px; /* Adjust font size as needed */
-      padding: 2px 1px; /* Adjust padding as needed */
+    font-size: 12px; /* Adjust font size as needed */
+    padding: 2px 1px; /* Adjust padding as needed */
   }
 }
 
 @media (max-width: 768px) {
-
   .banner-content h1 {
     font-size: 25px;
   }
@@ -407,12 +434,10 @@ body {
   .banner-content p {
     font-size: 16px;
   }
-  .banner-container{
+  .banner-container {
     padding: 150px;
   }
 }
-
-
 
 .image-container {
   display: flex;
@@ -423,7 +448,6 @@ body {
 
 .banner-container {
   padding: 80px 80px;
-  
 }
 
 .banner-para {
@@ -437,17 +461,14 @@ body {
   }
   .banner-container {
     padding: 80px 20px;
-    
   }
-
 }
-.faq-heading{
+.faq-heading {
   margin-top: 50px;
   text-align: center;
 }
 .faq-heading .faq-badge {
-  background: linear-gradient(to right, #ebebeb,
-      #105fc7, #00BDD6, #d6d6d6);
+  background: linear-gradient(to right, #ebebeb, #105fc7, #00bdd6, #d6d6d6);
   -webkit-text-fill-color: transparent;
   -webkit-background-clip: text;
   padding: 6px 12px;
@@ -455,12 +476,11 @@ body {
   font-size: 0.9rem;
   font-weight: 600;
 }
-.faq-heading h1{
-  color: #00BDD6;
+.faq-heading h1 {
+  color: #00bdd6;
   font-size: 40px;
   font-weight: 600;
 }
-
 
 /* Additional styles (optional): */
 .details {
@@ -469,19 +489,18 @@ body {
 .details[open] {
   background-color: #606060;
 }
-.faq-container{
+.faq-container {
   margin-top: 50px;
   margin-bottom: 50px;
   /* padding: 20px; */
   color: #ffffff;
   background-color: #191919;
 }
-.icons-fws{
-  width:40px;
-  height:40px;
+.icons-fws {
+  width: 40px;
+  height: 40px;
   padding: 5px;
 }
-
 
 /* Media query for tablets and small screens */
 @media (max-width: 768px) {
@@ -591,4 +610,3 @@ body {
     padding: 40px 20px; /* Adjust banner padding for mobile */
   }
 }
-
