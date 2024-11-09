@@ -1,8 +1,6 @@
 "use client"; // This marks the file as a Client Component
-
 import { useState } from 'react';
 import Link from 'next/link';
-//00BDD6
 
 const Navbar: React.FC = () => {
     const [isOpen, setIsOpen] = useState(false);
@@ -19,10 +17,8 @@ const Navbar: React.FC = () => {
                 <div className="flex items-center">
                     <div className="h-28 w-28 flex items-center justify-center">
                         <img src="/assets/logo.png" alt="Logo" />
-
                     </div>
                 </div>
-
 
                 {/* Navigation Links */}
                 <div className="hidden md:flex justify-center flex-1 space-x-8">
@@ -46,10 +42,12 @@ const Navbar: React.FC = () => {
                 {/* Sign-in/Sign-up Section */}
                 <div className="hidden md:flex space-x-4 items-center">
                     <Link href="#signin" legacyBehavior>
-                        <a className="signin">Sign in</a>
+                        <a className="text-[#00BDD6] font-bold text-sm lg:text-base transition-colors duration-300">Sign in</a>
                     </Link>
                     <Link href="#signup" legacyBehavior>
-                        <a className="signup-button">Sign up</a>
+                        <a className="bg-[#00BDD6] text-white font-bold text-sm lg:text-base py-2 px-4 rounded-full hover:bg-[#00a9c2] transition duration-300">
+                            Sign up
+                        </a>
                     </Link>
                 </div>
 
@@ -84,11 +82,12 @@ const Navbar: React.FC = () => {
 
                     <div className="px-3 py-2">
                         <Link href="#signin" legacyBehavior>
-                            <a className="block px-3 py-2 rounded-md text-base font-medium text-white hover:text-gray-400">Sign in</a>
+                            <a className="block px-3 py-2 rounded-md text-base font-medium text-[#00BDD6] font-bold">Sign in</a>
                         </Link>
                         <Link href="#signup" legacyBehavior>
-                            <a className="block px-3 py-2 rounded-md text-base font-medium text-white hover:text-gray-400">Sign up</a>
+                            <a className="block px-3 py-2 rounded-md text-base font-medium text-[#00BDD6] font-bold">Sign up</a>
                         </Link>
+                        
                     </div>
                 </div>
             </div>
