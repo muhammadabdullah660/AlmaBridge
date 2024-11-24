@@ -100,7 +100,7 @@ export default function SignUp() {
               onClick={() => handleRoleChange("student")}
               className={`px-4 py-2 rounded-l-md text-sm font-semibold bg-white-600 text-gray-900 border-2 border-r-0 ${
                 formData.role === "student"
-                  ? "border-teal-300"
+                  ? "border-[#00BDD6]"
                   : "border-gray-300"
               }`}
             >
@@ -111,7 +111,7 @@ export default function SignUp() {
               onClick={() => handleRoleChange("alumni")}
               className={`px-4 py-2 rounded-r-md text-sm font-semibold bg-white-600 text-gray-900 border-2 ${
                 formData.role === "alumni"
-                  ? "border-teal-300"
+                  ? "border-[#00BDD6]"
                   : "border-gray-300"
               }`}
             >
@@ -266,7 +266,7 @@ export default function SignUp() {
             <div>
               <button
                 type="submit"
-                className="flex w-full justify-center rounded-md bg-teal-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-teal-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-600"
+                className="flex w-full justify-center rounded-md bg-[#00BDD6] px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-[#00BDD6]-900 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-600"
               >
                 Sign up
               </button>
@@ -276,7 +276,7 @@ export default function SignUp() {
             Already a member?{" "}
             <a
               href="#"
-              className="font-semibold leading-6 text-teal-600 hover:text-teal-500"
+              className="font-semibold leading-6 text-[#00BDD6] hover:text-[#00BDD6]-900"
             >
               Sign In
             </a>

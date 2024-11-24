@@ -1,8 +1,7 @@
-"use client"; // This marks the file as a Client Component
-
+"use client"; // Marks the file as a Client Component
 import { useState } from "react";
 import Link from "next/link";
-//00bdd6
+import Image from "next/image";
 
 const Navbar: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -11,46 +10,52 @@ const Navbar: React.FC = () => {
     setIsOpen(!isOpen);
   };
 
+  const navItems = [
+    { href: "/", label: "About" },
+    { href: "/#faq", label: "FAQ" },
+    { href: "/#team", label: "Team" },
+    { href: "/#features", label: "Features" },
+    { href: "/", label: "Alumni Highlights" },
+  ];
+
   return (
-    <nav className="bg-black text-white">
+    <nav className="bg-black text-white sticky top-0 z-10">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 flex justify-between items-center h-16">
         {/* Logo Section */}
         <div className="flex items-center">
-          <div className="h-28 w-28 flex items-center justify-center">
-            <img src="/assets/logo.png" alt="Logo" />
-          </div>
+          <Image src="/assets/logo.png" alt="Logo" width={112} height={112} />
         </div>
 
-        {/* Navigation Links */}
-        <div className="hidden md:flex justify-center flex-1 space-x-8">
-          <Link href="#about" legacyBehavior>
-            <a className="hover:text-gray-400">About</a>
-          </Link>
-          <Link href="#faq" legacyBehavior>
-            <a className="hover:text-gray-400">FAQ</a>
-          </Link>
-          <Link href="#team" legacyBehavior>
-            <a className="hover:text-gray-400">Team</a>
-          </Link>
-          <Link href="#features" legacyBehavior>
-            <a className="hover:text-gray-400">Features</a>
-          </Link>
-          <Link href="#highlights" legacyBehavior>
-            <a className="hover:text-gray-400">Alumni Highlights</a>
-          </Link>
+        {/* Navigation Links for Desktop */}
+        <div className="hidden md:flex space-x-8">
+          {navItems.map((item) => (
+            <Link
+              key={item.href}
+              href={item.href}
+              className="hover:text-gray-400"
+            >
+              {item.label}
+            </Link>
+          ))}
         </div>
 
         {/* Sign-in/Sign-up Section */}
         <div className="hidden md:flex space-x-4 items-center">
-          <Link href="#signin" legacyBehavior>
-            <a className="signin">Sign in</a>
+          <Link
+            href="/signin"
+            className="text-[#00BDD6] font-bold text-sm lg:text-base transition-colors duration-300"
+          >
+            Sign in
           </Link>
-          <Link href="#signup" legacyBehavior>
-            <a className="signup-button">Sign up</a>
+          <Link
+            href="/signup"
+            className="bg-[#00BDD6] text-white font-bold text-sm lg:text-base py-2 px-4 rounded-full hover:bg-[#00a9c2] transition duration-300"
+          >
+            Sign up
           </Link>
         </div>
 
-        {/* Hamburger Icon for mobile */}
+        {/* Hamburger Icon for Mobile */}
         <div className="md:hidden flex items-center">
           <button
             onClick={toggleMenu}
@@ -76,44 +81,30 @@ const Navbar: React.FC = () => {
       </div>
 
       {/* Mobile Menu */}
-      <div className={`${isOpen ? "block" : "hidden"} md:hidden`}>
-        <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3">
-          <Link href="#about" legacyBehavior>
-            <a className="block px-3 py-2 rounded-md text-base font-medium hover:text-gray-400">
-              About
-            </a>
-          </Link>
-          <Link href="#faq" legacyBehavior>
-            <a className="block px-3 py-2 rounded-md text-base font-medium hover:text-gray-400">
-              FAQ
-            </a>
-          </Link>
-          <Link href="#team" legacyBehavior>
-            <a className="block px-3 py-2 rounded-md text-base font-medium hover:text-gray-400">
-              Team
-            </a>
-          </Link>
-          <Link href="#features" legacyBehavior>
-            <a className="block px-3 py-2 rounded-md text-base font-medium hover:text-gray-400">
-              Features
-            </a>
-          </Link>
-          <Link href="#highlights" legacyBehavior>
-            <a className="block px-3 py-2 rounded-md text-base font-medium hover:text-gray-400">
-              Alumni Highlights
-            </a>
-          </Link>
-
-          <div className="px-3 py-2">
-            <Link href="#signin" legacyBehavior>
-              <a className="block px-3 py-2 rounded-md text-base font-medium text-white hover:text-gray-400">
-                Sign in
-              </a>
+      <div
+        className={`${
+          isOpen ? "block" : "hidden"
+        } md:hidden bg-black border-t border-gray-700`}
+      >
+        <div className="px-4 py-3 space-y-2">
+          {navItems.map((item) => (
+            <Link
+              key={item.href}
+              href={item.href}
+              className="block text-gray-300 hover:text-white"
+            >
+              {item.label}
             </Link>
-            <Link href="#signup" legacyBehavior>
-              <a className="block px-3 py-2 rounded-md text-base font-medium text-white hover:text-gray-400">
-                Sign up
-              </a>
+          ))}
+          <div className="pt-4 border-t border-gray-700">
+            <Link href="/signin" className="block text-[#00BDD6] font-bold">
+              Sign in
+            </Link>
+            <Link
+              href="/signup"
+              className="block bg-[#00BDD6] text-white py-2 px-4 rounded-full text-center mt-2"
+            >
+              Sign up
             </Link>
           </div>
         </div>
