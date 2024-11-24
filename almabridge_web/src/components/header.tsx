@@ -85,7 +85,7 @@ export default function Header() {
         </header>
 
         {/* AlmaBridge Section */}
-        <section className="bg-black text-white py-24">
+        <section id="features" className="bg-black text-white py-24">
           <div className="text-center mb-12">
             <h2 className="text-4xl font-bold text-[#00bdd6] alma-heading">
               AlmaBridge
@@ -232,8 +232,13 @@ export default function Header() {
 
         {/*Meet the team*/}
 
-        <section className="team-section text-center py-12 bg-[#191919]">
-          <h2 className="text-3xl font-semibold text-[#00BDD6] mb-8">Meet the Team</h2>
+        <section
+          id="team"
+          className="team-section text-center py-12 bg-[#191919]"
+        >
+          <h2 className="text-3xl font-semibold text-[#00BDD6] mb-8">
+            Meet the Team
+          </h2>
           <div className="flex justify-center items-center py-12 px-4">
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8 max-w-6xl mx-auto">
               {teamMembers.map((member) => (
@@ -260,7 +265,7 @@ export default function Header() {
 
         {/*FAQ */}
 
-        <section className="bg-black text-white py-24">
+        <section id="faq" className="bg-black text-white py-24">
           <div className="text-center mb-12">
             <span className="bg-gradient-to-r from-gray-200 via-blue-600 to-gray-200 px-4 py-1 rounded-full text-transparent bg-clip-text">
               FREQUENTLY ASKED QUESTIONS
