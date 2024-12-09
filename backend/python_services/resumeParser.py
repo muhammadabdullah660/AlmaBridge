@@ -35,7 +35,7 @@ def extract_text_from_doc(file):
         app.logger.error(f"Error extracting text from DOC: {e}")
         return None
 
-@app.route('/api/resume_processor', methods=['POST'])
+@app.route('/api/v1/resume_processor', methods=['POST'])
 def resume_processor():
     if 'file' not in request.files:
         return jsonify({'error': 'No file attached'}), 400
