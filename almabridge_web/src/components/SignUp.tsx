@@ -11,6 +11,7 @@ interface FormData {
   password: string;
   confirmPassword: string;
   role: string;
+  studentEmail: string;
 }
 
 interface FormErrors {
@@ -19,6 +20,7 @@ interface FormErrors {
   email?: string;
   password?: string;
   confirmPassword?: string;
+  studentEmail?: string;
 }
 
 export default function SignUp() {
@@ -29,6 +31,7 @@ export default function SignUp() {
     password: "",
     confirmPassword: "",
     role: "student",
+    studentEmail: "",
   });
   const [showPassword, setShowPassword] = useState<boolean>(false);
   const [showConfirmPassword, setShowConfirmPassword] =
@@ -48,6 +51,18 @@ export default function SignUp() {
     if (!fname) newErrors.fname = "First name is required.";
     if (!lname) newErrors.lname = "Last name is required.";
     if (!email) newErrors.email = "Email address is required.";
+    if (formData.role === "student") {
+      if (!formData.studentEmail) {
+        newErrors.studentEmail = "Student email is required.";
+      } else if (
+        !/^\d{4}[a-zA-Z]{2,}[0-9]+@student\.uet\.edu\.pk$/.test(
+          formData.studentEmail
+        )
+      ) {
+        newErrors.studentEmail =
+          "Student email must be in the format: [year][dept][reg no]@student.uet.edu.pk.";
+      }
+    }
     if (!password) newErrors.password = "Password is required.";
     if (!confirmPassword)
       newErrors.confirmPassword = "Please confirm your password.";
@@ -196,6 +211,27 @@ export default function SignUp() {
                 )}
               </div>
             </div>
+            {formData.role === "student" && (
+              <div>
+                <label
+                  htmlFor="studentEmail"
+                  className="block text-sm font-medium text-gray-900"
+                >
+                  Student Email
+                </label>
+                <input
+                  id="studentEmail"
+                  name="studentEmail"
+                  type="email"
+                  value={formData.studentEmail}
+                  onChange={handleChange}
+                  className="block w-full rounded-md border-0 p-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-gray-600 sm:text-sm sm:leading-6"
+                />
+                {errors.studentEmail && (
+                  <p className="text-red-500 text-sm">{errors.studentEmail}</p>
+                )}
+              </div>
+            )}
 
             {/* Password */}
             <div>
