@@ -1,8 +1,9 @@
+
 "use client";
 
 import React, { useState } from "react";
 import Image from "next/image";
-import { FaPencilAlt, FaCamera } from "react-icons/fa";
+import { FaPencilAlt, FaCamera, FaPlus, FaTrash } from "react-icons/fa";
 
 export default function CreateProfile() {
   const [isEditing, setIsEditing] = useState(false);
@@ -10,10 +11,14 @@ export default function CreateProfile() {
     firstName: "Fatima",
     lastName: "Awais",
     address: "123 Main St, Springfield",
-    linkedin: "https://linkedin.com/in/johndoe",
+    aboutMe: "A passionate full-stack developer.",
+    linkedin: "https://linkedin.com/in/fatima-awais",
     bio: "A passionate full-stack developer with experience in React and Node.js.",
-    education: "B.Sc. in Computer Science from XYZ University",
-    workExperience: "Software Developer at ABC Corp for 2 years",
+    gender: "Female",
+    primaryEmail: "hi",
+    secondaryEmail: "hi2",
+    education: ["B.Sc. in Computer Science from XYZ University"],
+    workExperience: ["Software Developer at ABC Corp for 2 years"],
     skills: [
       { name: "React", rating: 4 },
       { name: "Node.js", rating: 5 },
@@ -40,15 +45,14 @@ export default function CreateProfile() {
 
   const handlePictureUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
-    if (file && file.size <= 5 * 1024 * 1024) { // 5MB size limit
+    if (file && file.size <= 5 * 1024 * 1024) {
       const imageUrl = URL.createObjectURL(file);
-      setProfilePicture(imageUrl); // Update profile picture state
+      setProfilePicture(imageUrl);
     } else {
       alert("File size must be less than 5MB.");
     }
   };
 
-  // Add this function for handling rating change
   const handleRatingChange = (skillName: string, newRating: number) => {
     setProfileData((prev) => ({
       ...prev,
@@ -56,7 +60,42 @@ export default function CreateProfile() {
         skill.name === skillName ? { ...skill, rating: newRating } : skill
       ),
     }));
+  };  
+
+  const addEducationField = () =>
+    setProfileData((prev) => ({
+      ...prev,
+      education: [...prev.education, ""],
+    }));
+
+  const updateEducation = (index: number, value: string) => {
+    const updatedEducation = [...profileData.education];
+    updatedEducation[index] = value;
+    setProfileData((prev) => ({ ...prev, education: updatedEducation }));
   };
+
+  const removeEducation = (index: number) => {
+    const updatedEducation = profileData.education.filter((_, i) => i !== index);
+    setProfileData((prev) => ({ ...prev, education: updatedEducation }));
+  };
+
+  const addWorkExperienceField = () =>
+    setProfileData((prev) => ({
+      ...prev,
+      workExperience: [...prev.workExperience, ""],
+    }));
+
+  const updateWorkExperience = (index: number, value: string) => {
+    const updatedWorkExperience = [...profileData.workExperience];
+    updatedWorkExperience[index] = value;
+    setProfileData((prev) => ({ ...prev, workExperience: updatedWorkExperience }));
+  };
+
+  const removeWorkExperience = (index: number) => {
+    const updatedWorkExperience = profileData.workExperience.filter((_, i) => i !== index);
+    setProfileData((prev) => ({ ...prev, workExperience: updatedWorkExperience }));
+  };
+
 
   return (
     <div className="flex flex-col min-h-screen bg-gradient-to-b from-gray-900 via-black to-black text-white">
@@ -68,9 +107,9 @@ export default function CreateProfile() {
         {/* Profile Picture & Header */}
         <div className="flex flex-col md:flex-row items-center mb-8">
           <div className="w-40 h-40 rounded-full overflow-hidden border-4 border-transparent mb-4 md:mb-0 transition-all duration-300 ease-in-out hover:ring-4 hover:ring-[#00BDD6] hover:scale-105 relative">
-          {isEditing && (
+            {isEditing && (
               <div className="absolute top-0 left-0 w-full h-full bg-black bg-opacity-50 flex justify-center items-center">
-                <FaCamera size={30}  />
+                <FaCamera size={30} />
               </div>
             )}
             {/* Only show file picker when isEditing is true */}
@@ -105,9 +144,33 @@ export default function CreateProfile() {
               >
                 <FaPencilAlt size={20} />
               </button>
+
             </div>
             <p className="text-gray-400 mt-2">Computer Scientist</p>
           </div>
+        </div>
+
+        {/* Resume Upload - Repositioned to the Top */}
+        <div className="mb-6 mt-10">
+          <h2 className="text-xl font-bold mb-2">Resume</h2>
+          {isEditing ? (
+            <input
+              type="file"
+              onChange={handleResumeUpload}
+              className="w-full bg-gray-900 border border-gray-700 rounded-md px-4 py-2 text-gray-200 focus:ring-2 focus:ring-[#00BDD6]"
+              
+            />
+          ) : (
+            <div className="mb-5">
+              <a
+                href={`/assets/${profileData.resume}`}
+                download
+                className="text-[#00BDD6] hover:underline text-lg font-medium"
+              >
+                {profileData.resume || "Upload your resume"}
+              </a>
+            </div>
+          )}
         </div>
 
         {/* Profile Details */}
@@ -122,6 +185,7 @@ export default function CreateProfile() {
                 value={profileData.firstName}
                 onChange={handleChange}
                 className="w-full bg-gray-900 border border-gray-700 rounded-md px-4 py-2 text-gray-200 focus:ring-2 focus:ring-[#00BDD6]"
+          
               />
             ) : (
               <p className="text-gray-300">{profileData.firstName}</p>
@@ -137,6 +201,7 @@ export default function CreateProfile() {
                 value={profileData.lastName}
                 onChange={handleChange}
                 className="w-full bg-gray-900 border border-gray-700 rounded-md px-4 py-2 text-gray-200 focus:ring-2 focus:ring-[#00BDD6]"
+                
               />
             ) : (
               <p className="text-gray-300">{profileData.lastName}</p>
@@ -169,6 +234,7 @@ export default function CreateProfile() {
                 value={profileData.linkedin}
                 onChange={handleChange}
                 className="w-full bg-gray-900 border border-gray-700 rounded-md px-4 py-2 text-gray-200 focus:ring-2 focus:ring-[#00BDD6]"
+                
               />
             ) : (
               <a
@@ -179,6 +245,58 @@ export default function CreateProfile() {
               >
                 {profileData.linkedin}
               </a>
+            )}
+          </div>
+
+          {/* Primary Email */}
+          <div className="mb-4">
+            <h3 className="text-lg font-semibold">Primary Email</h3>
+            {isEditing ? (
+              <input
+                type="email"
+                value={profileData.primaryEmail}
+                disabled={true}
+                className="w-full bg-gray-700 text-gray-400 border border-gray-700 rounded-md px-4 py-2 cursor-not-allowed"
+                
+              />
+            ) : (
+              <p>{profileData.primaryEmail}</p>
+            )}
+          </div>
+
+          {/* Secondary Email */}
+          <div>
+            <h3 className="text-lg font-semibold">Secondary Email</h3>
+            {isEditing ? (
+              <input
+                type="email"
+                value={profileData.secondaryEmail}
+                onChange={(e) => setProfileData({ ...profileData, secondaryEmail: e.target.value })}
+                className="w-full bg-gray-900 border border-gray-700 rounded-md px-4 py-2"
+                
+              />
+            ) : (
+              <p>{profileData.secondaryEmail}</p>
+            )}
+          </div>
+
+
+
+          {/* Gender */}
+          <div>
+            <h2 className="text-xl font-bold mb-2">Gender</h2>
+            {isEditing ? (
+              <select
+                value={profileData.gender}
+                onChange={(e) => setProfileData({ ...profileData, gender: e.target.value })}
+                className="w-full bg-gray-900 border border-gray-700 rounded-md px-4 py-2"
+              >
+                <option value="Male">Male</option>
+                <option value="Female">Female</option>
+                <option value="Other">Other</option>
+              </select>
+            ) : (
+              <p>{profileData.gender}</p>
             )}
           </div>
 
@@ -197,37 +315,65 @@ export default function CreateProfile() {
             )}
           </div>
 
+          {/* Work Experience */}
+          <div>
+            <h2 className="text-xl font-bold mb-2">Work Experience</h2>
+            {profileData.workExperience.map((experience, index) => (
+              <div key={index} className="flex items-center mb-2">
+                {isEditing ? (
+                  <>
+                    <input
+                      type="text"
+                      value={experience}
+                      onChange={(e) => updateWorkExperience(index, e.target.value)}
+                      className="w-full bg-gray-900 border border-gray-700 rounded-md px-4 py-2"
+                      
+                    />
+                    <button onClick={() => removeWorkExperience(index)} className="ml-2 text-red-500">
+                      <FaTrash />
+                    </button>
+                  </>
+                ) : (
+                  <p>
+                    {experience}
+                  </p>
+                )}
+              </div>
+            ))}
+            {isEditing && (
+              <button onClick={addWorkExperienceField} className="text-[#00BDD6] mt-2 flex items-center">
+                <FaPlus className="mr-1" /> Add Work Experience
+              </button>
+            )}
+          </div>
+
           {/* Education */}
           <div>
             <h2 className="text-xl font-bold mb-2">Education</h2>
             {isEditing ? (
-              <input
-                type="text"
-                name="education"
-                value={profileData.education}
-                onChange={handleChange}
-                className="w-full bg-gray-900 border border-gray-700 rounded-md px-4 py-2 text-gray-200 focus:ring-2 focus:ring-[#00BDD6]"
-              />
+              profileData.education.map((edu, index) => (
+                <div key={index} className="flex items-center mb-2">
+                  <input
+                    type="text"
+                    value={edu}
+                    onChange={(e) => updateEducation(index, e.target.value)}
+                    className="w-full bg-gray-900 border border-gray-700 rounded-md px-4 py-2"
+                    
+                  />
+                  <button onClick={() => removeEducation(index)} className="ml-2 text-red-500">
+                    <FaTrash />
+                  </button>
+                </div>
+              ))
             ) : (
-              <p className="text-gray-300">{profileData.education}</p>
+              profileData.education.map((edu, index) => <p key={index}>{edu}</p>)
+            )}
+            {isEditing && (
+              <button onClick={addEducationField} className="text-[#00BDD6] mt-2">
+                <FaPlus /> Add Education
+              </button>
             )}
           </div>
-
-          {/* Work Experience */}
-          <div>
-            <h2 className="text-xl font-bold mb-2">Work Experience</h2>
-            {isEditing ? (
-              <textarea
-                name="workExperience"
-                value={profileData.workExperience}
-                onChange={handleChange}
-                className="w-full bg-gray-900 border border-gray-700 rounded-md px-4 py-2 text-gray-200 focus:ring-2 focus:ring-[#00BDD6]"
-              />
-            ) : (
-              <p className="text-gray-300">{profileData.workExperience}</p>
-            )}
-          </div>
-
           {/* Skills */}
           <div>
             <h2 className="text-xl font-bold mb-2">Skills</h2>
@@ -246,6 +392,7 @@ export default function CreateProfile() {
                         handleRatingChange(skill.name, Number(e.target.value))
                       }
                       className="w-full bg-gray-700 h-2 rounded-full focus:ring-2 focus:ring-[#00BDD6]"
+                      
                     />
                   ) : (
                     <div className="bg-gray-700 h-2 rounded-full">
@@ -259,43 +406,23 @@ export default function CreateProfile() {
               </div>
             ))}
           </div>
-
-          {/* Resume Upload */}
-          <div>
-            <h2 className="text-xl font-bold mb-2">Resume</h2>
-            {isEditing ? (
-              <input
-                type="file"
-                onChange={handleResumeUpload}
-                className="w-full bg-gray-900 border border-gray-700 rounded-md px-4 py-2 text-gray-200 focus:ring-2 focus:ring-[#00BDD6]"
-              />
-            ) : (
-              <div className="mb-5">
-                <a
-                href={`/assets/${profileData.resume}`}
-                download
-                className="text-[#00BDD6] hover:underline"
-              >
-                {profileData.resume}
-              </a>
-              </div>
-              
-            )}
-          </div>
         </div>
 
-        {/* Save Button */}
-        {isEditing && (
-          <div className="text-center mt-8 mb-8">
-            <button
-              onClick={toggleEdit}
-              className="bg-[#00BDD6] text-gray-900 font-semibold px-6 py-2 rounded hover:bg-[#00a5c2] focus:outline-none focus:ring-2 focus:ring-[#00BDD6]"
-            >
-              Save Changes
-            </button>
-          </div>
-        )}
       </div>
+
+      {/* Save Button */}
+      {isEditing && (
+        <div className="text-center mt-8 mb-8">
+          <button 
+            type="submit"
+            onClick={toggleEdit}
+            className="bg-[#00BDD6] text-gray-900 font-semibold px-6 py-2 rounded hover:bg-[#00a5c2] focus:outline-none focus:ring-2 focus:ring-[#00BDD6]"
+          >
+            Save Changes
+          </button>
+        </div>
+      )}
+    
     </div>
   );
 }
