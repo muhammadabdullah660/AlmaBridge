@@ -5,6 +5,7 @@ import Image from "next/image";
 import { FaPencilAlt, FaCamera, FaPlus, FaTrash } from "react-icons/fa";
 import { Education } from "../types";
 import { WorkExperience } from "../types";
+import axios from "axios";
 export default function CreateProfile() {
   const [isEditing, setIsEditing] = useState(false);
   const [profileData, setProfileData] = useState({
@@ -70,7 +71,7 @@ export default function CreateProfile() {
         date: "2023-07-10",
       },
     ],
-    resume: "jane_doe_resume.pdf",
+    resume: "",
     portfolio: "https://janedoe.dev",
     linktree: "",
   });
@@ -89,7 +90,124 @@ export default function CreateProfile() {
   const handleResumeUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
-      setProfileData((prev) => ({ ...prev, resume: file.name }));
+      const formData = new FormData();
+      formData.append("file", file);
+
+      axios
+        .post("http://127.0.0.1:5000/api/resumeExtract", formData, {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        })
+        .then((res) => {
+          const parsedData = res.data.resume_data;
+
+          console.log("Parsed Data:", parsedData);
+          // type of parsedData
+
+          // Map JSON response to profileData
+          setProfileData((prev) => {
+            const updatedProfile = { ...prev };
+
+            // Update simple fields
+            if (parsedData.Name) {
+              const [firstName, ...lastNameParts] = parsedData.Name.split(" ");
+              updatedProfile.firstName = firstName || prev.firstName;
+              updatedProfile.lastName =
+                lastNameParts.join(" ") || prev.lastName;
+            }
+            updatedProfile.primaryEmail = parsedData.Email || prev.primaryEmail;
+            updatedProfile.address = parsedData.Address || prev.address;
+
+            // Map Work Experience
+            if (parsedData["Work Experience"]) {
+              updatedProfile.workExperience = parsedData["Work Experience"].map(
+                (exp: {
+                  Company: string;
+                  Title: string;
+                  Dates: string;
+                  Description: string;
+                }) => ({
+                  company: exp.Company,
+                  role: exp.Title,
+                  startDate: exp.Dates.split("–")[0]?.trim(),
+                  endDate: exp.Dates.split("–")[1]?.trim(),
+                  description: exp.Description,
+                })
+              );
+            }
+
+            // Map Skills
+            if (parsedData.Skills) {
+              const combinedSkills = [
+                ...parsedData.Skills.Languages.map((lang: string) => ({
+                  name: lang,
+                  rating: 5, // default rating
+                })),
+                ...parsedData.Skills.Frameworks.map((fw: string) => ({
+                  name: fw,
+                  rating: 5,
+                })),
+                ...parsedData.Skills.Libraries.map((lib: string) => ({
+                  name: lib,
+                  rating: 5,
+                })),
+                ...parsedData.Skills["Developer Tools"]?.map(
+                  (tool: string) => ({
+                    name: tool,
+                    rating: 5,
+                  })
+                ),
+              ];
+              updatedProfile.skills = combinedSkills;
+            }
+
+            // Map Education
+            if (parsedData.Education) {
+              updatedProfile.education = [
+                {
+                  school: parsedData.Education.University,
+                  degree: parsedData.Education.Degree,
+                  fieldOfStudy: "Computer Science", // Set manually or parse if present
+                  graduationYear: parsedData.Education["Graduation Year"] || "", // Add if available in response
+                },
+              ];
+            }
+
+            // Map Certifications
+            if (parsedData.Certifications) {
+              updatedProfile.certifications = parsedData.Certifications.map(
+                (cert: string) => ({
+                  name: cert,
+                  issuer: "", // Add if available in response
+                  date: "", // Add if available in response
+                })
+              );
+            }
+
+            // Map Projects
+            // if (parsedData.Projects) {
+            //   updatedProfile.projects = parsedData.Projects.map(
+            //     (proj: {
+            //       Name: string;
+            //       Description: string;
+            //       Technologies: string[];
+            //       Dates: string;
+            //     }) => ({
+            //       name: proj.Name,
+            //       description: proj.Description,
+            //       technologies: proj.Technologies,
+            //       dates: proj.Dates,
+            //     })
+            //   );
+            // }
+
+            return updatedProfile;
+          });
+        })
+        .catch((err) => {
+          console.error("Error processing resume:", err);
+        });
     }
   };
 
@@ -103,6 +221,7 @@ export default function CreateProfile() {
     }
   };
 
+  // Education
   const addEducationField = () => {
     setProfileData({
       ...profileData,
@@ -133,6 +252,7 @@ export default function CreateProfile() {
     setProfileData({ ...profileData, education: updatedEducation });
   };
 
+  // Work Experience
   const addWorkExperienceField = () => {
     setProfileData({
       ...profileData,
@@ -165,6 +285,8 @@ export default function CreateProfile() {
       workExperience: updatedWorkExperience,
     }));
   };
+
+  // Skills
   const addSkill = () => {
     setProfileData({
       ...profileData,
@@ -244,17 +366,19 @@ export default function CreateProfile() {
           {isEditing ? (
             <input
               type="file"
+              accept=".pdf"
               onChange={handleResumeUpload}
               className="w-full bg-gray-900 border border-gray-700 rounded-md px-4 py-2 text-gray-200 focus:ring-2 focus:ring-[#00BDD6]"
             />
           ) : (
             <div className="mb-5">
               <a
-                href={`/assets/${profileData.resume}`}
-                download
-                className="text-[#00BDD6] hover:underline text-lg font-medium"
+                href={profileData.resume}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-[#00BDD6] hover:underline"
               >
-                {profileData.resume || "Upload your resume"}
+                View Resume
               </a>
             </div>
           )}
