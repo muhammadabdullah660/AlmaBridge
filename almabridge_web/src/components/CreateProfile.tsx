@@ -8,38 +8,71 @@ import { WorkExperience } from "../types";
 export default function CreateProfile() {
   const [isEditing, setIsEditing] = useState(false);
   const [profileData, setProfileData] = useState({
-    firstName: "Yours",
-    lastName: "Truly",
-    address: "123 Main St, Springfield",
-    aboutMe: "A passionate full-stack developer.",
-    linkedin: "https://linkedin.com/in/",
-    bio: "A passionate full-stack developer with experience in React and Node.js.",
+    // dummy data
+    firstName: "Jane",
+    lastName: "Doe",
+    address: "456 Elm Street, Metropolis, USA",
+    aboutMe:
+      "A dedicated full-stack developer enthusiastic about building impactful and scalable software solutions.",
+    linkedin: "https://linkedin.com/in/jane-doe",
+    bio: "Creative problem-solver with a strong background in web technologies and a passion for delivering high-quality user experiences.",
     gender: "Female",
-    primaryEmail: "dummy",
-    secondaryEmail: "hi2",
+    primaryEmail: "janedoe@example.com",
+    secondaryEmail: "contact@janedoe.dev",
     education: [
       {
-        school: "University of XYZ",
-        degree: "Bachelor's",
-        fieldOfStudy: "Computer Science",
-        graduationYear: "2025",
+        school: "Metropolis University",
+        degree: "Master of Science",
+        fieldOfStudy: "Software Engineering",
+        graduationYear: "2023",
+      },
+      {
+        school: "Central Tech Institute",
+        degree: "Bachelor of Technology",
+        fieldOfStudy: "Information Technology",
+        graduationYear: "2020",
       },
     ],
     workExperience: [
       {
-        company: "ABC Corp",
-        role: "Software Engineer",
-        startDate: "2020-01-01",
-        endDate: "2022-01-01",
-        description: "Developed and maintained web applications.",
+        company: "Tech Giants Inc.",
+        role: "Full-Stack Developer",
+        startDate: "2023-03-01",
+        endDate: "Present",
+        description:
+          "Developing enterprise-level applications, improving performance, and collaborating with cross-functional teams to deliver seamless solutions.",
+      },
+      {
+        company: "Startup Solutions",
+        role: "Junior Developer",
+        startDate: "2021-01-15",
+        endDate: "2023-02-28",
+        description:
+          "Built user-friendly interfaces and worked on integrating RESTful APIs. Collaborated with the team to successfully deploy multiple client projects.",
       },
     ],
     skills: [
-      { name: "React", rating: 4 },
-      { name: "Node.js", rating: 5 },
-      { name: "MongoDB", rating: 3 },
+      { name: "React", rating: 8 },
+      { name: "Node.js", rating: 7 },
+      { name: "MongoDB", rating: 6 },
+      { name: "Python", rating: 9 },
+      { name: "Docker", rating: 5 },
     ],
-    resume: "resume.pdf",
+    certifications: [
+      {
+        name: "AWS Certified Developer - Associate",
+        issuer: "Amazon Web Services",
+        date: "2024-01-15",
+      },
+      {
+        name: "Certified Kubernetes Administrator",
+        issuer: "CNCF",
+        date: "2023-07-10",
+      },
+    ],
+    resume: "jane_doe_resume.pdf",
+    portfolio: "https://janedoe.dev",
+    linktree: "",
   });
 
   const [profilePicture, setProfilePicture] = useState("/assets/fatima.webp");
@@ -70,14 +103,6 @@ export default function CreateProfile() {
     }
   };
 
-  const handleRatingChange = (skillName: string, newRating: number) => {
-    setProfileData((prev) => ({
-      ...prev,
-      skills: prev.skills.map((skill) =>
-        skill.name === skillName ? { ...skill, rating: newRating } : skill
-      ),
-    }));
-  };
   const addEducationField = () => {
     setProfileData({
       ...profileData,
@@ -139,6 +164,26 @@ export default function CreateProfile() {
       ...prev,
       workExperience: updatedWorkExperience,
     }));
+  };
+  const addSkill = () => {
+    setProfileData({
+      ...profileData,
+      skills: [...profileData.skills, { name: "", rating: 5 }],
+    });
+  };
+  const removeSkill = (index: number) => {
+    const updatedSkills = profileData.skills.filter((_, i) => i !== index);
+    setProfileData({ ...profileData, skills: updatedSkills });
+  };
+  const handleSkillNameChange = (index: number, newName: string) => {
+    const updatedSkills = [...profileData.skills];
+    updatedSkills[index].name = newName;
+    setProfileData({ ...profileData, skills: updatedSkills });
+  };
+  const handleRatingChange = (index: number, newRating: number) => {
+    const updatedSkills = [...profileData.skills];
+    updatedSkills[index].rating = newRating;
+    setProfileData({ ...profileData, skills: updatedSkills });
   };
 
   return (
@@ -283,6 +328,50 @@ export default function CreateProfile() {
                 className="text-[#00BDD6] hover:underline"
               >
                 {profileData.linkedin}
+              </a>
+            )}
+          </div>
+          {/* Linktree */}
+          <div>
+            <h2 className="text-xl font-bold mb-2">Linktree</h2>
+            {isEditing ? (
+              <input
+                type="text"
+                name="linktree"
+                value={profileData.linktree}
+                onChange={handleChange}
+                className="w-full bg-gray-900 border border-gray-700 rounded-md px-4 py-2 text-gray-200 focus:ring-2 focus:ring-[#00BDD6]"
+              />
+            ) : (
+              <a
+                href={profileData.linktree}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-[#00BDD6] hover:underline"
+              >
+                {profileData.linktree}
+              </a>
+            )}
+          </div>
+          {/* Portfolio */}
+          <div>
+            <h2 className="text-xl font-bold mb-2">Portfolio</h2>
+            {isEditing ? (
+              <input
+                type="text"
+                name="portfolio"
+                value={profileData.portfolio}
+                onChange={handleChange}
+                className="w-full bg-gray-900 border border-gray-700 rounded-md px-4 py-2 text-gray-200 focus:ring-2 focus:ring-[#00BDD6]"
+              />
+            ) : (
+              <a
+                href={profileData.portfolio}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-[#00BDD6] hover:underline"
+              >
+                {profileData.portfolio}
               </a>
             )}
           </div>
@@ -582,35 +671,61 @@ export default function CreateProfile() {
             )}
           </div>
           {/* Skills */}
+          {/* Skills */}
           <div>
             <h2 className="text-xl font-bold mb-2">Skills</h2>
-            {profileData.skills.map((skill) => (
-              <div key={skill.name} className="flex items-center mb-4">
-                <span className="w-1/4 text-gray-300">{skill.name}</span>
-                <div className="flex-1">
-                  {isEditing ? (
+            {profileData.skills.map((skill, index) => (
+              <div key={index} className="flex items-center mb-4">
+                {isEditing ? (
+                  <>
+                    <input
+                      type="text"
+                      value={skill.name}
+                      onChange={(e) =>
+                        handleSkillNameChange(index, e.target.value)
+                      }
+                      placeholder="Skill Name"
+                      className="w-1/4 bg-gray-900 border border-gray-700 rounded-md px-2 py-1 mr-2 text-gray-300"
+                    />
                     <input
                       type="range"
                       min="0"
-                      max="5"
+                      max="10"
                       step="1"
                       value={skill.rating}
                       onChange={(e) =>
-                        handleRatingChange(skill.name, Number(e.target.value))
+                        handleRatingChange(index, Number(e.target.value))
                       }
-                      className="w-full bg-gray-700 h-2 rounded-full focus:ring-2 focus:ring-[#00BDD6]"
+                      className="flex-1 bg-gray-700 h-2 rounded-full focus:ring-2 focus:ring-[#00BDD6]"
                     />
-                  ) : (
-                    <div className="bg-gray-700 h-2 rounded-full">
+                    <button
+                      onClick={() => removeSkill(index)}
+                      className="ml-2 text-red-500"
+                    >
+                      <FaTrash />
+                    </button>
+                  </>
+                ) : (
+                  <>
+                    <span className="w-1/4 text-gray-300">{skill.name}</span>
+                    <div className="flex-1 bg-gray-700 h-2 rounded-full">
                       <div
                         className="bg-[#00BDD6] h-full rounded-full"
-                        style={{ width: `${(skill.rating / 5) * 100}%` }}
+                        style={{ width: `${(skill.rating / 10) * 100}%` }}
                       ></div>
                     </div>
-                  )}
-                </div>
+                  </>
+                )}
               </div>
             ))}
+            {isEditing && (
+              <button
+                onClick={addSkill}
+                className="text-[#00BDD6] mt-2 flex items-center"
+              >
+                <FaPlus className="mr-2" /> Add Skill
+              </button>
+            )}
           </div>
         </div>
       </div>
