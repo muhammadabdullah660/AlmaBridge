@@ -34,7 +34,7 @@ class ResumeController:
                 if extracted_text is None:
                     return jsonify({'error': 'Failed to extract text from file'}), 500
                 
-                resume_data = resume_parser(resume_data, API_KEY)
+                resume_data = resume_parser(extracted_text, API_KEY)
                 return jsonify({'resume_data': resume_data}), 200
             
             return jsonify({'error': 'File type not allowed'}), 400
