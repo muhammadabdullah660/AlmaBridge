@@ -5,6 +5,7 @@ import Image from "next/image";
 import { FaPencilAlt, FaCamera, FaPlus, FaTrash } from "react-icons/fa";
 import { Education } from "../types";
 import { WorkExperience } from "../types";
+import { Certification } from "../types";
 import axios from "axios";
 export default function CreateProfile() {
   const [isEditing, setIsEditing] = useState(false);
@@ -285,7 +286,39 @@ export default function CreateProfile() {
       workExperience: updatedWorkExperience,
     }));
   };
+  // Work Experience
+  const addCertificationField = () => {
+    setProfileData({
+      ...profileData,
+      certifications: [
+        ...profileData.certifications,
+        { name: "", issuer: "", date: "" },
+      ],
+    });
+  };
 
+  const updateCertificationField = (
+    index: number,
+    field: keyof Certification,
+    value: string
+  ) => {
+    const updatedCertification = [...profileData.certifications];
+    updatedCertification[index] = {
+      ...updatedCertification[index],
+      [field]: value,
+    };
+    setProfileData({ ...profileData, certifications: updatedCertification });
+  };
+
+  const removeCertification = (index: number) => {
+    const updatedCertification = profileData.certifications.filter(
+      (_, i) => i !== index
+    );
+    setProfileData((prev) => ({
+      ...prev,
+      certifications: updatedCertification,
+    }));
+  };
   // Skills
   const addSkill = () => {
     setProfileData({
@@ -794,7 +827,87 @@ export default function CreateProfile() {
               </button>
             )}
           </div>
-          {/* Skills */}
+          {/* Certifications */}
+          <div>
+            <h2 className="text-xl font-bold mb-2">Certifications</h2>
+            {isEditing
+              ? profileData.certifications.map((cert, index) => (
+                  <div key={index} className="mb-4 p-4 bg-gray-900 rounded-md">
+                    <div className="mb-2">
+                      <label className="block text-gray-400 mb-1">Name</label>
+                      <input
+                        type="text"
+                        name="name"
+                        value={cert.name}
+                        onChange={(e) =>
+                          updateCertificationField(
+                            index,
+                            "name",
+                            e.target.value
+                          )
+                        }
+                        className="w-full bg-gray-800 border border-gray-700 rounded-md px-4 py-2"
+                        placeholder="e.g., AWS Certified Developer - Associate"
+                      />
+                    </div>
+                    <div className="mb-2">
+                      <label className="block text-gray-400 mb-1">Issuer</label>
+                      <input
+                        type="text"
+                        name="issuer"
+                        value={cert.issuer}
+                        onChange={(e) =>
+                          updateCertificationField(
+                            index,
+                            "issuer",
+                            e.target.value
+                          )
+                        }
+                        className="w-full bg-gray-800 border border-gray-700 rounded-md px-4 py-2"
+                        placeholder="e.g., Amazon Web Services"
+                      />
+                    </div>
+                    <div className="mb-2">
+                      <label className="block text-gray-400 mb-1">Date</label>
+                      <input
+                        type="date"
+                        name="date"
+                        value={cert.date}
+                        onChange={(e) =>
+                          updateCertificationField(
+                            index,
+                            "date",
+                            e.target.value
+                          )
+                        }
+                        className="w-full bg-gray-800 border border-gray-700 rounded-md px-4 py-2"
+                      />
+                    </div>
+                    <button
+                      onClick={() => removeCertification(index)}
+                      className="text-red-500 mt-2"
+                    >
+                      <FaTrash /> Remove
+                    </button>
+                  </div>
+                ))
+              : profileData.certifications.map((cert, index) => (
+                  <div key={index} className="mb-4">
+                    <p className="text-lg font-semibold">{cert.name}</p>
+                    <p className="text-gray-300">{cert.issuer}</p>
+                    <p className="text-gray-400">{cert.date}</p>
+                  </div>
+                ))}
+            {isEditing && (
+              <button
+                onClick={addCertificationField}
+                className="text-[#00BDD6] mt-2 flex items-center"
+              >
+                <FaPlus className="mr-2" /> Add Certification
+              </button>
+            )}
+          </div>
+
           {/* Skills */}
           <div>
             <h2 className="text-xl font-bold mb-2">Skills</h2>

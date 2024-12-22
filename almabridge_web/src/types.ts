@@ -48,3 +48,9 @@ export interface WorkExperience {
   endDate: string;
   description: string;
 }
+
+export interface Certification {
+  name: string;
+  date: string;
+  issuer: string;
+}
