@@ -1,5 +1,6 @@
 const mailgun = require('mailgun-js');
-require('dotenv').config();
+const path = require('path');
+require('dotenv').config({ path: path.resolve(__dirname, '../../.env') });var pg = require("pg");
 
 const mg = mailgun({
     apiKey: process.env.MAILGUN_API_KEY,
