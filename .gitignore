@@ -38,6 +38,8 @@ almabridge_web/*.tsbuildinfo
 almabridge_web/next-env.d.ts
 
 # Backend ignores
+backend/node_modules/
+**/.env
 
 # Ignore backend dependencies in express_services
 backend/express_services/node_modules/
