@@ -1,6 +1,6 @@
 const { Sequelize } = require("sequelize");
-const path = require('path');
-require('dotenv').config({ path: path.resolve(__dirname, '../../.env') });var pg = require("pg");
+const path = require("path");
+require("dotenv").config({ path: path.resolve(__dirname, "../../.env") });
 var pg = require("pg");
 pg.defaults.ssl = true;
 

@@ -3,7 +3,7 @@
 
 import React, { useState } from "react";
 import Image from "next/image";
-
+import axios from "axios";
 interface FormData {
   email: string;
   password: string;
@@ -47,6 +47,16 @@ export default function SignIn() {
     } else {
       setErrors({}); // Clear errors
       // Handle form submission (e.g., send data to your server)
+      const { email, password } = formData;
+      axios
+        .post("http://127.0.0.1:3001/api/login", { email, password })
+        .then((response) => {
+          console.log("Login successful:", response.data);
+        })
+        .catch((error) => {
+          console.error("Login failed:", error);
+        });
+
       console.log("Form submitted successfully:", formData);
     }
   };

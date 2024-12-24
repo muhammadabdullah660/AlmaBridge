@@ -3,10 +3,10 @@
 
 import React, { useState } from "react";
 import Image from "next/image";
-
+import axios from "axios";
 interface FormData {
-  fname: string;
-  lname: string;
+  firstName: string;
+  lastName: string;
   email: string;
   password: string;
   confirmPassword: string;
@@ -15,8 +15,8 @@ interface FormData {
 }
 
 interface FormErrors {
-  fname?: string;
-  lname?: string;
+  firstName?: string;
+  lastName?: string;
   email?: string;
   password?: string;
   confirmPassword?: string;
@@ -25,8 +25,8 @@ interface FormErrors {
 
 export default function SignUp() {
   const [formData, setFormData] = useState<FormData>({
-    fname: "",
-    lname: "",
+    firstName: "",
+    lastName: "",
     email: "",
     password: "",
     confirmPassword: "",
@@ -45,11 +45,11 @@ export default function SignUp() {
   };
 
   const validateForm = (): FormErrors => {
-    const { fname, lname, email, password, confirmPassword } = formData;
+    const { firstName, lastName, email, password, confirmPassword } = formData;
     const newErrors: FormErrors = {};
 
-    if (!fname) newErrors.fname = "First name is required.";
-    if (!lname) newErrors.lname = "Last name is required.";
+    if (!firstName) newErrors.firstName = "First name is required.";
+    if (!lastName) newErrors.lastName = "Last name is required.";
     if (!email) newErrors.email = "Email address is required.";
     if (formData.role === "student") {
       if (!formData.studentEmail) {
@@ -83,7 +83,26 @@ export default function SignUp() {
     } else {
       setErrors({}); // Clear errors
       // Handle form submission (e.g., send data to your server)
-      console.log("Form submitted successfully:", formData);
+      const { firstName, lastName, email, password, role, studentEmail } =
+        formData;
+      // register the user
+      axios
+        .post("http://127.0.0.1:3001/api/register", {
+          firstName,
+          lastName,
+          email,
+          password,
+          role,
+          studentEmail,
+        })
+        .then((response) => {
+          console.log("Registration successful:", response.data);
+        })
+        .catch((error) => {
+          console.error("Registration failed:", error);
+        });
+
+      //console.log("Form submitted successfully:", formData);
     }
   };
 
@@ -140,24 +159,24 @@ export default function SignUp() {
             {/* First Name */}
             <div>
               <label
-                htmlFor="fname"
+                htmlFor="firstName"
                 className="block text-sm font-medium leading-6 text-gray-900"
               >
                 First Name
               </label>
               <div className="mt-2">
                 <input
-                  id="fname"
-                  name="fname"
+                  id="firstName"
+                  name="firstName"
                   type="text"
                   required
                   autoComplete="name"
-                  value={formData.fname}
+                  value={formData.firstName}
                   onChange={handleChange}
                   className="block w-full rounded-md border-0 p-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-gray-600 sm:text-sm sm:leading-6"
                 />
-                {errors.fname && (
-                  <p className="text-red-500 text-sm">{errors.fname}</p>
+                {errors.firstName && (
+                  <p className="text-red-500 text-sm">{errors.firstName}</p>
                 )}
               </div>
             </div>
@@ -165,24 +184,24 @@ export default function SignUp() {
             {/* Last Name */}
             <div>
               <label
-                htmlFor="lname"
+                htmlFor="lastName"
                 className="block text-sm font-medium leading-6 text-gray-900"
               >
                 Last Name
               </label>
               <div className="mt-2">
                 <input
-                  id="lname"
-                  name="lname"
+                  id="lastName"
+                  name="lastName"
                   type="text"
                   required
                   autoComplete="name"
-                  value={formData.lname}
+                  value={formData.lastName}
                   onChange={handleChange}
                   className="block w-full rounded-md border-0 p-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-gray-600 sm:text-sm sm:leading-6"
                 />
-                {errors.lname && (
-                  <p className="text-red-500 text-sm">{errors.lname}</p>
+                {errors.lastName && (
+                  <p className="text-red-500 text-sm">{errors.lastName}</p>
                 )}
               </div>
             </div>
