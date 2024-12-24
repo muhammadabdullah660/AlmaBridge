@@ -4,6 +4,7 @@
 import React, { useState } from "react";
 import Image from "next/image";
 import axios from "axios";
+import { useRouter } from "next/navigation";
 interface FormData {
   firstName: string;
   lastName: string;
@@ -24,6 +25,7 @@ interface FormErrors {
 }
 
 export default function SignUp() {
+  const router = useRouter();
   const [formData, setFormData] = useState<FormData>({
     firstName: "",
     lastName: "",
@@ -97,6 +99,8 @@ export default function SignUp() {
         })
         .then((response) => {
           console.log("Registration successful:", response.data);
+          // Redirect to the login page
+          router.push("/signin");
         })
         .catch((error) => {
           console.error("Registration failed:", error);
