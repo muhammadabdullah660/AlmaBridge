@@ -64,6 +64,8 @@ export default function SignIn() {
         password,
       });
       console.log("Login successful:", response.data);
+      const token = response.data.token;
+      localStorage.setItem("token", token);
       router.push("/createprofile");
     } catch (error) {
       console.error("Login failed:", error);

@@ -64,20 +64,16 @@ const register = async (req, res) => {
     const token = generateToken(user.id);
     await sendVerificationEmail(user.email, token);
 
-    res
-      .status(201)
-      .json({
-        message:
-          "User registered successfully. Please check your email to verify your account.",
-      });
+    res.status(201).json({
+      message:
+        "User registered successfully. Please check your email to verify your account.",
+    });
   } catch (error) {
     await logAction("User Registration Failed", null, error.message, "failure");
-    res
-      .status(500)
-      .json({
-        message: "Server error",
-        error: error.message || "An unexpected error occurred",
-      });
+    res.status(500).json({
+      message: "Server error",
+      error: error.message || "An unexpected error occurred",
+    });
   }
 };
 
@@ -195,5 +191,24 @@ const verifyEmail = async (req, res) => {
     res.status(400).json({ message: "Invalid or expired token", error });
   }
 };
+const getUserByToken = async (req, res) => {
+  const token = req.headers["authorization"]?.split(" ")[1]; // Get token from headers
+  //console.log(token);
 
-module.exports = { register, login, verifyEmail };
+  if (!token) {
+    return res.status(401).json({ message: "Unauthorized: No token provided" });
+  }
+  jwt.verify(token, process.env.JWT_SECRET, async (err, decoded) => {
+    console.log(err, decoded, process.env.JWT_SECRET);
+    if (err) {
+      return res.status(401).json({ message: "Unauthorized: Invalid token" });
+    }
+    const user = await User.findByPk(decoded.id);
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+    res.status(200).json({ user });
+  });
+};
+
+module.exports = { register, login, verifyEmail, getUserByToken };

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Image from "next/image";
 import { FaPencilAlt, FaCamera, FaPlus, FaTrash } from "react-icons/fa";
 import { Education } from "../types";
@@ -9,71 +9,39 @@ import { Certification } from "../types";
 import axios from "axios";
 export default function CreateProfile() {
   const [isEditing, setIsEditing] = useState(false);
-  const [profileData, setProfileData] = useState({
-    // dummy data
-    firstName: "Jane",
-    lastName: "Doe",
-    address: "456 Elm Street, Metropolis, USA",
-    aboutMe:
-      "A dedicated full-stack developer enthusiastic about building impactful and scalable software solutions.",
-    linkedin: "https://linkedin.com/in/jane-doe",
-    bio: "Creative problem-solver with a strong background in web technologies and a passion for delivering high-quality user experiences.",
-    gender: "Female",
-    primaryEmail: "janedoe@example.com",
-    secondaryEmail: "contact@janedoe.dev",
-    education: [
-      {
-        school: "Metropolis University",
-        degree: "Master of Science",
-        fieldOfStudy: "Software Engineering",
-        graduationYear: "2023",
-      },
-      {
-        school: "Central Tech Institute",
-        degree: "Bachelor of Technology",
-        fieldOfStudy: "Information Technology",
-        graduationYear: "2020",
-      },
-    ],
-    workExperience: [
-      {
-        company: "Tech Giants Inc.",
-        role: "Full-Stack Developer",
-        startDate: "2023-03-01",
-        endDate: "Present",
-        description:
-          "Developing enterprise-level applications, improving performance, and collaborating with cross-functional teams to deliver seamless solutions.",
-      },
-      {
-        company: "Startup Solutions",
-        role: "Junior Developer",
-        startDate: "2021-01-15",
-        endDate: "2023-02-28",
-        description:
-          "Built user-friendly interfaces and worked on integrating RESTful APIs. Collaborated with the team to successfully deploy multiple client projects.",
-      },
-    ],
-    skills: [
-      { name: "React", rating: 8 },
-      { name: "Node.js", rating: 7 },
-      { name: "MongoDB", rating: 6 },
-      { name: "Python", rating: 9 },
-      { name: "Docker", rating: 5 },
-    ],
-    certifications: [
-      {
-        name: "AWS Certified Developer - Associate",
-        issuer: "Amazon Web Services",
-        date: "2024-01-15",
-      },
-      {
-        name: "Certified Kubernetes Administrator",
-        issuer: "CNCF",
-        date: "2023-07-10",
-      },
-    ],
+  const [profileData, setProfileData] = useState<{
+    firstName: string;
+    lastName: string;
+    address: string;
+    aboutMe: string;
+    linkedin: string;
+    bio: string;
+    gender: string;
+    primaryEmail: string;
+    secondaryEmail: string;
+    education: Education[];
+    workExperience: WorkExperience[];
+    skills: { name: string; rating: number }[];
+    certifications: Certification[];
+    resume: string;
+    portfolio: string;
+    linktree: string;
+  }>({
+    firstName: "",
+    lastName: "",
+    address: "",
+    aboutMe: "",
+    linkedin: "",
+    bio: "",
+    gender: "",
+    primaryEmail: "",
+    secondaryEmail: "",
+    education: [],
+    workExperience: [],
+    skills: [],
+    certifications: [],
     resume: "",
-    portfolio: "https://janedoe.dev",
+    portfolio: "",
     linktree: "",
   });
 
@@ -81,13 +49,48 @@ export default function CreateProfile() {
 
   const toggleEdit = () => setIsEditing(!isEditing);
 
+  let token: string | null = null;
+  if (typeof window !== "undefined") {
+    token = localStorage.getItem("token");
+    //console.log("Token:", token);
+  }
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const token = localStorage.getItem("token");
+
+      if (!token) {
+        return;
+      }
+    }
+    axios
+      .get("http://127.0.0.1:3001/api/user", {
+        headers: { Authorization: `Bearer ${token}` }, // Pass token in headers
+      })
+      .then((response) => {
+        // Populate profile data if response is successful
+        //console.log(response.data);
+        const { firstName, lastName, email } = response.data.user;
+        //console.log(firstName, lastName, email);
+        setProfileData((prev) => ({
+          ...prev,
+          firstName,
+          lastName,
+          primaryEmail: email,
+        }));
+        //console.log(profileData);
+      })
+      .catch((err) => {
+        // Handle errors, like token expiration or invalid token
+        console.error("Error fetching user data:", err);
+      });
+  }, []);
+
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
     const { name, value } = e.target;
     setProfileData((prev) => ({ ...prev, [name]: value }));
   };
-
   const handleResumeUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
@@ -95,7 +98,7 @@ export default function CreateProfile() {
       formData.append("file", file);
 
       axios
-        .post("http://127.0.0.1:5000/api/resumeExtract", formData, {
+        .post("http://127.0.0.1:5001/api/resumeExtract", formData, {
           headers: {
             "Content-Type": "multipart/form-data",
           },
