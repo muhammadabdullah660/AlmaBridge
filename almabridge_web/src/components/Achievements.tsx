@@ -2,6 +2,7 @@
 
 import React, { useState } from "react";
 import { Typewriter } from "react-simple-typewriter";
+import '../styles/achievements.css';
 
 interface Achiever {
     name: string;
