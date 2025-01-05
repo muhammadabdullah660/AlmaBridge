@@ -99,8 +99,8 @@ export default function SignUp() {
         })
         .then((response) => {
           console.log("Registration successful:", response.data);
-          // Redirect to the login page
-          router.push("/signin");
+          // Redirect to the Account Auth Page
+          router.push("/accountAuth");
         })
         .catch((error) => {
           console.error("Registration failed:", error);

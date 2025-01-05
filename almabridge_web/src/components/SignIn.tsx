@@ -66,7 +66,13 @@ export default function SignIn() {
       console.log("Login successful:", response.data);
       const token = response.data.token;
       localStorage.setItem("token", token);
-      router.push("/createprofile");
+      const isUserVerified = response.data.isVerified;
+      if(isUserVerified) {
+        router.push("/createprofile");
+      }
+      else {
+        router.push("/accountAuth");
+      }
     } catch (error) {
       console.error("Login failed:", error);
       setErrors({ email: "Invalid credentials or server error." });

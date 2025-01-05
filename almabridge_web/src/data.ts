@@ -12,7 +12,7 @@ export const teamMembers: TeamMember[] = [
     img: "/assets/fatima.webp",
   },
   {
-    name: "Muhammad Shahzaib Ijaz",
+    name: "Shahzaib Ijaz",
     position: "Lead Developer",
     img: "/assets/shahzaib.webp",
   },
