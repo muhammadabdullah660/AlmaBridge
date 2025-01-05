@@ -2,18 +2,13 @@ const { DataTypes } = require('sequelize');
 const sequelize = require('../config/database');
 
 const UserProfile = sequelize.define('UserProfile', {
-    id: {
+    userId: {
         type: DataTypes.INTEGER,
-        primaryKey: true,
-        autoIncrement: true,
-    },
-    firstName: {
-        type: DataTypes.STRING,
         allowNull: false,
-    },
-    lastName: {
-        type: DataTypes.STRING,
-        allowNull: false,
+        // references: {
+        //     model: 'User',
+        //     key: 'id',
+        // },
     },
     address: {
         type: DataTypes.STRING,
@@ -59,14 +54,8 @@ const UserProfile = sequelize.define('UserProfile', {
     resume: {
         type: DataTypes.STRING,
     },
-    createdAt: {
-        type: DataTypes.DATE,
-        allowNull: false,
-    },
-    updatedAt: {
-        type: DataTypes.DATE,
-        allowNull: false,
-    },
+},{
+    timestamps: true,
 });
 
 module.exports = UserProfile;

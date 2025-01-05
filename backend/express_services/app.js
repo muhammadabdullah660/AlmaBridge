@@ -8,7 +8,7 @@ app.use(express.json());
 app.use(cors());
 
 app.use('/api', userRoutes);
-app.use('/userprofile', profileRoutes);
+app.use('/api/userprofile', profileRoutes);
 
 
 

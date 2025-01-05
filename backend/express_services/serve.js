@@ -3,7 +3,7 @@ require("dotenv").config({ path: path.resolve(__dirname, "../../.env") });
 const app = require("./app");
 require("./utils/sequelizeDB");
 
-const PORT = 3001;
+const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => {
   console.log(`Server Running on port ${PORT}`);
 });
