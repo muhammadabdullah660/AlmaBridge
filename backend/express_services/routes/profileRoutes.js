@@ -1,6 +1,7 @@
 const express = require('express');
 const multer = require('multer');
 const {createUserProfile, getUserProfile,updateUserProfile,deleteUserProfile} = require('../controllers/userprofileController');
+const { verifyToken } = require('../middlewares/authMiddleware');
 
 const router = express.Router();
 
@@ -17,7 +18,7 @@ const storage = multer.diskStorage({
 
 
 //User Profile Routes
-router.post('/create', upload.single('resume'), createUserProfile);
+router.post('/create', upload.single('resume'), verifyToken , createUserProfile);
 router.get('/get/:id', getUserProfile);
 router.put('/update/:id',upload.single('resume'), updateUserProfile);
 router.delete('/delete/:id', deleteUserProfile);

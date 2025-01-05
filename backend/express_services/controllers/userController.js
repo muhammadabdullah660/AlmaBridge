@@ -8,7 +8,6 @@ const UserProfile = require("../models/UserProfile");
 const path = require('path');
 require('dotenv').config({ path: path.resolve(__dirname, '../../.env') });
 
-
 //FUNCTION TO HASH PASSWORD
 const hashPassword = async (password) => {
     const salt = await bcrypt.genSalt(10);
@@ -29,17 +28,18 @@ const handleValidationErrors = (errors) => {
 //REGISTER USER
 const register = async (req, res) => {
     const errors = validationResult(req);
-    if(!errors.isEmpty()) {
+    if (!errors.isEmpty()) {
         const { status, response } = handleValidationErrors(errors);
         await logAction("User Registration Failed", null, `Validation errors: ${JSON.stringify(errors.array())}`, "failure");
         return res.status(status).json(response);
     }
 
-
-    const {firstName, lastName, email, password, role} = req.body;
+    const { firstName, lastName, email, password, role } = req.body;
     try {
-        const existingUser = await User.findOne({ where: {email}});
-        if (existingUser) { return res.status(400).json({ message: "User Already Exists" });}
+        const existingUser = await User.findOne({ where: { email } });
+        if (existingUser) {
+            return res.status(400).json({ message: "User Already Exists" });
+        }
 
         const hashedPassword = await hashPassword(password);
         const user = await User.create({
@@ -48,17 +48,28 @@ const register = async (req, res) => {
             email,
             password: hashedPassword,
             role,
-            isActive: true
+            isActive: true,
         });
+        
+        const userId = user.id;
+        
+        const isMailSend = await sendVerificationEmail(userId, email);
+        if (!isMailSend) {
+            await User.destroy({where: {userId} });
+            await logAction(
+                "Verification Email Failed",
+                user.id,
+                `Issue While Sending Verification Mail`,
+                "failure"
+            );
 
-        await logAction("User Registration", user.id, `New user registered with email: ${email}`);
-        const isMailSend = await sendVerificationEmail(user.id, email);
-        if(!isMailSend) {
-            await logAction("Verification Email Failed", user.id, `User Account Successfully Created But Issue While Sending Verification Mail`, "failure");
-            res.status(400).json({ message: "User Account Successfully Created But Issue While Sending Verification Mail" });
+            return res.status(400).json({
+                message: "Issue While Sending Verification Mail",
+            });
         }
 
-        if (role == "student") {
+        await logAction("User Registration", user.id, `New user registered with email: ${email}`);
+        if (role === "student") {
             const { studentEmail } = req.body;
             await UserProfile.create({
                 userId: user.id,
@@ -66,19 +77,23 @@ const register = async (req, res) => {
                 primaryEmail: email,
             });
         }
+
         const token = generateToken(user.id);
-        res.status(201).json({ message: "User Registered Successfully.", token: token });
-    }
-    catch (error) {
+        return res.status(201).json({ message: "User Registered Successfully.", token: token });
+    } catch (error) {
         await logAction("User Registration Failed", null, error.message, "failure");
-        res.status(500).json({ message: "Server error", error: error.message || "An unexpected error occurred" });
+        return res.status(500).json({
+            message: "Server error",
+            error: error.message || "An unexpected error occurred",
+        });
     }
 };
 
 
+
 const login = async (req, res) => {
     const errors = validationResult(req);
-    if(!error.isEmpty()) {
+    if(!errors.isEmpty()) {
         const {status, response} = handleValidationErrors(errors);
         await logAction("Login Attempt Failed", null, `Validation errors: ${JSON.stringify(errors.array())}`, "failure");
         return res.status(status).json(response);
@@ -106,20 +121,26 @@ const login = async (req, res) => {
 
         const token = generateToken(user.id);
         await logAction("User Logged In", user.id, `User Logged In: ${email}`, "success");
-        res.status(200).json({ message: "Logged In Successfully", token: token, isVerified: user.isVerified });
+        return res.status(200).json({ message: "Logged In Successfully", token: token, isVerified: user.isVerified });
     }
     catch (error) {
         await logAction("Login Attempt Failed", null, `Server error during login: ${error.message}`, "failure");
-        res.status(500).json({message: "Server error", error: error.message});
+        return res.status(500).json({message: "Server error", error: error.message});
     }
 };
 
 
 const verifyAccount = async (req, res) => {
 
-    const { userId, verificationCode } = req.body;
-
+    const errors = validationResult(req);
+    if(!errors.isEmpty()) {
+        const {status, response} = handleValidationErrors(errors);
+        await logAction("Account Verification Attempt Failed", null, `Validation errors: ${JSON.stringify(errors.array())}`, "failure");
+        return res.status(status).json(response);
+    }
+    
     try{
+        const { userId, verificationCode } = req.body;
         const user = await User.findByPk(userId);
         if(!user) {
             await logAction("Account Verification Failed", userId, "User Not Found Who try to Verify Account", "failed");
@@ -129,29 +150,22 @@ const verifyAccount = async (req, res) => {
         const result = await verifyCode(userId, verificationCode);
         if(!result.success) {
             await logAction("Account Verification Failed", userId, result.message, "failure");
-            res.status(400).json({ message: result.message });
+            return res.status(400).json({ message: result.message });
         }
 
         user.isVerified = true;
         await user.save();
 
         await logAction("Account Verified", userId, `User with email: ${user.email} verified their account`);
-        res.status(200).json({ message: "Account verified successfully!" });
+        return res.status(200).json({ message: "Account verified successfully!" });
     } catch(error) {
         await logAction("Account Verification Failed", userId, "Failed Email Verification", "failure");
-        res.status(500).json({ message: error.message });
+        return res.status(500).json({ message: error.message });
     }
 }
 
 
 const reSendVerificationCode = async (req, res) => {
-    
-    const errors = validationResult(req);
-    if(!error.isEmpty()) {
-        const {status, response} = handleValidationErrors(errors);
-        await logAction("Account Verification Attempt Failed", null, `Validation errors: ${JSON.stringify(errors.array())}`, "failure");
-        return res.status(status).json(response);
-    }
     
     const { userId } = req.body;
     try{
@@ -163,14 +177,30 @@ const reSendVerificationCode = async (req, res) => {
         const isMailSend = await sendVerificationEmail(userId, user.email);
         if(!isMailSend) {
             await logAction("Verification Email Failed", user.id, `Issue While Sending Verification Mail`, "failure");
-            res.status(400).json({ message: "Issue While Sending Verification Mail" });
+            return res.status(400).json({ message: "Issue While Sending Verification Mail" });
         }
-        res.status(200).json({ message: "Verification Code Email Resend Successfully!" });
+        return res.status(200).json({ message: "Verification Code Email Resend Successfully!" });
     } catch(error) {
         await logAction("Verification Mail Failed", userId, "Failed Email Verification", "failure");
-        res.status(500).json({ message: error.message });
+        return res.status(500).json({ message: error.message });
     }
 };
 
 
-module.exports = {register, login, verifyAccount, reSendVerificationCode};
+const getUser = async (req, res) => {
+    const { userId } = req.body;
+    try{
+        const user = await User.findByPk(userId);
+        if(!user || !user.isActive) {
+            return res.status(404).json({ message: "User Not Found" });
+        }
+        await logAction("User Retrieve Successful", userId, `ID: ${userId} get the user Data`);
+        return res.status(200).json({ user });
+    } catch(error) {
+        await logAction("User Data Retrieval Failed", userId, "Error Occur's While Retrieve User Data", "failure");
+        return res.status(500).json({ message: error.message });
+    }
+};
+
+
+module.exports = {register, login, verifyAccount, reSendVerificationCode, getUser};

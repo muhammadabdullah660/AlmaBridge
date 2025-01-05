@@ -1,12 +1,11 @@
 const nodeMailer = require("nodemailer");
 const VerificationCode = require('../models/VerificationCode');
-const path = require('path');
-require('dotenv').config({ path: path.resolve(__dirname, '../../.env') });
 const crypto = require('crypto');
 const logAction = require('./logService');
+const path = require('path');
+require('dotenv').config({ path: path.resolve(__dirname, '../../.env') });
 
-
-
+// function will generate verification code with length of 6 character
 const generateVerificationCode = (length = 6) => {
   return crypto.randomBytes(Math.ceil(length / 2)).toString('hex').slice(0, length).toUpperCase();
 };
@@ -16,7 +15,6 @@ const verifyCode = async (userId, code) => {
   try {
     const verificationCode = await VerificationCode.findOne({ where: { userId } });
 
-    // If no verification code is found for the user
     if (!verificationCode) {
       await logAction("Email Verification Failed", userId, "No verification code found for the user", "failure");
       return { success: false, message: "Verification code not found." };
@@ -56,7 +54,7 @@ const sendVerificationEmail = async (userId, email) => {
   try{
 
     // Check if the verification for corresponding userId Exist so, we delete it first. May be the user want to resend verification code.
-    await verificationCode.destroy({ where: {userId} });
+    await VerificationCode.destroy({ where: {userId} });
 
     //GENERATE SECURE VERIFICATION CODE
     const verificationCode = generateVerificationCode(8);
@@ -184,7 +182,16 @@ const sendVerificationEmail = async (userId, email) => {
     return true;
 
   } catch (error) {
-    await logAction("Failed Verification Code", userId, error.message, "failure");
+
+    if (error.code === "EENVELOPE") {
+      await logAction("Invalid Email Address", userId, `Email address ${email} is invalid or undeliverable. Error: ${error.message}`,
+      "failure"
+      );
+    } else if (error.response && error.response.includes("550")) {
+      await logAction("Undeliverable Email", userId, `Failed to deliver email to ${email}: ${error.response}`, "failure");  
+    } else {
+      await logAction("Failed Verification Code", userId, `Unexpected error: ${error.message}`, "failure");
+    }
     return false;
   }
 };
