@@ -3,14 +3,11 @@ const UserProfile = require('../models/UserProfile');
 const createUserProfile = async (req, res) => {
     try {
       const {
-        firstName,
-        lastName,
         address,
         aboutMe,
         linkedin,
         bio,
         gender,
-        primaryEmail,
         secondaryEmail,
         school,
         degree,
@@ -32,14 +29,11 @@ const createUserProfile = async (req, res) => {
   
       // Create a new user instance
       const user = new UserProfile({
-        firstName,
-        lastName,
         address,
         aboutMe,
         linkedin,
         bio,
         gender,
-        primaryEmail,
         secondaryEmail,
         education: [{ 
           school,
@@ -85,7 +79,7 @@ const createUserProfile = async (req, res) => {
   
    const getUserProfile = async (req, res) => {
     try {
-      const { id } = req.params; // Extract primaryEmail from request parameters
+      const { id } = req.params; 
   
       if (!id) {
         return res.status(400).json({
@@ -118,19 +112,16 @@ const createUserProfile = async (req, res) => {
   
   const updateUserProfile = async (req, res) => {
     try {
-      const { id } = req.params; // Extract primaryEmail from req.params
+      const { id } = req.params; 
       console.log(req.file);
       const resume = req.file ? req.file.path : null; // Handle resume file upload
   
       const {
-        firstName,
-        lastName,
         address,
         aboutMe,
         linkedin,
         bio,
         gender,
-        primaryEmail,
         secondaryEmail,
         school,
         degree,
@@ -152,14 +143,11 @@ const createUserProfile = async (req, res) => {
   
       // Construct the update data
       const updateData = {
-        firstName,
-        lastName,
         address,
         aboutMe,
         linkedin,
         bio,
         gender,
-        primaryEmail,
         secondaryEmail,
         portfolio,
         linktree,

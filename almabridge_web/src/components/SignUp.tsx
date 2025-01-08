@@ -35,6 +35,11 @@ export default function SignUp() {
     role: "student",
     studentEmail: "",
   });
+
+  let address, aboutMe, linkedin, bio, gender, secondaryEmail, school, degree, fieldOfStudy, graduationYear, company, role, startDate, endDate, description, skillName, certificationName, issuer, date, portfolio, linktree, resume;
+
+
+
   const [showPassword, setShowPassword] = useState<boolean>(false);
   const [showConfirmPassword, setShowConfirmPassword] =
     useState<boolean>(false);
@@ -87,6 +92,39 @@ export default function SignUp() {
       // Handle form submission (e.g., send data to your server)
       const { firstName, lastName, email, password, role, studentEmail } =
         formData;
+
+        axios
+        .post("http://127.0.0.1:3001/userprofile/create", {
+          address, 
+          aboutMe, 
+          linkedin, 
+          bio, 
+          gender, 
+          secondaryEmail, 
+          school, 
+          degree, 
+          fieldOfStudy,
+          graduationYear, 
+          company,
+          role, 
+          startDate, 
+          endDate, 
+          description, 
+          skillName, 
+          certificationName, 
+          issuer, 
+          date, 
+          portfolio, 
+          linktree, 
+          resume
+        })
+        .then((response) => {
+          console.log("User Profile Creation successful:", response.data);
+          // Redirect to the login page
+        })
+        .catch((error) => {
+          console.error("User Profile Creation failed:", error);
+        });
       // register the user
       axios
         .post("http://127.0.0.1:3001/api/register", {
@@ -105,6 +143,9 @@ export default function SignUp() {
         .catch((error) => {
           console.error("Registration failed:", error);
         });
+
+
+
 
       //console.log("Form submitted successfully:", formData);
     }
@@ -136,22 +177,20 @@ export default function SignUp() {
             <button
               type="button"
               onClick={() => handleRoleChange("student")}
-              className={`px-4 py-2 rounded-l-md text-sm font-semibold bg-white-600 text-gray-900 border-2 border-r-0 ${
-                formData.role === "student"
+              className={`px-4 py-2 rounded-l-md text-sm font-semibold bg-white-600 text-gray-900 border-2 border-r-0 ${formData.role === "student"
                   ? "border-[#00BDD6]"
                   : "border-gray-300"
-              }`}
+                }`}
             >
               I am a student
             </button>
             <button
               type="button"
               onClick={() => handleRoleChange("alumni")}
-              className={`px-4 py-2 rounded-r-md text-sm font-semibold bg-white-600 text-gray-900 border-2 ${
-                formData.role === "alumni"
+              className={`px-4 py-2 rounded-r-md text-sm font-semibold bg-white-600 text-gray-900 border-2 ${formData.role === "alumni"
                   ? "border-[#00BDD6]"
                   : "border-gray-300"
-              }`}
+                }`}
             >
               I am an alumni
             </button>

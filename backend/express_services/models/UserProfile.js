@@ -7,14 +7,6 @@ const UserProfile = sequelize.define('UserProfile', {
         primaryKey: true,
         autoIncrement: true,
     },
-    firstName: {
-        type: DataTypes.STRING,
-        allowNull: false,
-    },
-    lastName: {
-        type: DataTypes.STRING,
-        allowNull: false,
-    },
     address: {
         type: DataTypes.STRING,
     },
@@ -29,11 +21,6 @@ const UserProfile = sequelize.define('UserProfile', {
     },
     gender: {
         type: DataTypes.STRING,
-    },
-    primaryEmail: {
-        type: DataTypes.STRING,
-        allowNull: false,
-        unique: true,
     },
     secondaryEmail: {
         type: DataTypes.STRING,

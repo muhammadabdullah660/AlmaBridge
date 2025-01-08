@@ -4,6 +4,7 @@ const {
   login,
   verifyEmail,
   getUserByToken,
+  updateUser,
 } = require("../controllers/userController");
 const { check } = require("express-validator");
 const rateLimit = require("express-rate-limit");
@@ -46,5 +47,7 @@ router.get("/verify-email", verifyEmail);
 
 // Get user by token route
 router.get("/user", getUserByToken);
+
+router.put("/update/:id", updateUser);
 
 module.exports = router;
