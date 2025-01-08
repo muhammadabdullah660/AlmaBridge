@@ -1,5 +1,7 @@
 const express = require("express");
-const { register, login, verifyAccount, reSendVerificationCode, getUser } = require("../controllers/userController");
+const {
+  register, login, verifyAccount, reSendVerificationCode, getUser, updateUser
+} = require("../controllers/userController");
 const { check } = require("express-validator");
 const rateLimit = require("express-rate-limit");
 const { verifyToken } = require("../middlewares/authMiddleware");
@@ -55,5 +57,7 @@ router.post("/resendCode", limiter, verifyToken , reSendVerificationCode);
 
 // Get user Data
 router.get("/user", limiter ,verifyToken, getUser);
+router.put("/update/:id", updateUser);
+
 
 module.exports = router;

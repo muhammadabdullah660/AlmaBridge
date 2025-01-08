@@ -14,7 +14,6 @@ const hashPassword = async (password) => {
     return bcrypt.hash(password, salt);
 };
 
-
 //FUNCTION TO CREATE JWT TOKEN
 const generateToken = (userId) => {
     return jwt.sign({id: userId}, process.env.JWT_SECRET, {expiresIn: "1h"});
@@ -201,6 +200,33 @@ const getUser = async (req, res) => {
         return res.status(500).json({ message: error.message });
     }
 };
+const updateUser = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const updateData = req.body;
 
+    // Find the user by ID
+    const user = await User.findByPk(id);
 
-module.exports = {register, login, verifyAccount, reSendVerificationCode, getUser};
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    // Update the user with new data
+    await user.update(updateData);
+
+    // Return the updated user
+    res.status(200).json({
+      message: 'User updated successfully',
+      user,
+    });
+
+  } catch (error) {
+    res.status(500).json({
+      message: 'An error occurred while updating the user',
+      error: error.message,
+    });
+  }
+};
+
+module.exports = {register, login, verifyAccount, reSendVerificationCode, getUser, updateUser};

@@ -2,13 +2,10 @@ const { DataTypes } = require('sequelize');
 const sequelize = require('../config/database');
 
 const UserProfile = sequelize.define('UserProfile', {
-    userId: {
+    id: {
         type: DataTypes.INTEGER,
-        allowNull: false,
-        // references: {
-        //     model: 'User',
-        //     key: 'id',
-        // },
+        primaryKey: true,
+        autoIncrement: true,
     },
     address: {
         type: DataTypes.STRING,
@@ -24,11 +21,6 @@ const UserProfile = sequelize.define('UserProfile', {
     },
     gender: {
         type: DataTypes.STRING,
-    },
-    primaryEmail: {
-        type: DataTypes.STRING,
-        allowNull: false,
-        unique: true,
     },
     secondaryEmail: {
         type: DataTypes.STRING,
