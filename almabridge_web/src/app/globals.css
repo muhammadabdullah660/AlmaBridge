@@ -61,39 +61,6 @@ body {
     text-wrap: balance;
   }
 }
-/*
-.signup-button {
-  background-color: #00BDD6;
-  color: #fff;
-  font-family: Arial, sans-serif;
-  font-size: 16px;
-  font-weight: bold;
-  border: none;
-  border-radius: 20px;
-  padding: 10px 15px;
-  cursor: pointer;
-}
-
-.signin {
-  color: #00bdd6;
-  font-size: 16px;
-  font-weight: bold;
-  text-decoration: none;
-  transition: color 0.3s ease-in-out;
-}
-
-.button {
-  font-size: 14px;
-  border-radius: 25px;
-}
-
-.notifbutton {
-  background-color: #ffffff !important;
-  margin-left: 10px;
-  color: #000000;
-  font-weight: 600;
-  border-radius: 40px;
-}*/
 
 .comingHeading {
   background: linear-gradient(to right, #ebebeb, #105fc7, #00bdd6, #d6d6d6);
@@ -107,73 +74,6 @@ body {
   line-height: normal;
 }
 
-/*.inputEmail {
-  padding: 15px;
-  width: 354px;
-}
-
-.inputEmail {
-  font-size: 16px;
-  border-radius: none;
-  border: none;
-  background-color: rgba(255, 255, 255, 0.1);
-  backdrop-filter: blur(10px);
-  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
-  color: white;
-  outline: none;
-}*/
-
-/*.inputEmail::placeholder {
-  color: rgba(255, 255, 255, 0.6);
-}
-
-.inputdiv {
-  padding: 10px;
-}
-
-.card-container {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-}
-
-.card {
-  width: 300px;
-  height: 280px;
-  background-color: #191919;
-  color: #fff;
-  text-align: center;
-  padding: 20px;
-  margin: 20px;
-  border-radius: 10px;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
-}
-
-.card i {
-  font-size: 40px;
-  margin-bottom: 20px;
-}
-
-.card h3 {
-  font-size: 18px;
-  margin-bottom: 10px;
-  color: #737b8a;
-  font-weight: 600;
-}
-
-.card p {
-  margin-bottom: 20px;
-  font-size: 14px;
-  font-weight: 500;
-}
-
-.card a {
-  display: block;
-  text-decoration: none;
-  color: #00bdd6;
-  padding: 10px 20px;
-  border-radius: 5px;
-}*/
 
 @media (max-width: 768px) {
   .card-container {
@@ -224,56 +124,6 @@ body {
   font-family: "Arial", sans-serif;
 }
 
-/* 
-.metrics-heading {
-  margin-bottom: 40px;
-}
-
-.metrics-heading .badge {
-  background: linear-gradient(to right, #ebebeb, #105fc7, #00bdd6, #d6d6d6);
-  -webkit-text-fill-color: transparent;
-  -webkit-background-clip: text;
-  padding: 6px 12px;
-  border-radius: 12px;
-  font-size: 0.9rem;
-  font-weight: 600;
-}
-
-.metrics-heading h2 {
-  font-size: 2rem;
-  margin-top: 15px;
-  color: #fff;
-  font-weight: 400;
-}
-
-.metrics-container {
-  display: flex;
-  justify-content: space-evenly;
-  align-items: center;
-  gap: 40px;
-  flex-wrap: wrap;
-  
-}
-
-.metric-item {
-  flex: 1;
-  max-width: 250px;
-}
-
-.metric-number {
-  display: block;
-  font-size: 3rem;
-  font-weight: bold;
-  color: #00CFFD;
-
-}
-
-.metric-text {
-  font-size: 1rem;
-  color: #CFCFCF;
-  margin-top: 10px;
-}*/
-
 /* Responsive adjustments */
 @media (max-width: 768px) {
   .metrics-container {
@@ -297,48 +147,6 @@ body {
     font-size: 0.9rem;
   }
 }
-
-/*.team-section {
-  text-align: center;
-  padding: 50px;
-  background-color: #191919;
-}
-
-.team-members {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-}
-
-.team-member {
-  width: 300px;
-  text-align: center;
-  margin: 20px;
-}
-
-.team-member img {
-  width: 100px;
-  height: 100px;
-  border-radius: 0%;
-}
-
-.team-member h3 {
-  font-size: 24px;
-  margin-top: 10px;
-  color: white;
-}
-
-.team-member p {
-  margin-bottom: 10px;
-  color: white;
-}
-
-.team-section h2 {
-  font-size: 40px;
-  font-weight: 600;
-  color: #00bdd6;
-  padding: 50px;
-}*/
 
 .bg-metric {
   color: white;
@@ -364,54 +172,6 @@ body {
   width: 230px;
   padding: 5px;
 }
-/* 
-.banner {
-  background: linear-gradient(to right, #ebebeb, #105fc7, #00bdd6, #d6d6d6);
-  background-size: cover;
-  background-position: center;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  color: #fff;
-  border-radius: 30px;
-}
-
-.banner-content {
-  text-align: center;
-  color: #ffffff !important;
-  padding: 50px 30px;
-  display: flex;
-}
-
-.banner-content h1 {
-  font-size: 30px;
-  margin-bottom: 20px;
-  font-weight: 600;
-}
-
-.banner-content p {
-  font-size: 16px;
-  margin-bottom: 30px;
-}
-
-.register-button {
-  font-size: 14px;
-  color: white;
-  padding: 8px 20px;
-  border: none;
-  border-radius: 20px; 
-  background: linear-gradient(to right, #105fc7, #00BDD6); 
-  text-transform: uppercase;
-  font-weight: bold;
-  text-align: center;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  position: relative;
-  display: inline-flex;
-  align-items: center;
-  height: 40px; 
-
-}*/
 
 /* updated */
 @media screen and (max-width: 768px) and (min-width: 501px) {

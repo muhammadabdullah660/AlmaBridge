@@ -1,6 +1,7 @@
 const express = require('express');
 const multer = require('multer');
 const {createUserProfile, getUserProfile,updateUserProfile,deleteUserProfile} = require('../controllers/userprofileController');
+//const { verifyToken } = require('../middlewares/authMiddleware');
 
 const router = express.Router();
 

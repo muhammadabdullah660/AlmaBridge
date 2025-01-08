@@ -1,13 +1,11 @@
 const express = require("express");
 const {
-  register,
-  login,
-  verifyEmail,
-  getUserByToken,
-  updateUser,
+  register, login, verifyAccount, reSendVerificationCode, getUser, updateUser
 } = require("../controllers/userController");
 const { check } = require("express-validator");
 const rateLimit = require("express-rate-limit");
+const { verifyToken } = require("../middlewares/authMiddleware");
+
 
 const router = express.Router();
 
@@ -42,12 +40,24 @@ router.post(
   login
 );
 
-// Email verification route
-router.get("/verify-email", verifyEmail);
+// Account Verification Route
+router.post(
+  "/verifyAccount",
+  [
+    check("verificationCode", "Verification Code is required").exists(),
+  ],
+  limiter,
+  verifyToken,
+  verifyAccount
+);
 
-// Get user by token route
-router.get("/user", getUserByToken);
 
+// Re-Send Verification Route
+router.post("/resendCode", limiter, verifyToken , reSendVerificationCode);
+
+// Get user Data
+router.get("/user", limiter ,verifyToken, getUser);
 router.put("/update/:id", updateUser);
+
 
 module.exports = router;

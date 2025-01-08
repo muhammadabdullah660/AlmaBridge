@@ -46,14 +46,8 @@ const UserProfile = sequelize.define('UserProfile', {
     resume: {
         type: DataTypes.STRING,
     },
-    createdAt: {
-        type: DataTypes.DATE,
-        allowNull: false,
-    },
-    updatedAt: {
-        type: DataTypes.DATE,
-        allowNull: false,
-    },
+},{
+    timestamps: true,
 });
 
 module.exports = UserProfile;
