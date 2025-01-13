@@ -3,10 +3,11 @@ const JobPosting = require('../models/JobPosting');
 // Create a Job Posting
 const createJobPosting = async (req, res) => {
     try {
-      const { jobName, salaryRange, location, postedById, jobType } = req.body;
+      const { jobName, jobDescription, salaryRange, location, postedById, jobType } = req.body;
   
       const newJobPosting = await JobPosting.create({
         jobName,
+        jobDescription,
         salaryRange,
         location, // Directly save location as an array of strings
         postedById,
@@ -19,19 +20,13 @@ const createJobPosting = async (req, res) => {
       res.status(500).json({ message: 'Error creating job posting', error });
     }
   };
-  const getJobPostingById = async (req, res) => {
+  const getAllJobPosting = async (req, res) => {
     try {
-      const { id } = req.params;
-      const jobPosting = await JobPosting.findByPk(id);
-  
-      if (!jobPosting) {
-        return res.status(404).json({ message: 'Job posting not found' });
-      }
-  
-      res.status(200).json(jobPosting);
+      const jobs = await JobPosting.findAll();
+      res.status(200).json(jobs);
     } catch (error) {
-      console.error('Error fetching job posting by ID:', error); // Log the error for debugging
-      res.status(500).json({ message: 'Error fetching job posting', error });
+      console.error("Error fetching jobs:", error);
+      res.status(500).json({ message: "Error fetching jobs", error });
     }
   };
   
@@ -75,4 +70,4 @@ const createJobPosting = async (req, res) => {
     }
   };
 
-  module.exports={createJobPosting, getJobPostingById, updateJobPosting, deleteJobPosting};
+  module.exports={createJobPosting, getAllJobPosting, updateJobPosting, deleteJobPosting};
