@@ -1,0 +1,6 @@
+.min-h-screen {
+    min-height: 81vh !important;
+}
+.event-image{
+    border-radius: 0% !important;
+}
