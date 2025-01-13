@@ -6,6 +6,11 @@ const JobPosting = sequelize.define('JobPosting', {
       type: DataTypes.STRING,
       allowNull: false,
     },
+    jobDescription:
+    {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
     salaryRange: {
       type: DataTypes.STRING,
       allowNull: false,

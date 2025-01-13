@@ -21,6 +21,7 @@ interface Achiever {
 
 interface Jobs {
     jobName: string;
+    jobDescription:string;
     salaryRange: string;
     location: [string, string, string]; // [city, state, country]
     postedById: string;
