@@ -1,13 +1,12 @@
 const { DataTypes } = require('sequelize');
 const sequelize = require('../config/database');
-const UserProfile = require("./UserProfile");
 
 const UserExperience = sequelize.define('UserExperience', {
     userProfileId: {
         type: DataTypes.INTEGER,
         allowNull: false,
         references: {
-            model: 'UserProfile',
+            model: 'UserProfiles',
             key: 'id',
         },
         onDelete: 'CASCADE',
@@ -37,9 +36,6 @@ const UserExperience = sequelize.define('UserExperience', {
 });
 
 // Association with UserProfile Model
-UserExperience.belongsTo(UserProfile, {
-    foreignKey: 'userProfileId',
-    as: "profile",
-});
+
 
 module.exports = UserExperience;

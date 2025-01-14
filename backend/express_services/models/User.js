@@ -1,8 +1,7 @@
 const { DataTypes } = require('sequelize');
 const sequelize = require('../config/database');
-const UserProfile = require('./UserProfile');
 
-const User = sequelize.define('User', {
+const User = sequelize.define('Users', {
   firstName: {
     type: DataTypes.STRING,
     allowNull: false,
@@ -35,14 +34,6 @@ const User = sequelize.define('User', {
 }, {
   timestamps: true,
 });
-
-
-User.hasOne(UserProfile, {
-  foreignKey: "userId",
-  as: "profile",
-  onDelete: "CASCADE",
-});
-
 
 
 module.exports = User;
