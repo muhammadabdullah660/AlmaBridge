@@ -277,7 +277,7 @@ const Achievements: React.FC = () => {
 
                 {/* Floating Add Button */}
                 <button
-                    className="fixed bottom-10 right-10 bg-[#00BDD6] text-white p-6 rounded-full shadow-lg transform hover:scale-110 transition-all"
+                    className="fixed bottom-6 right-6 bg-[#00BDD6] text-white p-4 rounded-full shadow-lg hover:scale-110 transition duration-300"
                     onClick={() => setDialogOpen(true)}
                 >
                     +
