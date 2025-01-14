@@ -1,10 +1,12 @@
 const express = require("express");
 const {
-  register, login, verifyAccount, reSendVerificationCode, getUser, updateUser
+  register, login, verifyAccount, reSendVerificationCode, getUser, updateUser,
+  deleteUser,
+  destroyUser
 } = require("../controllers/userController");
 const { check } = require("express-validator");
 const rateLimit = require("express-rate-limit");
-const { verifyToken } = require("../middlewares/authMiddleware");
+const { verifyToken, verifyRole, verifyIsAdmin } = require("../middlewares/authMiddleware");
 
 
 const router = express.Router();
@@ -57,7 +59,15 @@ router.post("/resendCode", limiter, verifyToken , reSendVerificationCode);
 
 // Get user Data
 router.get("/user", limiter ,verifyToken, getUser);
-router.put("/update/:id", updateUser);
+
+// Update User Data
+router.put("/user",limiter, verifyToken, updateUser);
+
+// Delete User Data
+router.post("/delUser", limiter, verifyToken, deleteUser);
+
+// Destroy User Data
+router.delete("/user", limiter, verifyToken, verifyIsAdmin, destroyUser);
 
 
 module.exports = router;

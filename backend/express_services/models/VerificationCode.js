@@ -4,11 +4,7 @@ const sequelize = require('../config/database');
 const VerificationCode = sequelize.define('VerificationCode', {
     userId: {
         type: DataTypes.INTEGER,
-        allowNull: false,
-        // references: {
-        //     model: 'User',
-        //     key: 'id',
-        // },   
+        allowNull: false,   
     },
     code: {
         type: DataTypes.STRING,
@@ -21,6 +17,7 @@ const VerificationCode = sequelize.define('VerificationCode', {
 }, {
     timestamps: true,
 });
+
 
 
 module.exports = VerificationCode;
