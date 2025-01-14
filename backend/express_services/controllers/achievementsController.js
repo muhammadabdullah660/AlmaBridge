@@ -10,6 +10,7 @@ const createAchievement = async (req, res) => {
       achievementsDescription,
       session,
       department,
+      Link,
     } = req.body;
 
     const newAchievement = await Achievement.create({
@@ -19,9 +20,10 @@ const createAchievement = async (req, res) => {
       achievementsDescription,
       session,
       department,
+      Link
     });
     if (req.file) {
-      newAchievement.achieverPicture = `${req.protocol}://${req.get(
+      newAchievement.achievementPicture = `${req.protocol}://${req.get(
         "host"
       )}/uploadsAchieverPhotos/${req.file.filename}`;
     }

@@ -1,49 +1,42 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Typewriter } from "react-simple-typewriter";
 import "../styles/achievements.css";
+import axios from "axios";
 
 interface Achiever {
-    achieverName: string;
-    session: string;
+    id?: string;
     achievementName: string;
-    achievementDescription: string;
+    achieverName: string;
     achieverCategory: string;
+    achievementsDescription: string;
+    session: string;
     department: string;
-    achieverPicture: string;
-    link: string; // New field for the link
+    Link: string;
+    achievementPicture: string;
 }
 
 const Achievements: React.FC = () => {
     const [filter, setFilter] = useState<string>("all");
     const [departmentFilter, setDepartmentFilter] = useState<string>("all");
     const [sidebarOpen, setSidebarOpen] = useState<boolean>(false);
+    const [achievers, setAchievers] = useState<Achiever[]>([]);
 
-    const [achievers, setAchievers] = useState<Achiever[]>([
-        {
-            achieverName: "Zoya Naveed",
-            session: "2021-2025",
-            achievementName: "Won a coding competition",
-            achievementDescription:
-                "Zoya competed in a national coding competition and secured first place. Her performance demonstrated exceptional problem-solving skills.",
-            achieverCategory: "current",
-            department: "Computer Science",
-            achieverPicture: "/assets/zoya.webp",
-            link: "https://www.google.com", // Sample link
-        },
-        {
-            achieverName: "Shahzaib Ijaz",
-            session: "2020-2024",
-            achievementName: "Published a research paper",
-            achievementDescription:
-                "Shahzaib published a groundbreaking research paper on AI, which was later presented at an international conference.",
-            achieverCategory: "alumni",
-            department: "Electrical Engineering",
-            achieverPicture: "/assets/shahzaib.webp",
-            link: "https://www.google.com", // Sample link
-        },
-    ]);
+    useEffect(() => {
+        // Fetch data from the backend API
+        const fetchAchievers = async () => {
+            try {
+                const response = await axios.get<Achiever[]>("http://127.0.0.1:3001/api/achievements/get");
+                setAchievers(response.data);
+                console.log(response.data);
+            } catch (error) {
+                console.error("Error fetching achievers data:", error);
+            }
+        };
+
+        fetchAchievers();
+    }, []);
 
     const [dialogOpen, setDialogOpen] = useState<boolean>(false);
     const [selectedAchievement, setSelectedAchievement] = useState<number | null>(null);
@@ -51,14 +44,14 @@ const Achievements: React.FC = () => {
     const [editModalOpen, setEditModalOpen] = useState<boolean>(false);
     const [editData, setEditData] = useState<Achiever | null>(null);
     const [newAchiever, setNewAchiever] = useState<Achiever>({
-        achieverName: "",
-        session: "",
         achievementName: "",
-        achievementDescription: "",
+        achieverName: "",
         achieverCategory: "",
+        achievementsDescription: "",
+        session: "",
         department: "",
-        achieverPicture: "",
-        link: "", // Initialize the new field
+        Link: "",
+        achievementPicture: "",
     });
 
     const handleCardClick = (index: number) => {
@@ -74,21 +67,45 @@ const Achievements: React.FC = () => {
     const handleDialogClose = () => {
         setDialogOpen(false);
         setNewAchiever({
-            achieverName: "",
-            session: "",
             achievementName: "",
-            achievementDescription: "",
+            achieverName: "",
             achieverCategory: "",
+            achievementsDescription: "",
+            session: "",
             department: "",
-            achieverPicture: "",
-            link: "", // Reset the new field
+            Link: "",
+            achievementPicture: "",
         });
     };
 
-    const handleSaveNewAchievement = () => {
-        setAchievers((prevAchievers) => [...prevAchievers, newAchiever]);
+    const handleSaveNewAchievement = async () => {
+        try {
+            let response;
+            // API call for adding a job
+            response = await fetch("http://127.0.0.1:3001/api/achievements/create", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify(newAchiever),
+            });
 
-        handleDialogClose();
+
+            if (response.ok) {
+                const updatedJob = await response.json();
+
+                setAchievers((prevAchievers) => [...prevAchievers, newAchiever]);
+
+                console.log("Job Done Successfully");
+                // Close the dialog after successful update
+                handleDialogClose();
+            } else {
+                console.error("Failed to save changes:", await response.text());
+            }
+        } catch (error) {
+            console.error("Error saving changes:", error);
+        }
+
     };
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -98,8 +115,6 @@ const Achievements: React.FC = () => {
             [name]: value,
         }));
     };
-
-
 
     const handleEdit = (index: number) => {
         const achievement = achievers[index];
@@ -131,17 +146,41 @@ const Achievements: React.FC = () => {
         );
     };
 
-    const saveEdit = (index: number) => {
+    const saveEdit = async (index: number) => {
+        console.log(achievers[index]);
+        let response;
+
+        response = await fetch(`http://127.0.0.1:3001/api/achievements/update/${achievers[index].id}`, {
+            method: "PUT",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify(achievers[index]),
+        });
         setEditMode(false);
-        alert("Achievement updated successfully!");
+        // alert("Achievement updated successfully!");
     };
 
-    const handleDelete = (index: number) => {
-        if (window.confirm("Are you sure you want to delete this achievement?")) {
-            setAchievers((prevAchievers) =>
-                prevAchievers.filter((_, i) => i !== index)
-            );
-            setViewModalOpen(false);
+    const handleDelete = async (index: number) => {
+        try {
+            // API call to delete the job
+            const response = await fetch(`http://127.0.0.1:3001/api/achievements/delete/${achievers[index].id}`, {
+                method: "DELETE",
+            });
+
+            if (response.ok) {
+                // Update the frontend by removing the deleted job
+                setAchievers((prevAchievers) =>
+                    prevAchievers.filter((_, i) => i !== index)
+                );
+                setViewModalOpen(false); 
+                console.log("Job deleted successfully");
+                handleDialogClose();
+            } else {
+                console.error("Failed to delete job:", await response.text());
+            }
+        } catch (error) {
+            console.error("Error deleting job:", error);
         }
     };
 
@@ -256,7 +295,7 @@ const Achievements: React.FC = () => {
                         >
                             <div className="flex flex-col items-center justify-center text-center text-white">
                                 <img
-                                    src={achiever.achieverPicture}
+                                    src={achiever.achievementPicture}
                                     alt={achiever.achieverName}
                                     className="w-24 h-24 rounded-full mt-4"
                                 />
@@ -268,7 +307,7 @@ const Achievements: React.FC = () => {
                                 </div>
                                 {/* Description shown on hover */}
                                 <div className="absolute inset-0 bg-black bg-opacity-70 text-white p-4 opacity-0 group-hover:opacity-100 flex justify-center items-center transition-opacity">
-                                    <p>{achiever.achievementDescription}</p>
+                                    <p>{achiever.achievementsDescription}</p>
                                 </div>
                             </div>
                         </div>
@@ -289,7 +328,6 @@ const Achievements: React.FC = () => {
                         <div className="bg-black p-8 rounded-lg w-full max-w-3xl text-white max-h-screen overflow-y-auto">
                             <div className="flex justify-between items-center mb-4">
                                 <h3 className="text-2xl text-[#00BDD6] font-bold">Achievement Details</h3>
-
                                 {/* Edit and Delete buttons on the right side */}
                                 <div className="flex space-x-2">
                                     <button
@@ -373,7 +411,7 @@ const Achievements: React.FC = () => {
                                         <textarea
                                             className="w-full p-2 rounded bg-gray-800 text-white"
                                             name="description"
-                                            value={achievers[selectedAchievement].achievementDescription}
+                                            value={achievers[selectedAchievement].achievementsDescription}
                                             onChange={(e) => handleEditInputChange(e, selectedAchievement)}
                                         />
                                     </div>
@@ -382,7 +420,7 @@ const Achievements: React.FC = () => {
                                         <input
                                             className="w-full p-2 rounded bg-gray-800 text-white"
                                             name="link"
-                                            value={achievers[selectedAchievement].link}
+                                            value={achievers[selectedAchievement].Link}
                                             onChange={(e) => handleEditInputChange(e, selectedAchievement)}
                                         />
                                     </div>
@@ -432,12 +470,12 @@ const Achievements: React.FC = () => {
 
                                     <div className="mb-4">
                                         <label className="block text-[#00BDD6] mb-2">Achievement Description</label>
-                                        <p>{achievers[selectedAchievement].achievementDescription}</p>
+                                        <p>{achievers[selectedAchievement].achievementsDescription}</p>
                                     </div>
 
                                     <div className="mb-4">
                                         <label className="block text-[#00BDD6] mb-2">Link</label>
-                                        <p>{achievers[selectedAchievement].link}</p>
+                                        <p>{achievers[selectedAchievement].Link}</p>
                                     </div>
 
                                 </div>
@@ -462,16 +500,13 @@ const Achievements: React.FC = () => {
                             <h3 className="text-2xl text-[#00BDD6] mb-4 font-bold">Add New Achievement</h3>
 
                             <div>
-                                {/* Name Field */}
                                 <div className="mb-4">
                                     <label className="block text-[#00BDD6] mb-2">Name</label>
                                     <input
-                                        type="text"
+                                        className="w-full p-2 rounded bg-gray-800 text-white"
                                         name="name"
                                         value={newAchiever.achieverName}
                                         onChange={handleInputChange}
-                                        required
-                                        className="w-full p-2 rounded bg-black text-white"
                                     />
                                 </div>
 
@@ -538,7 +573,7 @@ const Achievements: React.FC = () => {
                                     <label className="block text-[#00BDD6] mb-2">Achievement Description</label>
                                     <textarea
                                         name="achievementDescription"
-                                        value={newAchiever.achievementDescription}
+                                        value={newAchiever.achievementsDescription}
                                         onChange={handleInputChange}
                                         required
                                         className="w-full p-2 rounded bg-black text-white"
@@ -551,7 +586,7 @@ const Achievements: React.FC = () => {
                                     <input
                                         type="text"
                                         name="link"
-                                        value={newAchiever.link}
+                                        value={newAchiever.Link}
                                         onChange={handleInputChange}
                                         className="w-full p-2 rounded bg-black text-white"
                                     />
