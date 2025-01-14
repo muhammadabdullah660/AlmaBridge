@@ -1,34 +1,37 @@
-const { DataTypes } = require('sequelize');
-const sequelize = require('../config/database');
+const { DataTypes } = require("sequelize");
+const sequelize = require("../config/database");
 
-const JobPosting = sequelize.define('JobPosting', {
+const JobPosting = sequelize.define(
+  "JobPosting",
+  {
     jobName: {
       type: DataTypes.STRING,
-      allowNull: false,
+      allowNull: true,
     },
-    jobDescription:
-    {
+    jobDescription: {
       type: DataTypes.STRING,
-      allowNull: false,
+      allowNull: true,
     },
     salaryRange: {
       type: DataTypes.STRING,
-      allowNull: false,
+      allowNull: true,
     },
     location: {
       type: DataTypes.ARRAY(DataTypes.STRING), // Change location to an array of strings
-      allowNull: false,
+      allowNull: true,
     },
     postedById: {
       type: DataTypes.INTEGER,
-      allowNull: false,
+      allowNull: true,
     },
     jobType: {
-      type: DataTypes.ENUM('Hybrid', 'Onsite', 'Remote'),
-      allowNull: false,
+      type: DataTypes.ENUM("Hybrid", "Onsite", "Remote"),
+      allowNull: true,
     },
-  }, {
+  },
+  {
     timestamps: true,
-  });
+  }
+);
 
 module.exports = JobPosting;
