@@ -81,6 +81,12 @@ export default function SignIn() {
     }
   };
 
+
+  const handleSignUpBtn = async (e: React.MouseEvent<HTMLAnchorElement>) => {
+    e.preventDefault();
+    router.push('/signup');
+  };  
+
   return (
     <div className="flex flex-col justify-center font-[sans-serif] min-h-screen p-2">
       <div className="max-w-md w-full mx-auto border border-gray-300 rounded-2xl p-8 bg-white">
@@ -167,7 +173,8 @@ export default function SignIn() {
           <p className="mt-10 text-center text-sm text-gray-500">
             Not a member?{" "}
             <a
-              href="#"
+              href="/signup"
+              onClick={handleSignUpBtn}
               className="font-semibold leading-6 text-[#00BDD6] hover:text-teal-500"
             >
               Sign Up

@@ -25,7 +25,7 @@ const UserProfile = sequelize.define('UserProfiles', {
     },
     gender: {
         type: DataTypes.ENUM('Male', 'Female', 'Other'),
-        allowNull: false,
+        allowNull: true,
     },
     secondaryEmail: {
         type: DataTypes.STRING,

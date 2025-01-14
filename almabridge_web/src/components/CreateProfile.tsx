@@ -6,11 +6,14 @@ import { FaPencilAlt, FaCamera, FaPlus, FaTrash } from "react-icons/fa";
 import { Education } from "../types";
 import { WorkExperience } from "../types";
 import { Certification } from "../types";
+import { useRouter } from "next/navigation";
 import axios from "axios";
+
 export default function CreateProfile() {
+  const router = useRouter();
   const [isEditing, setIsEditing] = useState(false);
   const [profileData, setProfileData] = useState<{
-    id: Number;
+    id: number;
     firstName: string;
     lastName: string;
     address: string;
@@ -109,6 +112,7 @@ export default function CreateProfile() {
         endDate: exp.endDate,
         description: exp.description,
       }));
+      
   
       const formattedSkills = profileData.skills.map((skill) => ({
         skillName: skill.name, // Rename 'name' to 'skillName'
@@ -123,6 +127,8 @@ export default function CreateProfile() {
   
       // Construct the payload
       const updatedProfileData = {
+        firstName: profileData.firstName,
+        lastName: profileData.lastName,
         address: profileData.address,
         aboutMe: profileData.aboutMe,
         linkedin: profileData.linkedin,
@@ -130,17 +136,19 @@ export default function CreateProfile() {
         gender: profileData.gender,
         secondaryEmail: profileData.secondaryEmail,
         education: formattedEducation,
-        workExperience: formattedWorkExperience,
+        experiences: formattedWorkExperience,
         skills: formattedSkills,
         certifications: formattedCertifications,
         resume: profileData.resume,
         portfolio: profileData.portfolio,
         linktree: profileData.linktree,
       };
-  
+      
+      console.log(updatedProfileData);
+
       // Send the updated profile data to the backend
-      const response = await axios.put(
-        `http://127.0.0.1:3001/userprofile/update/${profileData.id}`,
+      const response = await axios.post(
+        `http://127.0.0.1:3001/api/profile`,
         updatedProfileData,
         {
           headers: {
@@ -151,6 +159,7 @@ export default function CreateProfile() {
       );
   
       console.log("User profile updated successfully:", response.data);
+      router.push("/userDashboard");
     } catch (error) {
       console.error("Error updating user profile:", error);
     }
@@ -158,31 +167,31 @@ export default function CreateProfile() {
   
 
   // Function to update basic user information (firstName and lastName)
-  const updateUserBasicInfo = async () => {
-    try {
-      const token = localStorage.getItem("token"); // Retrieve the token
-      if (!token) {
-        throw new Error("No token found");
-      }
+  // const updateUserBasicInfo = async () => {
+  //   try {
+  //     const token = localStorage.getItem("token"); // Retrieve the token
+  //     if (!token) {
+  //       throw new Error("No token found");
+  //     }
 
-      const response = await axios.put(
-        `http://127.0.0.1:3001/api/update/${profileData.id}`, // User API
-        {
-          firstName: profileData.firstName,
-          lastName: profileData.lastName,
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
+  //     const response = await axios.put(
+  //       `http://127.0.0.1:3001/api/update/${profileData.id}`, // User API
+  //       {
+  //         firstName: profileData.firstName,
+  //         lastName: profileData.lastName,
+  //       },
+  //       {
+  //         headers: {
+  //           Authorization: `Bearer ${token}`,
+  //         },
+  //       }
+  //     );
 
-      console.log("User basic information updated successfully:", response.data);
-    } catch (error) {
-      console.error("Error updating user basic information:", error);
-    }
-  };
+  //     console.log("User basic information updated successfully:", response.data);
+  //   } catch (error) {
+  //     console.error("Error updating user basic information:", error);
+  //   }
+  // };
 
 
   const handleChange = (
@@ -245,24 +254,24 @@ export default function CreateProfile() {
             // Map Skills
             if (parsedData.Skills) {
               const combinedSkills = [
-                ...parsedData.Skills.Languages.map((lang: string) => ({
+                ...parsedData.Skills.Languages?.map((lang: string) => ({
                   name: lang,
                   rating: 5, // default rating
-                })),
-                ...parsedData.Skills.Frameworks.map((fw: string) => ({
+                })) || [],
+                ...parsedData.Skills.Frameworks?.map((fw: string) => ({
                   name: fw,
                   rating: 5,
-                })),
-                ...parsedData.Skills.Libraries.map((lib: string) => ({
+                })) || [],
+                ...parsedData.Skills.Libraries?.map((lib: string) => ({
                   name: lib,
                   rating: 5,
-                })),
+                })) || [],
                 ...parsedData.Skills["Developer Tools"]?.map(
                   (tool: string) => ({
                     name: tool,
                     rating: 5,
                   })
-                ),
+                ) || [],
               ];
               updatedProfile.skills = combinedSkills;
             }
@@ -1079,7 +1088,7 @@ export default function CreateProfile() {
             onClick={() => {
               toggleEdit();
               updateUserProfile();
-              updateUserBasicInfo();
+              // updateUserBasicInfo();
             }}            
             className="bg-[#00BDD6] text-gray-900 font-semibold px-6 py-2 rounded hover:bg-[#00a5c2] focus:outline-none focus:ring-2 focus:ring-[#00BDD6]"
           >

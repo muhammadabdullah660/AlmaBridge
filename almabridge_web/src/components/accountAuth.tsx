@@ -77,7 +77,7 @@ export default function AccountAuthentification() {
 
         try {
             const { verifCode } = formData;
-            const token = localStorage.getItem("token");
+            const token = localStorage.getItem("token"); 
             const response = await axios.post(
                 `http://127.0.0.1:3001/api/verifyAccount`,
                 { verificationCode: verifCode },

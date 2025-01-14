@@ -37,7 +37,7 @@ const register = async (req, res) => {
     try {
         const existingUser = await User.findOne({ where: { email } });
         if (existingUser) {
-            return res.status(400).json({ message: "User Already Exists" });
+            return res.status(409).json({ message: "User Already Exists" });
         }
 
         const hashedPassword = await hashPassword(password);

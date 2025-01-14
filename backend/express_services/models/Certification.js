@@ -1,7 +1,7 @@
 const { DataTypes } = require('sequelize');
 const sequelize = require('../config/database');
 
-const UserCertificate = sequelize.define('UserCertificate', {
+const UserCertificate = sequelize.define('UserCertificates', {
     userProfileId: {
         type: DataTypes.INTEGER,
         allowNull: false,
@@ -20,7 +20,7 @@ const UserCertificate = sequelize.define('UserCertificate', {
         allowNull: false,
     },
     issueDate: {
-        type: DataTypes.DATE,
+        type: DataTypes.STRING,
         allowNull: false,
     }
 }, {

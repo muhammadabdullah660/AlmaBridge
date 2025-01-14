@@ -7,6 +7,7 @@ const UserCertificate = require('../models/Certification');
 const User = require('../models/User');
 
 
+
 const updateUserProfile = async (req, res) => {
   try {
     const { userId } = req.body;
@@ -49,19 +50,19 @@ const updateUserProfile = async (req, res) => {
 
     }
 
-    if (req.body.education) {
-      await bulkInsert(UserEducation, educations, existingProfile.id);
+    if (req.body.education && Array.isArray(req.body.educations) && req.body.educations.length > 0) {
+      await bulkInsert(UserEducation, req.body.educations, existingProfile.id);
     }
-    if (req.body.experiences) {
-      await bulkInsert(UserExperience, experiences, existingProfile.id);
-    }
-
-    if (req.body.skills) {
-      await bulkInsert(UserSkill, skills, existingProfile.id);
+    if (req.body.experiences && Array.isArray(req.body.experiences) && req.body.experiences.length > 0) {
+      await bulkInsert(UserExperience, req.body.experiences, existingProfile.id);
     }
 
-    if (req.body.certificates) {
-      await bulkInsert(UserCertificate, certificates, existingProfile.id);
+    if (req.body.skills && Array.isArray(req.body.skills) && req.body.skills.length > 0) {
+      await bulkInsert(UserSkill, req.body.skills, existingProfile.id);
+    }
+
+    if (req.body.certificates && Array.isArray(req.body.certificates) && req.body.certificates.length > 0) {
+      await bulkInsert(UserCertificate, req.body.certificates, existingProfile.id);
     }
 
     // Success response
