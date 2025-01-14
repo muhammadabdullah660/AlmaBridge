@@ -87,7 +87,6 @@ const Achievements: React.FC = () => {
 
     const handleSaveNewAchievement = () => {
         setAchievers((prevAchievers) => [...prevAchievers, newAchiever]);
-
         handleDialogClose();
     };
 
@@ -97,24 +96,6 @@ const Achievements: React.FC = () => {
             ...prev,
             [name]: value,
         }));
-    };
-
-
-
-    const handleEdit = (index: number) => {
-        const achievement = achievers[index];
-        setEditData(achievement); // Set current achievement for editing
-        setSelectedAchievement(index); // Save index for updating
-        setEditModalOpen(true); // Open edit modal
-    };
-
-    const handleSaveEdit = () => {
-        if (selectedAchievement !== null && editData) {
-            const updatedAchievers = [...achievers];
-            updatedAchievers[selectedAchievement] = editData; // Update the achievement at the selected index
-            setAchievers(updatedAchievers);
-            setEditModalOpen(false); // Close edit modal
-        }
     };
 
     const [editMode, setEditMode] = useState<boolean>(false);
@@ -314,7 +295,7 @@ const Achievements: React.FC = () => {
                                         <label className="block text-[#00BDD6] mb-2">Name</label>
                                         <input
                                             className="w-full p-2 rounded bg-gray-800 text-white"
-                                            name="name"
+                                            name="achieverName"
                                             value={achievers[selectedAchievement].achieverName}
                                             onChange={(e) => handleEditInputChange(e, selectedAchievement)}
                                         />
@@ -363,7 +344,7 @@ const Achievements: React.FC = () => {
                                         <label className="block text-[#00BDD6] mb-2">Achievement</label>
                                         <textarea
                                             className="w-full p-2 rounded bg-gray-800 text-white"
-                                            name="achievement"
+                                            name="achievementName"
                                             value={achievers[selectedAchievement].achievementName}
                                             onChange={(e) => handleEditInputChange(e, selectedAchievement)}
                                         />
@@ -372,7 +353,7 @@ const Achievements: React.FC = () => {
                                         <label className="block text-[#00BDD6] mb-2">Achievement Description</label>
                                         <textarea
                                             className="w-full p-2 rounded bg-gray-800 text-white"
-                                            name="description"
+                                            name="achievementDescription"
                                             value={achievers[selectedAchievement].achievementDescription}
                                             onChange={(e) => handleEditInputChange(e, selectedAchievement)}
                                         />
@@ -467,7 +448,7 @@ const Achievements: React.FC = () => {
                                     <label className="block text-[#00BDD6] mb-2">Name</label>
                                     <input
                                         type="text"
-                                        name="name"
+                                        name="achieverName"
                                         value={newAchiever.achieverName}
                                         onChange={handleInputChange}
                                         required
@@ -525,7 +506,7 @@ const Achievements: React.FC = () => {
                                     <label className="block text-[#00BDD6] mb-2">Achievement</label>
                                     <input
                                         type="text"
-                                        name="achievement"
+                                        name="achievementName"
                                         value={newAchiever.achievementName}
                                         onChange={handleInputChange}
                                         required
@@ -563,7 +544,7 @@ const Achievements: React.FC = () => {
                                     <label className="block text-[#00BDD6] mb-2">Image</label>
                                     <input
                                         type="file"
-                                        name="image"
+                                        name="achieverPicture"
                                         accept="image/*"
                                         onChange={(e) => {
                                             const file = e.target.files?.[0];
