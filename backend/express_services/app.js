@@ -18,7 +18,7 @@ app.use(express.json());
 app.use(cors());
 
 app.use("/api", userRoutes);
-app.use("/api/userprofile", profileRoutes);
+app.use("/api", profileRoutes);
 app.use("/api/jobposting", jobRoutes);
 app.use("/api/achievements", achievementsRoutes);
 
