@@ -26,7 +26,11 @@ const Achievements = sequelize.define('Achievements', {
         type: DataTypes.STRING,
         allowNull: false,
       },
-    achieverPicture:{
+    Link:{
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
+    achievementPicture:{
         type: DataTypes.STRING,
       //allowNull: false,
     }
