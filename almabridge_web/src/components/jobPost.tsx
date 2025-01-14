@@ -1,61 +1,45 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { FaEdit, FaTrashAlt, FaPlus } from 'react-icons/fa';
 import { Typewriter } from 'react-simple-typewriter';
+import axios from "axios";
+
+
+interface Jobs {
+    Id?: string
+    jobName: string;
+    jobDescription: string;
+    salaryRange: string;
+    location: [string, string, string]; // [city, state, country]
+    postedById: Number;
+    jobType: string;
+}
 
 const JobPost = () => {
-    const [jobPosts, setJobPosts] = useState([
-        {
-            jobName: 'UI/UX Designer',
-            jobDescription: 'Design amazing user interfaces.',
-            salaryRange: '$100,000 - $120,000',
-            jobType: 'Remote',
-            location: 'New York, USA',
-        },
-        {
-            jobName: 'UI/UX Designer',
-            jobDescription: 'Design amazing user interfaces.',
-            salaryRange: '$100,000 - $120,000',
-            jobType: 'Remote',
-            location: 'New York, USA',
-        },
-        {
-            jobName: 'UI/UX Designer',
-            jobDescription: 'Design amazing user interfaces.',
-            salaryRange: '$100,000 - $120,000',
-            jobType: 'Remote',
-            location: 'New York, USA',
-        },
-        {
-            jobName: 'UI/UX Designer',
-            jobDescription: 'Design amazing user interfaces.',
-            salaryRange: '$100,000 - $120,000',
-            jobType: 'Remote',
-            location: 'New York, USA',
-        },
-        {
-            jobName: 'UI/UX Designer',
-            jobDescription: 'Design amazing user interfaces.',
-            salaryRange: '$100,000 - $120,000',
-            jobType: 'Remote',
-            location: 'New York, USA',
-        },
-        {
-            jobName: 'UI/UX Designer',
-            jobDescription: 'Design amazing user interfaces.',
-            salaryRange: '$100,000 - $120,000',
-            jobType: 'Remote',
-            location: 'New York, USA',
-        },
-
-    ]);
-
     const [selectedJob, setSelectedJob] = useState<any>(null);
     const [dialogOpen, setDialogOpen] = useState(false);
     const [isEditing, setIsEditing] = useState(false);
     const [editableJob, setEditableJob] = useState<any>(null);
     const [isAdding, setIsAdding] = useState(false);
+    const [jobs, setJobs] = useState<Jobs[]>([]);
+
+    useEffect(() => {
+        // Fetch data from the backend API
+        const fetchJobs = async () => {
+            try {
+                const response = await axios.get<Jobs[]>(
+                    "http://127.0.0.1:3001/api/jobposting/get"
+                );
+                setJobs(response.data);
+                console.log(response.data);
+            } catch (error) {
+                console.error("Error fetching achievers data:", error);
+            }
+        };
+
+        fetchJobs();
+    }, []);
 
     const handleJobClick = (job: any) => {
         setSelectedJob(job);
@@ -84,27 +68,77 @@ const JobPost = () => {
         setIsAdding(true);
     };
 
-    const handleSaveChanges = () => {
-        if (isAdding) {
-            setJobPosts((prev) => [...prev, { ...editableJob }]);
-        } else {
-            setJobPosts((prev) =>
-                prev.map((job) =>
-                    job === selectedJob ? { ...editableJob } : job
-                )
-            );
+    const handleSaveChanges = async () => {
+        try {
+            let response;
+            if (isAdding) {
+                // API call for adding a job
+                response = await fetch("http://127.0.0.1:3001/api/jobposting/create", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify(editableJob),
+                });
+            } else {
+                // API call for updating a job
+                response = await fetch(`http://127.0.0.1:3001/api/jobposting/update/${selectedJob.id}`, {
+                    method: "PUT",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify(editableJob),
+                });
+            }
+
+            if (response.ok) {
+                const updatedJob = await response.json();
+
+                setJobs((prev) => {
+                    if (isAdding) {
+                        // Add new job to the state
+                        return [...prev, updatedJob];
+                    } else {
+                        // Update the edited job in the state
+                        return prev.map((job) =>
+                            job.Id === updatedJob.id ? updatedJob : job
+                        );
+                    }
+                });
+                console.log("Job Done Successfully");
+                // Close the dialog after successful update
+                handleDialogClose();
+            } else {
+                console.error("Failed to save changes:", await response.text());
+            }
+        } catch (error) {
+            console.error("Error saving changes:", error);
         }
-        handleDialogClose();
     };
 
-    const handleDeleteJob = () => {
-        if (selectedJob) {
-            setJobPosts(jobPosts.filter((job) => job !== selectedJob));
-            handleDialogClose();
+
+    const handleDeleteJob = async () => {
+        try {
+            // API call to delete the job
+            const response = await fetch(`http://127.0.0.1:3001/api/jobposting/delete/${selectedJob.id}`, {
+                method: "DELETE",
+            });
+
+            if (response.ok) {
+                // Update the frontend by removing the deleted job
+                setJobs(jobs.filter((job) => job !== selectedJob));
+                console.log("Job deleted successfully");
+                handleDialogClose();
+            } else {
+                console.error("Failed to delete job:", await response.text());
+            }
+        } catch (error) {
+            console.error("Error deleting job:", error);
         }
     };
 
-    const handleChange = (field: string, value: string) => {
+
+    const handleChange = (field: string, value: any) => {
         setEditableJob((prev: any) => ({
             ...prev,
             [field]: value,
@@ -126,34 +160,50 @@ const JobPost = () => {
             </h1>
 
             {/* Job Posts Grid */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 px-6 mb-10">
-                {jobPosts.map((job, index) => (
-                    <div
-                        key={index}
-                        onClick={() => handleJobClick(job)}
-                        className="p-6 rounded-lg border border-[#00BDD6] shadow-xl hover:scale-105 transition transform duration-300 cursor-pointer"
-                        style={{
-                            background: 'linear-gradient(to bottom, #000000, #4b4b4b)', // Black to gray gradient
-                            display: 'flex', // Flexbox for centering content
-                            flexDirection: 'column', // Stack content vertically
-                            justifyContent: 'center', // Center content vertically
-                            alignItems: 'center', // Center content horizontally
-                        }}
-                    >
-                        <h3 className="text-xl font-bold mb-2 text-center">{job.jobName}</h3>
-                        <p className="mb-2 text-center">{job.jobDescription}</p>
-                        <p className="text-center">
-                            <strong>Salary Range:</strong> {job.salaryRange}
-                        </p>
-                        <p className="text-center">
-                            <strong>Type:</strong> {job.jobType}
-                        </p>
-                        <p className="text-center">
-                            <strong>Location:</strong> {job.location}
-                        </p>
+            <div className=" bg-black text-white px-6 py-8 mb-20">
+                <div className="max-w-7xl mx-auto">
+                    {/* Header Section */}
+                    <h1 className="text-[#00BDD6] text-3xl font-bold">Latest Jobs</h1>
+                    <p className="text-gray-400 mb-8">
+                        Jobs or projects posted by our alumni
+                    </p>
+
+                    {/* Job Cards Grid */}
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                        {jobs.map((job, index) => (
+                            <div
+                                key={index}
+                                onClick={() => handleJobClick(job)}
+
+                                className="bg-[#1E1E1E] rounded-lg p-6 border border-gray-600 hover:border-[#00BDD6] transition-all"
+                            >
+                                {/* Job Header */}
+                                <h3 className="text-lg font-semibold mb-2">{job.jobName}</h3>
+
+                                {/* Job Details */}
+                                <p className="text-sm text-gray-400 mb-2">{job.salaryRange}</p>
+                                <p className="text-sm text-gray-400 mb-4">{job.jobType}</p>
+
+                                {/* Location */}
+                                <p className="text-sm text-gray-400 mb-4">
+                                    📍 {job.location[0]},
+                                    <i className="fa fa-home" aria-hidden="true"></i>
+                                    {job.location[1]}, {job.location[2]}
+                                </p>
+
+                                {/* Save Job */}
+                                <button
+                                    className="text-[#00BDD6] text-sm font-semibold hover:underline"
+                                    onClick={() => console.log(`Saved job: ${job.jobName}`)}
+                                >
+                                    Save Job
+                                </button>
+                            </div>
+                        ))}
                     </div>
-                ))}
+                </div>
             </div>
+
 
             {/* Floating Add Button */}
             <button
@@ -231,20 +281,41 @@ const JobPost = () => {
                                 )}
                             </div>
                             <div>
+                                <label className="block text-[#00BDD6] font-bold mb-2">Location:</label>
+                                {isAdding || isEditing ? (
+                                    <input
+                                        type="text"
+                                        placeholder="City, State, Country"
+                                        value={editableJob.location} // Join array into a string for the input field
+                                        onChange={(e) => {
+                                            const [city, state, country] = e.target.value.split(',').map(item => item.trim());
+                                            // Ensure we always have exactly 3 values, otherwise fallback to empty strings
+                                            handleChange('location', [city , state, country]);
+                                        }}
+                                        className="w-full p-2 rounded border border-gray-500 bg-gray-800 text-white"
+                                    />
+                                ) : (
+                                    <p>{selectedJob.location.join(", ")}</p> // Display as a string for non-editing mode
+                                )}
+                            </div>
+
+
+                            <div>
                                 <label className="block text-[#00BDD6] font-bold mb-2">
-                                    Location:
+                                    PostedById:
                                 </label>
                                 {isAdding || isEditing ? (
                                     <input
                                         type="text"
-                                        value={editableJob.location}
-                                        onChange={(e) => handleChange('location', e.target.value)}
+                                        value={editableJob.postedById}
+                                        onChange={(e) => handleChange('postedById', e.target.value)}
                                         className="w-full p-2 rounded border border-gray-500 bg-gray-800 text-white"
                                     />
                                 ) : (
-                                    <p>{selectedJob.location}</p>
+                                    <p>{selectedJob.postedById}</p>
                                 )}
                             </div>
+
                         </div>
 
                         <div className="flex justify-between mt-6">
