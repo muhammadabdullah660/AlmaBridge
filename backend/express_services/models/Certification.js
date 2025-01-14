@@ -1,13 +1,12 @@
 const { DataTypes } = require('sequelize');
 const sequelize = require('../config/database');
-const UserProfile = require("./UserProfile");
 
 const UserCertificate = sequelize.define('UserCertificate', {
     userProfileId: {
         type: DataTypes.INTEGER,
         allowNull: false,
         references: {
-            model: 'UserProfile',
+            model: 'UserProfiles',
             key: 'id',
         },
         onDelete: 'CASCADE',
@@ -28,10 +27,5 @@ const UserCertificate = sequelize.define('UserCertificate', {
     timestamps: true,
 });
 
-// Association with UserProfile Model
-UserCertificate.belongsTo(UserProfile, {
-    foreignKey: 'userProfileId',
-    as: "profile",
-});
 
 module.exports = UserCertificate;

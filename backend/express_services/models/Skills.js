@@ -1,13 +1,12 @@
 const { DataTypes } = require('sequelize');
 const sequelize = require('../config/database');
-const UserProfile = require("./UserProfile");
 
 const UserSkill = sequelize.define('UserSkills', {
     userProfileId: {
         type: DataTypes.INTEGER,
         allowNull: false,
         references: {
-            model: 'UserProfile',
+            model: 'UserProfiles',
             key: 'id',
         },
         onDelete: 'CASCADE',
@@ -24,10 +23,5 @@ const UserSkill = sequelize.define('UserSkills', {
     timestamps: true,
 });
 
-// Association with UserProfile Model
-UserSkill.belongsTo(UserProfile, {
-    foreignKey: 'userProfileId',
-    as: "profile",
-});
 
 module.exports = UserSkill;
