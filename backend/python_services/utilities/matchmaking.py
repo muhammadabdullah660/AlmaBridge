@@ -98,15 +98,21 @@ class MatchmakingService:
         # Return top N recommendations
         return [(df.iloc[i]["name"], score) for i, score in filtered_scores[:top_n]]
 
-    def get_recommendations(self, user_name, additional_profiles=None):
+    def get_recommendations(self, education, skills, bio):
         """
         Main function to get recommendations for a user.
         """
+
+        additional_profiles = None
         # Fetch profiles from MongoDB
         mongo_profiles = self.fetch_from_mongodb()
 
         # Separate and format data
         formatted_profiles = self.separate_profiles_data(mongo_profiles)
+
+        print(f"Student Education Data: {education}")
+        print(f"Alumni Data: {formatted_profiles}")
+
 
         # Combine MongoDB profiles with additional profiles if provided
         if additional_profiles:
