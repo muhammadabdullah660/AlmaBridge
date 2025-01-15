@@ -1,53 +1,54 @@
-const { DataTypes } = require('sequelize');
-const sequelize = require('../config/database');
+const { DataTypes } = require("sequelize");
+const sequelize = require("../config/database");
 
-const UserProfile = sequelize.define('UserProfile', {
-    id: {
-        type: DataTypes.INTEGER,
-        primaryKey: true,
-        autoIncrement: true,
+const UserProfile = sequelize.define(
+  "UserProfiles",
+  {
+    userId: {
+      type: DataTypes.INTEGER,
+      allowNull: true,
+      references: {
+        model: "Users",
+        key: "id",
+      },
+      onDelete: "CASCADE",
     },
     address: {
-        type: DataTypes.STRING,
-    },
-    aboutMe: {
-        type: DataTypes.TEXT,
+      type: DataTypes.STRING,
+      allowNull: true,
     },
     linkedin: {
-        type: DataTypes.STRING,
+      type: DataTypes.STRING,
+      allowNull: true,
     },
     bio: {
-        type: DataTypes.TEXT,
+      type: DataTypes.STRING,
+      allowNull: true,
     },
     gender: {
-        type: DataTypes.STRING,
+      type: DataTypes.ENUM("Male", "Female", "Other"),
+      allowNull: true,
     },
     secondaryEmail: {
-        type: DataTypes.STRING,
-    },
-    education: {
-        type: DataTypes.JSONB, // For complex nested data
-    },
-    workExperience: {
-        type: DataTypes.JSONB,
-    },
-    skills: {
-        type: DataTypes.JSONB,
-    },
-    certifications: {
-        type: DataTypes.JSONB,
+      type: DataTypes.STRING,
+      allowNull: true,
     },
     portfolio: {
-        type: DataTypes.STRING,
+      type: DataTypes.STRING,
+      allowNull: true,
     },
     linktree: {
-        type: DataTypes.STRING,
+      type: DataTypes.STRING,
+      allowNull: true,
     },
     resume: {
-        type: DataTypes.STRING,
+      type: DataTypes.STRING,
+      allowNull: true,
     },
-},{
+  },
+  {
     timestamps: true,
-});
+  }
+);
 
 module.exports = UserProfile;

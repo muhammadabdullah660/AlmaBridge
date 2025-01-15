@@ -37,7 +37,7 @@ const register = async (req, res) => {
     try {
         const existingUser = await User.findOne({ where: { email } });
         if (existingUser) {
-            return res.status(400).json({ message: "User Already Exists" });
+            return res.status(409).json({ message: "User Already Exists" });
         }
 
         const hashedPassword = await hashPassword(password);
@@ -68,15 +68,13 @@ const register = async (req, res) => {
         }
 
         await logAction("User Registration", user.id, `New user registered with email: ${email}`);
-        if (role === "student") {
-            const { studentEmail } = req.body;
-            await UserProfile.create({
-                userId: user.id,
-                secondaryEmail: studentEmail,
-                primaryEmail: email,
-            });
-        }
-
+        const userProfileData = {
+            userId: user.id,
+            ...(role === "student" && { secondaryEmail: req.body.studentEmail }), // Add secondaryEmail only if role is "student"
+        };
+        
+        await UserProfile.create(userProfileData);
+        
         const token = generateToken(user.id);
         return res.status(201).json({ message: "User Registered Successfully.", token: token });
     } catch (error) {
@@ -200,33 +198,76 @@ const getUser = async (req, res) => {
         return res.status(500).json({ message: error.message });
     }
 };
+
+
 const updateUser = async (req, res) => {
-  try {
-    const { id } = req.params;
-    const updateData = req.body;
-
-    // Find the user by ID
-    const user = await User.findByPk(id);
-
-    if (!user) {
-      return res.status(404).json({ message: 'User not found' });
+    // Extract userId and omit it from updateData
+    const { userId, ...updateData } = req.body;
+    try {
+        const user = await User.findByPk(userId);
+        if (!user) {
+            await logAction("User Retrieval Failed", userId, "Error Occured while Update the User Data", "failure");
+            return res.status(404).json({ message: 'User not found' });
+        }
+    
+        // Update the user with new data
+        await user.update(updateData);
+        await logAction("User Data Update", userId, "User Data Updated Successfully");
+    
+        // Return the updated user
+        return res.status(200).json({
+            message: 'User updated successfully',
+            user,
+        });
+  
+    } catch (error) {
+        await logAction("User Updation Failed", userId, "Error Occured while Update the User Data", "failure");
+        return res.status(500).json({
+            message: 'An error occurred while updating the user',
+            error: error.message,
+        });
     }
-
-    // Update the user with new data
-    await user.update(updateData);
-
-    // Return the updated user
-    res.status(200).json({
-      message: 'User updated successfully',
-      user,
-    });
-
-  } catch (error) {
-    res.status(500).json({
-      message: 'An error occurred while updating the user',
-      error: error.message,
-    });
-  }
 };
 
-module.exports = {register, login, verifyAccount, reSendVerificationCode, getUser, updateUser};
+
+const deleteUser = async (req, res) => {
+    const { userId } = req.body;
+    try{
+        const user = await User.findByPk(userId);
+        if (!user) {
+            await logAction("User Retrieval Failed", userId, "Error Occured while Deleting the User Data", "failure");
+            return res.status(404).json({ message: 'User not found' });
+        }
+
+        user.isActive = false;
+        await user.save();
+        await logAction("User Data Delete", userId, "User Data Deleted Successfully!");
+        return res.status(204).json({ message: "User Data Deleted Succesfully" });
+    } catch (error) {
+        await logAction("User Deletion Failed", userId, "Error Occured while Deleting the User Data", "failure");
+        return res.status(500).json({
+            message: 'An error occurred while deleting the user',
+            error: error.message,
+        });
+    }
+};
+
+
+
+const destroyUser = async (req, res) => {
+    const { userId } = req.body;
+    try{
+        await User.destroy({ where: { userId } });
+        return res.status(204).json({
+            message: "Data Deleted From the database Successfully",
+        });
+    } catch (error) {
+        await logAction("User Destroy Failed", userId, "Error Occured while Destroy the User Data", "failure");
+        return res.status(500).json({
+            message: 'An error occurred while deleting the user',
+            error: error.message,
+        });
+    }
+};
+
+module.exports = {register, login, verifyAccount, reSendVerificationCode, getUser, updateUser, deleteUser, destroyUser};

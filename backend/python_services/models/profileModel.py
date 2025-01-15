@@ -1,13 +1,27 @@
 from pymongo import MongoClient
 from bson.objectid import ObjectId
 from schemas.profileSchema import ProfileSchema
+import os
+from dotenv import load_dotenv
 
+
+base_dir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))  # Go two levels up
+dotenv_path = os.path.join(base_dir, '.env')
+
+load_dotenv()
+
+
+CLOUD_DB_URI = os.getenv('MONGO_DB_URI')
+CLOUD_DB_NAME = os.getenv('MONGO_DB_NAME')
+
+if not CLOUD_DB_NAME and CLOUD_DB_URI:
+    raise ValueError(f"Environment variables not properly loaded from {dotenv_path}. Check your .env file.")
 
 class ProfileModel:
-    def __init__(self, db_url="mongodb://localhost:27017", db_name="scraping_DB"):
+    def __init__(self, db_url=CLOUD_DB_URI, db_name=CLOUD_DB_NAME):
         self.client = MongoClient(db_url)
         self.db = self.client[db_name]
-        self.collection = self.db["profiles"]
+        self.collection = self.db["scraped_profiles"]
     
 
     def insert_profiles(self, profile_data: dict) -> str:

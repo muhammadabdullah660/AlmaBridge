@@ -1,37 +1,45 @@
-const { DataTypes } = require('sequelize');
-const sequelize = require('../config/database');
+const { DataTypes } = require("sequelize");
+const sequelize = require("../config/database");
 
-const Achievements = sequelize.define('Achievements', {
+const Achievements = sequelize.define(
+  "Achievements",
+  {
     achievementName: {
       type: DataTypes.STRING,
-      allowNull: false,
+      allowNull: true,
     },
     achieverName: {
-        type: DataTypes.STRING,
-        allowNull: false,
-      },
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
     achieverCategory: {
-        type: DataTypes.STRING,
-        allowNull: false,
+      type: DataTypes.STRING,
+      allowNull: true,
     },
     achievementsDescription: {
       type: DataTypes.STRING,
-      allowNull: false,
+      allowNull: true,
     },
     session: {
       type: DataTypes.STRING,
-      allowNull: false,
+      allowNull: true,
     },
     department: {
-        type: DataTypes.STRING,
-        allowNull: false,
-      },
-    achieverPicture:{
-        type: DataTypes.STRING,
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
+    Link: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
+    achievementPicture: {
+      type: DataTypes.STRING,
       //allowNull: false,
-    }
-  }, {
+    },
+  },
+  {
     timestamps: true,
-  });
+  }
+);
 
 module.exports = Achievements;

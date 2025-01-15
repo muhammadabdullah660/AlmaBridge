@@ -6,11 +6,15 @@ import { FaPencilAlt, FaCamera, FaPlus, FaTrash } from "react-icons/fa";
 import { Education } from "../types";
 import { WorkExperience } from "../types";
 import { Certification } from "../types";
+import { useRouter } from "next/navigation";
 import axios from "axios";
+
 export default function CreateProfile() {
+  const router = useRouter();
   const [isEditing, setIsEditing] = useState(false);
   const [profileData, setProfileData] = useState<{
-    id: Number;
+    id: number;
+    id: number;
     firstName: string;
     lastName: string;
     address: string;
@@ -93,7 +97,7 @@ export default function CreateProfile() {
     try {
       const token = localStorage.getItem("token");
       if (!token) throw new Error("No token found");
-  
+
       // Map arrays to match backend expectations
       const formattedEducation = profileData.education.map((edu) => ({
         degree: edu.degree,
@@ -101,7 +105,7 @@ export default function CreateProfile() {
         fieldOfStudy: edu.fieldOfStudy,
         graduationYear: edu.graduationYear,
       }));
-  
+
       const formattedWorkExperience = profileData.workExperience.map((exp) => ({
         role: exp.role,
         company: exp.company,
@@ -109,20 +113,24 @@ export default function CreateProfile() {
         endDate: exp.endDate,
         description: exp.description,
       }));
-  
+
       const formattedSkills = profileData.skills.map((skill) => ({
         skillName: skill.name, // Rename 'name' to 'skillName'
         rating: skill.rating,
       }));
-  
-      const formattedCertifications = profileData.certifications.map((cert) => ({
-        certificationName: cert.name, // Rename 'name' to 'certificationName'
-        issuer: cert.issuer,
-        date: cert.date,
-      }));
-  
+
+      const formattedCertifications = profileData.certifications.map(
+        (cert) => ({
+          certificationName: cert.name, // Rename 'name' to 'certificationName'
+          issuer: cert.issuer,
+          date: cert.date,
+        })
+      );
+
       // Construct the payload
       const updatedProfileData = {
+        firstName: profileData.firstName,
+        lastName: profileData.lastName,
         address: profileData.address,
         aboutMe: profileData.aboutMe,
         linkedin: profileData.linkedin,
@@ -130,17 +138,19 @@ export default function CreateProfile() {
         gender: profileData.gender,
         secondaryEmail: profileData.secondaryEmail,
         education: formattedEducation,
-        workExperience: formattedWorkExperience,
+        experiences: formattedWorkExperience,
         skills: formattedSkills,
         certifications: formattedCertifications,
         resume: profileData.resume,
         portfolio: profileData.portfolio,
         linktree: profileData.linktree,
       };
-  
+
+      console.log(updatedProfileData);
+
       // Send the updated profile data to the backend
-      const response = await axios.put(
-        `http://127.0.0.1:3001/userprofile/update/${profileData.id}`,
+      const response = await axios.post(
+        `http://127.0.0.1:3001/api/profile`,
         updatedProfileData,
         {
           headers: {
@@ -149,41 +159,40 @@ export default function CreateProfile() {
           },
         }
       );
-  
+
       console.log("User profile updated successfully:", response.data);
+      router.push("/userDashboard");
     } catch (error) {
       console.error("Error updating user profile:", error);
     }
   };
-  
 
   // Function to update basic user information (firstName and lastName)
-  const updateUserBasicInfo = async () => {
-    try {
-      const token = localStorage.getItem("token"); // Retrieve the token
-      if (!token) {
-        throw new Error("No token found");
-      }
+  // const updateUserBasicInfo = async () => {
+  //   try {
+  //     const token = localStorage.getItem("token"); // Retrieve the token
+  //     if (!token) {
+  //       throw new Error("No token found");
+  //     }
 
-      const response = await axios.put(
-        `http://127.0.0.1:3001/api/update/${profileData.id}`, // User API
-        {
-          firstName: profileData.firstName,
-          lastName: profileData.lastName,
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
+  //     const response = await axios.put(
+  //       `http://127.0.0.1:3001/api/update/${profileData.id}`, // User API
+  //       {
+  //         firstName: profileData.firstName,
+  //         lastName: profileData.lastName,
+  //       },
+  //       {
+  //         headers: {
+  //           Authorization: `Bearer ${token}`,
+  //         },
+  //       }
+  //     );
 
-      console.log("User basic information updated successfully:", response.data);
-    } catch (error) {
-      console.error("Error updating user basic information:", error);
-    }
-  };
-
+  //     console.log("User basic information updated successfully:", response.data);
+  //   } catch (error) {
+  //     console.error("Error updating user basic information:", error);
+  //   }
+  // };
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -245,24 +254,24 @@ export default function CreateProfile() {
             // Map Skills
             if (parsedData.Skills) {
               const combinedSkills = [
-                ...parsedData.Skills.Languages.map((lang: string) => ({
+                ...(parsedData.Skills.Languages?.map((lang: string) => ({
                   name: lang,
                   rating: 5, // default rating
-                })),
-                ...parsedData.Skills.Frameworks.map((fw: string) => ({
+                })) || []),
+                ...(parsedData.Skills.Frameworks?.map((fw: string) => ({
                   name: fw,
                   rating: 5,
-                })),
-                ...parsedData.Skills.Libraries.map((lib: string) => ({
+                })) || []),
+                ...(parsedData.Skills.Libraries?.map((lib: string) => ({
                   name: lib,
                   rating: 5,
-                })),
-                ...parsedData.Skills["Developer Tools"]?.map(
+                })) || []),
+                ...(parsedData.Skills["Developer Tools"]?.map(
                   (tool: string) => ({
                     name: tool,
                     rating: 5,
                   })
-                ),
+                ) || []),
               ];
               updatedProfile.skills = combinedSkills;
             }
@@ -712,117 +721,117 @@ export default function CreateProfile() {
             <h2 className="text-xl font-bold mb-2">Work Experience</h2>
             {isEditing
               ? profileData.workExperience.map((experience, index) => (
-                <div key={index} className="mb-4 p-4 bg-gray-900 rounded-md">
-                  <div className="mb-2">
-                    <label className="block text-gray-400 mb-1">
-                      Company
-                    </label>
-                    <input
-                      type="text"
-                      name="company"
-                      value={experience.company}
-                      onChange={(e) =>
-                        updateWorkExperienceField(
-                          index,
-                          "company",
-                          e.target.value
-                        )
-                      }
-                      className="w-full bg-gray-800 border border-gray-700 rounded-md px-4 py-2"
-                      placeholder="e.g., ABC Corp"
-                    />
-                  </div>
-                  <div className="mb-2">
-                    <label className="block text-gray-400 mb-1">Role</label>
-                    <input
-                      type="text"
-                      name="role"
-                      value={experience.role}
-                      onChange={(e) =>
-                        updateWorkExperienceField(
-                          index,
-                          "role",
-                          e.target.value
-                        )
-                      }
-                      className="w-full bg-gray-800 border border-gray-700 rounded-md px-4 py-2"
-                      placeholder="e.g., Software Engineer"
-                    />
-                  </div>
-                  <div className="flex gap-4 mb-2">
-                    <div className="flex-1">
+                  <div key={index} className="mb-4 p-4 bg-gray-900 rounded-md">
+                    <div className="mb-2">
                       <label className="block text-gray-400 mb-1">
-                        Start Date
+                        Company
                       </label>
                       <input
-                        type="date"
-                        name="startDate"
-                        value={experience.startDate}
+                        type="text"
+                        name="company"
+                        value={experience.company}
                         onChange={(e) =>
                           updateWorkExperienceField(
                             index,
-                            "startDate",
+                            "company",
                             e.target.value
                           )
                         }
                         className="w-full bg-gray-800 border border-gray-700 rounded-md px-4 py-2"
+                        placeholder="e.g., ABC Corp"
                       />
                     </div>
-                    <div className="flex-1">
-                      <label className="block text-gray-400 mb-1">
-                        End Date
-                      </label>
+                    <div className="mb-2">
+                      <label className="block text-gray-400 mb-1">Role</label>
                       <input
-                        type="date"
-                        name="endDate"
-                        value={experience.endDate}
+                        type="text"
+                        name="role"
+                        value={experience.role}
                         onChange={(e) =>
                           updateWorkExperienceField(
                             index,
-                            "endDate",
+                            "role",
                             e.target.value
                           )
                         }
                         className="w-full bg-gray-800 border border-gray-700 rounded-md px-4 py-2"
+                        placeholder="e.g., Software Engineer"
                       />
                     </div>
+                    <div className="flex gap-4 mb-2">
+                      <div className="flex-1">
+                        <label className="block text-gray-400 mb-1">
+                          Start Date
+                        </label>
+                        <input
+                          type="date"
+                          name="startDate"
+                          value={experience.startDate}
+                          onChange={(e) =>
+                            updateWorkExperienceField(
+                              index,
+                              "startDate",
+                              e.target.value
+                            )
+                          }
+                          className="w-full bg-gray-800 border border-gray-700 rounded-md px-4 py-2"
+                        />
+                      </div>
+                      <div className="flex-1">
+                        <label className="block text-gray-400 mb-1">
+                          End Date
+                        </label>
+                        <input
+                          type="date"
+                          name="endDate"
+                          value={experience.endDate}
+                          onChange={(e) =>
+                            updateWorkExperienceField(
+                              index,
+                              "endDate",
+                              e.target.value
+                            )
+                          }
+                          className="w-full bg-gray-800 border border-gray-700 rounded-md px-4 py-2"
+                        />
+                      </div>
+                    </div>
+                    <div className="mb-2">
+                      <label className="block text-gray-400 mb-1">
+                        Description
+                      </label>
+                      <textarea
+                        name="description"
+                        value={experience.description}
+                        onChange={(e) =>
+                          updateWorkExperienceField(
+                            index,
+                            "description",
+                            e.target.value
+                          )
+                        }
+                        className="w-full bg-gray-800 border border-gray-700 rounded-md px-4 py-2"
+                        placeholder="e.g., Developed and maintained web applications..."
+                      />
+                    </div>
+                    <button
+                      onClick={() => removeWorkExperience(index)}
+                      className="text-red-500 mt-2"
+                    >
+                      <FaTrash /> Remove
+                    </button>
                   </div>
-                  <div className="mb-2">
-                    <label className="block text-gray-400 mb-1">
-                      Description
-                    </label>
-                    <textarea
-                      name="description"
-                      value={experience.description}
-                      onChange={(e) =>
-                        updateWorkExperienceField(
-                          index,
-                          "description",
-                          e.target.value
-                        )
-                      }
-                      className="w-full bg-gray-800 border border-gray-700 rounded-md px-4 py-2"
-                      placeholder="e.g., Developed and maintained web applications..."
-                    />
-                  </div>
-                  <button
-                    onClick={() => removeWorkExperience(index)}
-                    className="text-red-500 mt-2"
-                  >
-                    <FaTrash /> Remove
-                  </button>
-                </div>
-              ))
+                ))
               : profileData.workExperience.map((experience, index) => (
-                <div key={index} className="mb-4">
-                  <p className="text-lg font-semibold">{experience.role}</p>
-                  <p className="text-gray-300">
-                    {experience.company} | {experience.startDate} -{" "}
-                    {experience.endDate || "Present"}
-                  </p>
-                  <p className="text-gray-400">{experience.description}</p>
-                </div>
-              ))}
+                  <div key={index} className="mb-4">
+                    <p className="text-lg font-semibold">{experience.role}</p>
+                    <p className="text-gray-300">
+                      {experience.company} | {experience.startDate} -{" "}
+                      {experience.endDate || "Present"}
+                    </p>
+                    <p className="text-gray-400">{experience.description}</p>
+                  </div>
+                ))}
             {isEditing && (
               <button
                 onClick={addWorkExperienceField}
@@ -838,90 +847,90 @@ export default function CreateProfile() {
             <h2 className="text-xl font-bold mb-2">Education</h2>
             {isEditing
               ? profileData.education.map((edu, index) => (
-                <div key={index} className="mb-4 p-4 bg-gray-900 rounded-md">
-                  <div className="mb-2">
-                    <label className="block text-gray-400 mb-1">School</label>
-                    <input
-                      type="text"
-                      name="school"
-                      value={edu.school}
-                      onChange={(e) =>
-                        updateEducationField(index, "school", e.target.value)
-                      }
-                      className="w-full bg-gray-800 border border-gray-700 rounded-md px-4 py-2"
-                      placeholder="e.g., University of XYZ"
-                    />
+                  <div key={index} className="mb-4 p-4 bg-gray-900 rounded-md">
+                    <div className="mb-2">
+                      <label className="block text-gray-400 mb-1">School</label>
+                      <input
+                        type="text"
+                        name="school"
+                        value={edu.school}
+                        onChange={(e) =>
+                          updateEducationField(index, "school", e.target.value)
+                        }
+                        className="w-full bg-gray-800 border border-gray-700 rounded-md px-4 py-2"
+                        placeholder="e.g., University of XYZ"
+                      />
+                    </div>
+                    <div className="mb-2">
+                      <label className="block text-gray-400 mb-1">Degree</label>
+                      <input
+                        type="text"
+                        name="degree"
+                        value={edu.degree}
+                        onChange={(e) =>
+                          updateEducationField(index, "degree", e.target.value)
+                        }
+                        className="w-full bg-gray-800 border border-gray-700 rounded-md px-4 py-2"
+                        placeholder="e.g., Bachelor's"
+                      />
+                    </div>
+                    <div className="mb-2">
+                      <label className="block text-gray-400 mb-1">
+                        Field of Study
+                      </label>
+                      <input
+                        type="text"
+                        name="fieldOfStudy"
+                        value={edu.fieldOfStudy}
+                        onChange={(e) =>
+                          updateEducationField(
+                            index,
+                            "fieldOfStudy",
+                            e.target.value
+                          )
+                        }
+                        className="w-full bg-gray-800 border border-gray-700 rounded-md px-4 py-2"
+                        placeholder="e.g., Computer Science"
+                      />
+                    </div>
+                    <div className="mb-2">
+                      <label className="block text-gray-400 mb-1">
+                        Graduation Year
+                      </label>
+                      <input
+                        type="text"
+                        name="graduationYear"
+                        value={edu.graduationYear}
+                        onChange={(e) =>
+                          updateEducationField(
+                            index,
+                            "graduationYear",
+                            e.target.value
+                          )
+                        }
+                        className="w-full bg-gray-800 border border-gray-700 rounded-md px-4 py-2"
+                        placeholder="e.g., 2025"
+                      />
+                    </div>
+                    <button
+                      onClick={() => removeEducation(index)}
+                      className="text-red-500 mt-2"
+                    >
+                      <FaTrash /> Remove
+                    </button>
                   </div>
-                  <div className="mb-2">
-                    <label className="block text-gray-400 mb-1">Degree</label>
-                    <input
-                      type="text"
-                      name="degree"
-                      value={edu.degree}
-                      onChange={(e) =>
-                        updateEducationField(index, "degree", e.target.value)
-                      }
-                      className="w-full bg-gray-800 border border-gray-700 rounded-md px-4 py-2"
-                      placeholder="e.g., Bachelor's"
-                    />
-                  </div>
-                  <div className="mb-2">
-                    <label className="block text-gray-400 mb-1">
-                      Field of Study
-                    </label>
-                    <input
-                      type="text"
-                      name="fieldOfStudy"
-                      value={edu.fieldOfStudy}
-                      onChange={(e) =>
-                        updateEducationField(
-                          index,
-                          "fieldOfStudy",
-                          e.target.value
-                        )
-                      }
-                      className="w-full bg-gray-800 border border-gray-700 rounded-md px-4 py-2"
-                      placeholder="e.g., Computer Science"
-                    />
-                  </div>
-                  <div className="mb-2">
-                    <label className="block text-gray-400 mb-1">
-                      Graduation Year
-                    </label>
-                    <input
-                      type="text"
-                      name="graduationYear"
-                      value={edu.graduationYear}
-                      onChange={(e) =>
-                        updateEducationField(
-                          index,
-                          "graduationYear",
-                          e.target.value
-                        )
-                      }
-                      className="w-full bg-gray-800 border border-gray-700 rounded-md px-4 py-2"
-                      placeholder="e.g., 2025"
-                    />
-                  </div>
-                  <button
-                    onClick={() => removeEducation(index)}
-                    className="text-red-500 mt-2"
-                  >
-                    <FaTrash /> Remove
-                  </button>
-                </div>
-              ))
+                ))
               : profileData.education.map((edu, index) => (
-                <div key={index} className="mb-4">
-                  <p className="text-lg font-semibold">{edu.school}</p>
-                  <p className="text-gray-300">
-                    {edu.degree} in {edu.fieldOfStudy}
-                  </p>
-                  <p className="text-gray-400">
-                    Graduated: {edu.graduationYear}
-                  </p>
-                </div>
-              ))}
+                  <div key={index} className="mb-4">
+                    <p className="text-lg font-semibold">{edu.school}</p>
+                    <p className="text-gray-300">
+                      {edu.degree} in {edu.fieldOfStudy}
+                    </p>
+                    <p className="text-gray-400">
+                      Graduated: {edu.graduationYear}
+                    </p>
+                  </div>
+                ))}
             {isEditing && (
               <button
                 onClick={addEducationField}
@@ -936,72 +945,72 @@ export default function CreateProfile() {
             <h2 className="text-xl font-bold mb-2">Certifications</h2>
             {isEditing
               ? profileData.certifications.map((cert, index) => (
-                <div key={index} className="mb-4 p-4 bg-gray-900 rounded-md">
-                  <div className="mb-2">
-                    <label className="block text-gray-400 mb-1">Name</label>
-                    <input
-                      type="text"
-                      name="name"
-                      value={cert.name}
-                      onChange={(e) =>
-                        updateCertificationField(
-                          index,
-                          "name",
-                          e.target.value
-                        )
-                      }
-                      className="w-full bg-gray-800 border border-gray-700 rounded-md px-4 py-2"
-                      placeholder="e.g., AWS Certified Developer - Associate"
-                    />
+                  <div key={index} className="mb-4 p-4 bg-gray-900 rounded-md">
+                    <div className="mb-2">
+                      <label className="block text-gray-400 mb-1">Name</label>
+                      <input
+                        type="text"
+                        name="name"
+                        value={cert.name}
+                        onChange={(e) =>
+                          updateCertificationField(
+                            index,
+                            "name",
+                            e.target.value
+                          )
+                        }
+                        className="w-full bg-gray-800 border border-gray-700 rounded-md px-4 py-2"
+                        placeholder="e.g., AWS Certified Developer - Associate"
+                      />
+                    </div>
+                    <div className="mb-2">
+                      <label className="block text-gray-400 mb-1">Issuer</label>
+                      <input
+                        type="text"
+                        name="issuer"
+                        value={cert.issuer}
+                        onChange={(e) =>
+                          updateCertificationField(
+                            index,
+                            "issuer",
+                            e.target.value
+                          )
+                        }
+                        className="w-full bg-gray-800 border border-gray-700 rounded-md px-4 py-2"
+                        placeholder="e.g., Amazon Web Services"
+                      />
+                    </div>
+                    <div className="mb-2">
+                      <label className="block text-gray-400 mb-1">Date</label>
+                      <input
+                        type="date"
+                        name="date"
+                        value={cert.date}
+                        onChange={(e) =>
+                          updateCertificationField(
+                            index,
+                            "date",
+                            e.target.value
+                          )
+                        }
+                        className="w-full bg-gray-800 border border-gray-700 rounded-md px-4 py-2"
+                      />
+                    </div>
+                    <button
+                      onClick={() => removeCertification(index)}
+                      className="text-red-500 mt-2"
+                    >
+                      <FaTrash /> Remove
+                    </button>
                   </div>
-                  <div className="mb-2">
-                    <label className="block text-gray-400 mb-1">Issuer</label>
-                    <input
-                      type="text"
-                      name="issuer"
-                      value={cert.issuer}
-                      onChange={(e) =>
-                        updateCertificationField(
-                          index,
-                          "issuer",
-                          e.target.value
-                        )
-                      }
-                      className="w-full bg-gray-800 border border-gray-700 rounded-md px-4 py-2"
-                      placeholder="e.g., Amazon Web Services"
-                    />
-                  </div>
-                  <div className="mb-2">
-                    <label className="block text-gray-400 mb-1">Date</label>
-                    <input
-                      type="date"
-                      name="date"
-                      value={cert.date}
-                      onChange={(e) =>
-                        updateCertificationField(
-                          index,
-                          "date",
-                          e.target.value
-                        )
-                      }
-                      className="w-full bg-gray-800 border border-gray-700 rounded-md px-4 py-2"
-                    />
-                  </div>
-                  <button
-                    onClick={() => removeCertification(index)}
-                    className="text-red-500 mt-2"
-                  >
-                    <FaTrash /> Remove
-                  </button>
-                </div>
-              ))
+                ))
               : profileData.certifications.map((cert, index) => (
-                <div key={index} className="mb-4">
-                  <p className="text-lg font-semibold">{cert.name}</p>
-                  <p className="text-gray-300">{cert.issuer}</p>
-                  <p className="text-gray-400">{cert.date}</p>
-                </div>
-              ))}
+                  <div key={index} className="mb-4">
+                    <p className="text-lg font-semibold">{cert.name}</p>
+                    <p className="text-gray-300">{cert.issuer}</p>
+                    <p className="text-gray-400">{cert.date}</p>
+                  </div>
+                ))}
             {isEditing && (
               <button
                 onClick={addCertificationField}
@@ -1079,8 +1088,8 @@ export default function CreateProfile() {
             onClick={() => {
               toggleEdit();
               updateUserProfile();
-              updateUserBasicInfo();
-            }}            
+              // updateUserBasicInfo();
+            }}
             className="bg-[#00BDD6] text-gray-900 font-semibold px-6 py-2 rounded hover:bg-[#00a5c2] focus:outline-none focus:ring-2 focus:ring-[#00BDD6]"
           >
             Save Changes

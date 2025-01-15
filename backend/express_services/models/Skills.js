@@ -1,19 +1,24 @@
 const { DataTypes } = require("sequelize");
 const sequelize = require("../config/database");
 
-const VerificationCode = sequelize.define(
-  "VerificationCode",
+const UserSkill = sequelize.define(
+  "UserSkills",
   {
-    userId: {
+    userProfileId: {
       type: DataTypes.INTEGER,
       allowNull: true,
+      references: {
+        model: "UserProfiles",
+        key: "id",
+      },
+      onDelete: "CASCADE",
     },
-    code: {
+    skill: {
       type: DataTypes.STRING,
       allowNull: true,
     },
-    expiry: {
-      type: DataTypes.DATE,
+    rating: {
+      type: DataTypes.FLOAT,
       allowNull: true,
     },
   },
@@ -22,4 +27,4 @@ const VerificationCode = sequelize.define(
   }
 );
 
-module.exports = VerificationCode;
+module.exports = UserSkill;
