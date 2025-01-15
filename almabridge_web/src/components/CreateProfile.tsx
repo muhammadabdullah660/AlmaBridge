@@ -113,9 +113,9 @@ export default function CreateProfile() {
         endDate: exp.endDate,
         description: exp.description,
       }));
-
+      console.log(profileData.skills);
       const formattedSkills = profileData.skills.map((skill) => ({
-        skillName: skill.name, // Rename 'name' to 'skillName'
+        skill: skill.name, // Rename 'name' to 'skillName'
         rating: skill.rating,
       }));
 

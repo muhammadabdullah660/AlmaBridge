@@ -27,6 +27,62 @@ const Suggestions: React.FC = () => {
   }>({
     profiles: [],
   });
+  const fetchRecommendations = async () => {
+    let userData: any = null; // Initialize userData
+    let token: string | null = null;
+
+    if (typeof window !== "undefined") {
+      token = localStorage.getItem("token");
+    }
+
+    try {
+      // Fetch user data
+      const userResponse = await axios.get(
+        "http://127.0.0.1:3001/api/profile",
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+      userData = userResponse.data; // Assign user data after successful response
+      console.log("User Data:", userData.data.profile);
+      const { educations, experiences, skills, bio } = userData.data.profile;
+      // stringify the user data each attribute
+
+      userData = {
+        bio,
+        educations,
+        experiences,
+        skills,
+      };
+      console.log("User Data:", userData);
+    } catch (error) {
+      console.error("Error fetching user data:", error);
+      return; // Exit function if user data fetch fails
+    }
+
+    try {
+      // Fetch recommendations
+      const response = await fetch("http://127.0.0.1:5001/api/recommend", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(userData),
+      });
+
+      if (!response.ok) {
+        throw new Error(
+          `Failed to fetch recommendations: ${response.statusText}`
+        );
+      }
+
+      const data = await response.json();
+      console.log("Recommendations:", data);
+    } catch (error) {
+      console.error("Error fetching recommendations:", error);
+    }
+  };
+
   // fetch all suggestions from the server
   useEffect(() => {
     axios.get("http://127.0.0.1:5001/api/profiles").then((response) => {
@@ -233,7 +289,15 @@ const Suggestions: React.FC = () => {
           </h1>
         </nav>
       </div>
-
+      {/* Recommend button */}
+      <div className="flex items-center justify-center">
+        <button
+          className="w-1/2 p-2 bg-[#00BDD6] text-white rounded-lg flex items-center justify-center"
+          onClick={fetchRecommendations}
+        >
+          Recommend
+        </button>
+      </div>
       <div
         className={`flex-grow transition-all ${
           sidebarOpen ? "pl-64" : "pl-0"

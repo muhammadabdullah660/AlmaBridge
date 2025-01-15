@@ -6,7 +6,7 @@ const UserCertificate = sequelize.define(
   {
     userProfileId: {
       type: DataTypes.INTEGER,
-      allowNull: false,
+      allowNull: true,
       references: {
         model: "UserProfiles",
         key: "id",
@@ -15,15 +15,15 @@ const UserCertificate = sequelize.define(
     },
     certificationName: {
       type: DataTypes.STRING,
-      allowNull: false,
+      allowNull: true,
     },
     issuer: {
       type: DataTypes.FLOAT,
-      allowNull: false,
+      allowNull: true,
     },
     issueDate: {
       type: DataTypes.STRING,
-      allowNull: false,
+      allowNull: true,
     },
   },
   {
