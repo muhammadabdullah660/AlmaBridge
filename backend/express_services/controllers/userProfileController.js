@@ -1,12 +1,10 @@
-const UserProfile = require('../models/UserProfile');
+const UserProfile = require("../models/UserProfile");
 const UserEducation = require("../models/Education");
-const UserExperience = require('../models/Experience');
+const UserExperience = require("../models/Experience");
 const logAction = require("../utils/logService");
-const UserSkill = require('../models/Skills');
-const UserCertificate = require('../models/Certification');
-const User = require('../models/User');
-
-
+const UserSkill = require("../models/Skills");
+const UserCertificate = require("../models/Certification");
+const User = require("../models/User");
 
 const updateUserProfile = async (req, res) => {
   try {
@@ -47,22 +45,45 @@ const updateUserProfile = async (req, res) => {
       };
 
       await user.update(updatedUserData);
-
     }
 
-    if (req.body.education && Array.isArray(req.body.educations) && req.body.educations.length > 0) {
+    if (
+      req.body.education &&
+      Array.isArray(req.body.educations) &&
+      req.body.educations.length > 0
+    ) {
       await bulkInsert(UserEducation, req.body.educations, existingProfile.id);
     }
-    if (req.body.experiences && Array.isArray(req.body.experiences) && req.body.experiences.length > 0) {
-      await bulkInsert(UserExperience, req.body.experiences, existingProfile.id);
+    if (
+      req.body.experiences &&
+      Array.isArray(req.body.experiences) &&
+      req.body.experiences.length > 0
+    ) {
+      await bulkInsert(
+        UserExperience,
+        req.body.experiences,
+        existingProfile.id
+      );
     }
-
-    if (req.body.skills && Array.isArray(req.body.skills) && req.body.skills.length > 0) {
+    console.log(req.body.skills);
+    if (
+      req.body.skills &&
+      Array.isArray(req.body.skills) &&
+      req.body.skills.length > 0
+    ) {
       await bulkInsert(UserSkill, req.body.skills, existingProfile.id);
     }
 
-    if (req.body.certificates && Array.isArray(req.body.certificates) && req.body.certificates.length > 0) {
-      await bulkInsert(UserCertificate, req.body.certificates, existingProfile.id);
+    if (
+      req.body.certificates &&
+      Array.isArray(req.body.certificates) &&
+      req.body.certificates.length > 0
+    ) {
+      await bulkInsert(
+        UserCertificate,
+        req.body.certificates,
+        existingProfile.id
+      );
     }
 
     // Success response
@@ -72,8 +93,9 @@ const updateUserProfile = async (req, res) => {
       "User profile and related data updated successfully",
       "success"
     );
-    return res.status(200).json({ message: "User profile updated successfully" });
-
+    return res
+      .status(200)
+      .json({ message: "User profile updated successfully" });
   } catch (error) {
     console.error("Error updating user profile:", error);
 
@@ -92,7 +114,6 @@ const updateUserProfile = async (req, res) => {
   }
 };
 
-
 const bulkInsert = async (Model, records, userProfileId) => {
   if (Array.isArray(records) && records.length > 0) {
     await Model.destroy({ where: { userProfileId } });
@@ -105,40 +126,58 @@ const bulkInsert = async (Model, records, userProfileId) => {
   }
 };
 
-
-
 const getUserProfile = async (req, res) => {
   try {
     const { userId } = req.body;
 
     const user = await User.findOne({
       where: { id: userId },
-      attributes: ['firstName', 'lastName', 'email'],
+      attributes: ["firstName", "lastName", "email"],
       include: [
         {
           model: UserProfile,
-          as: 'profile',
-          attributes: ['address', 'linkedin', 'bio', 'gender', 'secondaryEmail', 'portfolio', 'linktree', 'resume'],
+          as: "profile",
+          attributes: [
+            "address",
+            "linkedin",
+            "bio",
+            "gender",
+            "secondaryEmail",
+            "portfolio",
+            "linktree",
+            "resume",
+          ],
           include: [
             {
               model: UserEducation,
-              as: 'educations',
-              attributes: ['school', 'degree', 'fieldOfStudy', 'graduationYear'],
+              as: "educations",
+              attributes: [
+                "school",
+                "degree",
+                "fieldOfStudy",
+                "graduationYear",
+              ],
             },
             {
               model: UserExperience,
-              as: 'experiences',
-              attributes: ['role', 'company', 'startDate', 'endDate', 'description'],
+              as: "experiences",
+              attributes: [
+                "role",
+                "company",
+                "startDate",
+                "endDate",
+                "description",
+              ],
             },
             {
               model: UserSkill,
-              as: 'skills',
-              attributes: ['skill', 'rating'],
+              as: "skills",
+              attributes: ["skill", "rating"],
             },
             {
               model: UserCertificate,
-              as: 'certificates',
-              attributes: ['certificationName', 'issuer', 'issueDate'],
+              as: "certificates",
+              attributes: ["certificationName", "issuer", "issueDate"],
             },
           ],
         },
@@ -146,7 +185,12 @@ const getUserProfile = async (req, res) => {
     });
 
     if (!user) {
-      await logAction("Profile Not Found", userId, "User profile not found", "failure");
+      await logAction(
+        "Profile Not Found",
+        userId,
+        "User profile not found",
+        "failure"
+      );
       return res.status(404).json({ message: "User Not Found" });
     }
 
@@ -155,48 +199,69 @@ const getUserProfile = async (req, res) => {
       data: user,
     });
   } catch (error) {
-    await logAction("Failed to Retrieve User Profile", req.body.userId, error.message, "failure");
+    await logAction(
+      "Failed to Retrieve User Profile",
+      req.body.userId,
+      error.message,
+      "failure"
+    );
     res.status(500).json({
       message: "Failed to retrieve user profile",
       error: error.message,
     });
   }
-
 };
-
-
-
 
 const getAllUserProfiles = async (req, res) => {
   const { userId } = req.body;
   try {
     const users = await User.findAll({
-      attributes: ['firstName', 'lastName', 'email'],
+      attributes: ["firstName", "lastName", "email"],
       include: [
         {
           model: UserProfile,
-          as: 'profile',
-          attributes: ['address', 'linkedin', 'bio', 'gender', 'secondaryEmail', 'portfolio', 'linktree', 'resume'],
+          as: "profile",
+          attributes: [
+            "address",
+            "linkedin",
+            "bio",
+            "gender",
+            "secondaryEmail",
+            "portfolio",
+            "linktree",
+            "resume",
+          ],
           include: [
             {
               model: UserEducation,
-              as: 'educations',
-              attributes: ['school', 'degree', 'fieldOfStudy', 'graduationYear'],
+              as: "educations",
+              attributes: [
+                "school",
+                "degree",
+                "fieldOfStudy",
+                "graduationYear",
+              ],
             },
             {
               model: UserExperience,
-              as: 'experiences',
-              attributes: ['role', 'company', 'startDate', 'endDate', 'description'],
+              as: "experiences",
+              attributes: [
+                "role",
+                "company",
+                "startDate",
+                "endDate",
+                "description",
+              ],
             },
             {
               model: UserSkill,
-              as: 'skills',
-              attributes: ['skill', 'rating'],
+              as: "skills",
+              attributes: ["skill", "rating"],
             },
             {
               model: UserCertificate,
-              as: 'certificates',
-              attributes: ['certificationName', 'issuer', 'issueDate'],
+              as: "certificates",
+              attributes: ["certificationName", "issuer", "issueDate"],
             },
           ],
         },
@@ -204,7 +269,12 @@ const getAllUserProfiles = async (req, res) => {
     });
 
     if (users.length === 0) {
-      await logAction("No Profiles Found", userId, "No user profiles found", "failure");
+      await logAction(
+        "No Profiles Found",
+        userId,
+        "No user profiles found",
+        "failure"
+      );
       return res.status(404).json({ message: "No User Profiles Found" });
     }
 
@@ -213,7 +283,12 @@ const getAllUserProfiles = async (req, res) => {
       data: users,
     });
   } catch (error) {
-    await logAction("Failed to Retrieve User Profiles", userId, error.message, "failure");
+    await logAction(
+      "Failed to Retrieve User Profiles",
+      userId,
+      error.message,
+      "failure"
+    );
     res.status(500).json({
       message: "Failed to retrieve user profiles",
       error: error.message,
@@ -221,7 +296,4 @@ const getAllUserProfiles = async (req, res) => {
   }
 };
 
-
-
-
-module.exports = { getUserProfile, updateUserProfile, getAllUserProfiles};
+module.exports = { getUserProfile, updateUserProfile, getAllUserProfiles };

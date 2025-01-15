@@ -6,7 +6,7 @@ const UserExperience = sequelize.define(
   {
     userProfileId: {
       type: DataTypes.INTEGER,
-      allowNull: false,
+      allowNull: true,
       references: {
         model: "UserProfiles",
         key: "id",
@@ -15,11 +15,11 @@ const UserExperience = sequelize.define(
     },
     role: {
       type: DataTypes.STRING,
-      allowNull: false,
+      allowNull: true,
     },
     company: {
       type: DataTypes.STRING,
-      allowNull: false,
+      allowNull: true,
     },
     startDate: {
       type: DataTypes.STRING,

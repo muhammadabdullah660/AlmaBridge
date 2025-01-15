@@ -26,15 +26,15 @@ const Achievements = sequelize.define(
     },
     department: {
       type: DataTypes.STRING,
-      allowNull: false,
+      allowNull: true,
     },
     Link: {
       type: DataTypes.STRING,
-      allowNull: false,
+      allowNull: true,
     },
     achievementPicture: {
       type: DataTypes.STRING,
-      //allowNull: false,
+      //allowNull: true,
     },
   },
   {
