@@ -6,7 +6,7 @@ import "../styles/achievements.css";
 import axios from "axios";
 
 interface Achiever {
-    id?: string;
+    id: string;
     achievementName: string;
     achieverName: string;
     achieverCategory: string;
@@ -44,6 +44,7 @@ const Achievements: React.FC = () => {
     const [editModalOpen, setEditModalOpen] = useState<boolean>(false);
     const [editData, setEditData] = useState<Achiever | null>(null);
     const [newAchiever, setNewAchiever] = useState<Achiever>({
+        id: "",
         achievementName: "",
         achieverName: "",
         achieverCategory: "",
@@ -67,6 +68,7 @@ const Achievements: React.FC = () => {
     const handleDialogClose = () => {
         setDialogOpen(false);
         setNewAchiever({
+            id: "",
             achievementName: "",
             achieverName: "",
             achieverCategory: "",
@@ -173,7 +175,7 @@ const Achievements: React.FC = () => {
                 setAchievers((prevAchievers) =>
                     prevAchievers.filter((_, i) => i !== index)
                 );
-                setViewModalOpen(false); 
+                setViewModalOpen(false);
                 console.log("Job deleted successfully");
                 handleDialogClose();
             } else {
