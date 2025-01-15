@@ -1,27 +1,30 @@
-const { DataTypes } = require('sequelize');
-const sequelize = require('../config/database');
+const { DataTypes } = require("sequelize");
+const sequelize = require("../config/database");
 
-const UserSkill = sequelize.define('UserSkills', {
+const UserSkill = sequelize.define(
+  "UserSkills",
+  {
     userProfileId: {
-        type: DataTypes.INTEGER,
-        allowNull: false,
-        references: {
-            model: 'UserProfiles',
-            key: 'id',
-        },
-        onDelete: 'CASCADE',
+      type: DataTypes.INTEGER,
+      allowNull: true,
+      references: {
+        model: "UserProfiles",
+        key: "id",
+      },
+      onDelete: "CASCADE",
     },
     skill: {
-        type: DataTypes.STRING,
-        allowNull: false,
+      type: DataTypes.STRING,
+      allowNull: true,
     },
     rating: {
-        type: DataTypes.FLOAT,
-        allowNull: false,
+      type: DataTypes.FLOAT,
+      allowNull: true,
     },
-}, {
+  },
+  {
     timestamps: true,
-});
-
+  }
+);
 
 module.exports = UserSkill;

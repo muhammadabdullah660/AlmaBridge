@@ -1,5 +1,5 @@
-const { DataTypes } = require('sequelize');
-const sequelize = require('../config/database');
+const { DataTypes } = require("sequelize");
+const sequelize = require("../config/database");
 
 const Achievements = sequelize.define('Achievements', {
   id: {
@@ -42,5 +42,6 @@ const Achievements = sequelize.define('Achievements', {
 }, {
   timestamps: true,
 });
+
 
 module.exports = Achievements;

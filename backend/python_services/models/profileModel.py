@@ -21,7 +21,7 @@ class ProfileModel:
     def __init__(self, db_url=CLOUD_DB_URI, db_name=CLOUD_DB_NAME):
         self.client = MongoClient(db_url)
         self.db = self.client[db_name]
-        self.collection = self.db["profiles"]
+        self.collection = self.db["scraped_profiles"]
     
 
     def insert_profiles(self, profile_data: dict) -> str:
