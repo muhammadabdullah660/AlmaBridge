@@ -349,7 +349,7 @@ export default function SignUp() {
           <p className="mt-10 text-center text-sm text-gray-500">
             Already a member?{" "}
             <a
-              href="#"
+              href="/signin"
               className="font-semibold leading-6 text-[#00BDD6] hover:text-[#00BDD6]-900"
             >
               Sign In

@@ -14,7 +14,6 @@ export default function CreateProfile() {
   const [isEditing, setIsEditing] = useState(false);
   const [profileData, setProfileData] = useState<{
     id: number;
-    id: number;
     firstName: string;
     lastName: string;
     address: string;
@@ -51,7 +50,7 @@ export default function CreateProfile() {
     linktree: "",
   });
 
-  const [profilePicture, setProfilePicture] = useState("/assets/fatima.webp");
+  const [profilePicture, setProfilePicture] = useState("/assets/Default_pfp.jpg");
 
   const toggleEdit = () => setIsEditing(!isEditing);
 

@@ -17,6 +17,8 @@ const Navbar: React.FC = () => {
     { href: "/#team", label: "Team" },
     { href: "/#features", label: "Features" },
     { href: "/achievements", label: "Achievements" },
+    {href:"/suggestionsPage", label: "Suggestions"},
+    {href:"/jobPosting", label: "Jobs"},
   ];
 
   return (
