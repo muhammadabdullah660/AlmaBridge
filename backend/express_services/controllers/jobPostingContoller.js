@@ -1,32 +1,55 @@
 const JobPosting = require("../models/JobPosting");
+const logAction = require("../utils/logService");
+const { validationResult } = require('express-validator');
+const { handleValidationErrors } = require('../utils/errorHandler');
+
+
 
 // Create a Job Posting
 const createJobPosting = async (req, res) => {
+
+  const errors = validationResult(req);
+  if(!errors.isEmpty()) {
+    const { status, response } = handleValidationErrors(errors);
+    await logAction(
+        "Job Post Creation Failed",
+        null,
+        `Validation errors: ${JSON.stringify(errors.array())}`,
+        "failure"
+    );
+    return res.status(status).json(response);
+  }
+
+  const { userId, jobName, jobDescription, salaryRange, location, jobType } = req.body;
   try {
-    const {
+    const newJobPosting = await JobPosting.create({
+      userId,
       jobName,
       jobDescription,
       salaryRange,
       location,
-      postedById,
-      jobType,
-    } = req.body;
-
-    const newJobPosting = await JobPosting.create({
-      jobName,
-      jobDescription,
-      salaryRange,
-      location, // Directly save location as an array of strings
-      postedById,
       jobType,
     });
 
+    await logAction(
+      "Job Post Created",
+      userId,
+      `UserId: ${userId} create a job post successfully`,
+    );
+
     res.status(201).json(newJobPosting);
   } catch (error) {
-    console.error("Error creating job posting:", error); // Log the error for debugging
+    await logAction(
+      "Job Post Failed",
+      userId,
+      error.message,
+      "failure"
+    );
     res.status(500).json({ message: "Error creating job posting", error });
   }
 };
+
+
 const getAllJobPosting = async (req, res) => {
   try {
     const jobs = await JobPosting.findAll();
@@ -38,6 +61,18 @@ const getAllJobPosting = async (req, res) => {
 };
 
 const updateJobPosting = async (req, res) => {
+  const errors = validationResult(req);
+  if(!errors.isEmpty()) {
+    const { status, response } = handleValidationErrors(errors);
+    await logAction(
+        "Job Post Updation Failed",
+        null,
+        `Validation errors: ${JSON.stringify(errors.array())}`,
+        "failure"
+    );
+    return res.status(status).json(response);
+  }
+  const { userId } = req.body;
   try {
     const { id } = req.params;
     const updates = req.body;
@@ -47,18 +82,22 @@ const updateJobPosting = async (req, res) => {
     });
 
     if (!updated) {
+      await logAction("Job Post Updation Fail", userId, `Such Job does not Exist in the System`, "failure");
       return res.status(404).json({ message: "Job posting not found" });
     }
-
-    const updatedJobPosting = await JobPosting.findByPk(id);
-    res.status(200).json(updatedJobPosting);
+    await logAction("Job Post Updated", userId, `UserId: ${userId} has updated the Job Post Successfully`);
+    res.status(200).json({ message: "Job Post Updated Successfully" });
   } catch (error) {
-    console.error("Error updating job posting:", error); // Log the error for debugging
+    await logAction("Job Post Updation Fail", userId, error, "failure");
     res.status(500).json({ message: "Error updating job posting", error });
   }
 };
 
+
+
 const deleteJobPosting = async (req, res) => {
+
+  const { userId } = req.body;
   try {
     const { id } = req.params;
 
@@ -67,12 +106,14 @@ const deleteJobPosting = async (req, res) => {
     });
 
     if (!deleted) {
+      await logAction("Job Post Deletion Fail", userId, `Such Job does not Exist in the System`, "failure");
       return res.status(404).json({ message: "Job posting not found" });
     }
 
-    res.status(200).json({ message: "Job posting deleted successfully" });
+    await logAction("Job Post Deleted", userId, `UserId: ${userId} has deleted the Job Post Successfully`);
+    res.status(204).json({ message: "Job posting deleted successfully" });
   } catch (error) {
-    console.error("Error deleting job posting:", error); // Log the error for debugging
+    await logAction("Job Post Deletion Fail", userId, error, "failure");
     res.status(500).json({ message: "Error deleting job posting", error });
   }
 };

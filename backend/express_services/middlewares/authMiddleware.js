@@ -46,7 +46,7 @@ const verifyRole = async (req, res, next) => {
       return res.status(404).json({ message: 'User not found' });
     }
 
-    const allowedRoles = ['admin', 'uniAdmin', 'alumni'];
+    const allowedRoles = ['admin', 'uniAdmin'];
     if (!allowedRoles.includes(user.role)) {
       await logAction("User Role Authentication", userId, "User Role Authentication Failed Due to Insufficient Permissions", "failure");
       return res.status(403).json({ message: 'Access denied. Insufficient permissions' });

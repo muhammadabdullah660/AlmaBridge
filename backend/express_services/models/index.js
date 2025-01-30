@@ -4,6 +4,8 @@ const UserEducation = require('./Education');
 const UserExperience = require('./Experience');
 const UserCertificate = require('./Certification');
 const UserSkills = require('./Skills');
+const Achievements = require('./Achievements');
+const JobPosts = require('./JobPosting');
 
 const sequelize = require('../config/database');
 
@@ -73,6 +75,30 @@ UserExperience.belongsTo(UserProfile, {
 UserEducation.belongsTo(UserProfile, {
     foreignKey: 'userProfileId',
     as: "profile",
+});
+
+// Relation of Achievements with User Model
+Achievements.belongsTo(User, {
+    foreignKey: 'userId',
+    as: "user",
+});
+
+User.hasMany(Achievements, {
+    foreignKey: 'userId',
+    as: "achievements",
+    onDelete: 'CASCADE',
+});
+
+// Relation of JobPosting with User Model
+User.hasMany(JobPosts, {
+    foreignKey: "userId",
+    as: "JobPosts",
+    onDelete: "CASCADE",
+});
+
+JobPosts.belongsTo(User, {
+    foreignKey: 'userId',
+    as: "user",
 });
 
 

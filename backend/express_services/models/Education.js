@@ -2,11 +2,11 @@ const { DataTypes } = require("sequelize");
 const sequelize = require("../config/database");
 
 const UserEducation = sequelize.define(
-  "UserEducation",
+  "UserEducations",
   {
     userProfileId: {
       type: DataTypes.INTEGER,
-      allowNull: true,
+      allowNull: false,
       references: {
         model: "UserProfiles",
         key: "id",
@@ -14,12 +14,12 @@ const UserEducation = sequelize.define(
       onDelete: "CASCADE",
     },
     school: {
-      type: DataTypes.STRING,
-      allowNull: true,
+      type: DataTypes.TEXT,
+      allowNull: false,
     },
     degree: {
       type: DataTypes.STRING,
-      allowNull: true,
+      allowNull: false,
     },
     fieldOfStudy: {
       type: DataTypes.STRING,
@@ -32,6 +32,12 @@ const UserEducation = sequelize.define(
   },
   {
     timestamps: true,
+    indexes: [
+      {
+        unique: false,
+        fields: ["userProfileId"],
+      },
+    ],
   }
 );
 

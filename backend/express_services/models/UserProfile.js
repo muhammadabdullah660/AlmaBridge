@@ -13,16 +13,20 @@ const UserProfile = sequelize.define(
       },
       onDelete: "CASCADE",
     },
+    profileImage: {
+      type: DataTypes.TEXT,
+      allowNull: true,
+    },
     address: {
-      type: DataTypes.STRING,
+      type: DataTypes.TEXT,
       allowNull: true,
     },
     linkedin: {
-      type: DataTypes.STRING,
+      type: DataTypes.TEXT,
       allowNull: true,
     },
     bio: {
-      type: DataTypes.STRING,
+      type: DataTypes.TEXT,
       allowNull: true,
     },
     gender: {
@@ -34,20 +38,22 @@ const UserProfile = sequelize.define(
       allowNull: true,
     },
     portfolio: {
-      type: DataTypes.STRING,
+      type: DataTypes.TEXT,
       allowNull: true,
     },
     linktree: {
-      type: DataTypes.STRING,
-      allowNull: true,
-    },
-    resume: {
-      type: DataTypes.STRING,
+      type: DataTypes.TEXT,
       allowNull: true,
     },
   },
   {
     timestamps: true,
+    indexes: [
+      {
+        unique: true,
+        fields: ["userId"],
+      },
+    ],
   }
 );
 

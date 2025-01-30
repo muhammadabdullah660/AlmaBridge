@@ -11,3 +11,6 @@ spacy
 scikit-learn
 pandas
 numpy
+selenium
+beautifulsoup4
+python-dotenv

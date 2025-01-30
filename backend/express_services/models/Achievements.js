@@ -2,10 +2,14 @@ const { DataTypes } = require("sequelize");
 const sequelize = require("../config/database");
 
 const Achievements = sequelize.define('Achievements', {
-  id: {
+  userId: {
     type: DataTypes.INTEGER,
-    primaryKey: true,
-    autoIncrement: true, // Automatically increment IDs
+    allowNull: false,
+    references: {
+      model: "Users",
+      key: "id",
+    },
+    onDelete: "CASCADE",
   },
   achievementName: {
     type: DataTypes.STRING,
@@ -16,31 +20,37 @@ const Achievements = sequelize.define('Achievements', {
     allowNull: false,
   },
   achieverCategory: {
-    type: DataTypes.STRING,
-    allowNull: false,
+    type: DataTypes.ENUM("student", "alumni"),
+    allowNull: true,
   },
   achievementsDescription: {
-    type: DataTypes.STRING,
+    type: DataTypes.TEXT,
     allowNull: false,
   },
   session: {
     type: DataTypes.STRING,
-    allowNull: false,
+    allowNull: true,
   },
   department: {
-    type: DataTypes.STRING,
-    allowNull: false,
+    type: DataTypes.STRING(400),
+    allowNull: true,
   },
   Link: {
-    type: DataTypes.STRING,
-    //allowNull: false,
+    type: DataTypes.TEXT,
+    allowNull: true,
   },
   achievementPicture: {
-    type: DataTypes.STRING,
-    //allowNull: false,
+    type: DataTypes.TEXT,
+    allowNull: true,
   }
 }, {
   timestamps: true,
+  indexes: [
+    {
+      unique: false,
+      fields: ["userId"],
+    },
+  ],
 });
 
 
