@@ -6,7 +6,7 @@ const UserCertificate = sequelize.define(
   {
     userProfileId: {
       type: DataTypes.INTEGER,
-      allowNull: true,
+      allowNull: false,
       references: {
         model: "UserProfiles",
         key: "id",
@@ -14,12 +14,12 @@ const UserCertificate = sequelize.define(
       onDelete: "CASCADE",
     },
     certificationName: {
-      type: DataTypes.STRING,
-      allowNull: true,
+      type: DataTypes.TEXT,
+      allowNull: false,
     },
     issuer: {
-      type: DataTypes.FLOAT,
-      allowNull: true,
+      type: DataTypes.TEXT,
+      allowNull: false,
     },
     issueDate: {
       type: DataTypes.STRING,
@@ -28,6 +28,12 @@ const UserCertificate = sequelize.define(
   },
   {
     timestamps: true,
+    indexes: [
+      {
+        unique: false,
+        fields: ["userProfileId"],
+      },
+    ],
   }
 );
 

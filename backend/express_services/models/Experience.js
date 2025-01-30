@@ -2,11 +2,11 @@ const { DataTypes } = require("sequelize");
 const sequelize = require("../config/database");
 
 const UserExperience = sequelize.define(
-  "UserExperience",
+  "UserExperiences",
   {
     userProfileId: {
       type: DataTypes.INTEGER,
-      allowNull: true,
+      allowNull: false,
       references: {
         model: "UserProfiles",
         key: "id",
@@ -15,15 +15,15 @@ const UserExperience = sequelize.define(
     },
     role: {
       type: DataTypes.STRING,
-      allowNull: true,
+      allowNull: false,
     },
     company: {
       type: DataTypes.STRING,
-      allowNull: true,
+      allowNull: false,
     },
     startDate: {
       type: DataTypes.STRING,
-      allowNull: true,
+      allowNull: false,
     },
     endDate: {
       type: DataTypes.STRING,
@@ -36,9 +36,14 @@ const UserExperience = sequelize.define(
   },
   {
     timestamps: true,
+    indexes: [
+      {
+        unique: false,
+        fields: ["userProfileId"],
+      },
+    ],
   }
 );
 
-// Association with UserProfile Model
 
 module.exports = UserExperience;

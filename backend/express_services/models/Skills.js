@@ -13,7 +13,7 @@ const UserSkill = sequelize.define(
       },
       onDelete: "CASCADE",
     },
-    skill: {
+    skillName: {
       type: DataTypes.STRING,
       allowNull: true,
     },
@@ -24,6 +24,12 @@ const UserSkill = sequelize.define(
   },
   {
     timestamps: true,
+    indexes: [
+      {
+        unique: false,
+        fields: ["userProfileId"],
+      },
+    ],
   }
 );
 

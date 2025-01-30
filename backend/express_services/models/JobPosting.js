@@ -1,29 +1,31 @@
 const { DataTypes } = require("sequelize");
 const sequelize = require("../config/database");
 
-const JobPosting = sequelize.define(
-  "JobPosting",
-  {
+const JobPosting = sequelize.define("JobPosting", {
+    userId: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      references: {
+        model: "Users",
+        key: "id",
+      },
+      onDelete: "CASCADE",
+    },
     jobName: {
       type: DataTypes.STRING,
-      allowNull: true,
+      allowNull: false,
     },
     jobDescription:
     {
-      type: DataTypes.STRING(1000),
+      type: DataTypes.TEXT,
       allowNull: false,
-
     },
     salaryRange: {
       type: DataTypes.STRING,
       allowNull: true,
     },
     location: {
-      type: DataTypes.ARRAY(DataTypes.STRING), // Change location to an array of strings
-      allowNull: true,
-    },
-    postedById: {
-      type: DataTypes.INTEGER,
+      type: DataTypes.STRING(500),
       allowNull: true,
     },
     jobType: {
@@ -33,6 +35,12 @@ const JobPosting = sequelize.define(
   },
   {
     timestamps: true,
+    indexes: [
+      {
+        unique: false,
+        fields: ["userId"],
+      },
+    ],
   }
 );
 

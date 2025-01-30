@@ -5,6 +5,8 @@ const logAction = require("../utils/logService");
 const UserSkill = require("../models/Skills");
 const UserCertificate = require("../models/Certification");
 const User = require("../models/User");
+const { uploadFile, deleteFile, checkFileName } = require('../utils/cloudflareService');
+
 
 const updateUserProfile = async (req, res) => {
   try {
@@ -21,8 +23,29 @@ const updateUserProfile = async (req, res) => {
       );
       return res.status(404).json({ message: "User profile not found" });
     }
+    let filePath = null;
+    
+    if (req.file) {
+      const existingFileName = existingProfile?.profileImage;
+      try {
+        if (!existingFileName) {
+          filePath = await uploadFile(req.file, userId, "profileImages");
+        }
+        else if (checkFileName(req.file.originalname, existingFileName)) {
+          filePath = existingFileName;
+        }
+        else {
+          await deleteFile(existingFileName);
+          filePath = await uploadFile(req.file, userId);
+        }
+      } catch (error) {
+        console.error("Error handling file upload:", error.message);
+        throw new Error("File processing failed. Please try again.");
+      }
+    }
 
     const updatedProfileData = {
+      profileImage: filePath,
       address: req.body.address || existingProfile.address,
       linkedin: req.body.linkedin || existingProfile.linkedin,
       bio: req.body.bio || existingProfile.bio,
@@ -30,7 +53,6 @@ const updateUserProfile = async (req, res) => {
       portfolio: req.body.portfolio || existingProfile.portfolio,
       linktree: req.body.linktree || existingProfile.linktree,
       secondaryEmail: req.body.secondaryEmail || existingProfile.secondaryEmail,
-      resume: req.file ? req.file.path : null,
     };
 
     await existingProfile.update(updatedProfileData);
@@ -65,7 +87,6 @@ const updateUserProfile = async (req, res) => {
         existingProfile.id
       );
     }
-    console.log(req.body.skills);
     if (
       req.body.skills &&
       Array.isArray(req.body.skills) &&
@@ -138,6 +159,7 @@ const getUserProfile = async (req, res) => {
           model: UserProfile,
           as: "profile",
           attributes: [
+            "profileImage",
             "address",
             "linkedin",
             "bio",
@@ -145,7 +167,6 @@ const getUserProfile = async (req, res) => {
             "secondaryEmail",
             "portfolio",
             "linktree",
-            "resume",
           ],
           include: [
             {
@@ -222,6 +243,7 @@ const getAllUserProfiles = async (req, res) => {
           model: UserProfile,
           as: "profile",
           attributes: [
+            "profileImage",
             "address",
             "linkedin",
             "bio",
@@ -229,7 +251,6 @@ const getAllUserProfiles = async (req, res) => {
             "secondaryEmail",
             "portfolio",
             "linktree",
-            "resume",
           ],
           include: [
             {

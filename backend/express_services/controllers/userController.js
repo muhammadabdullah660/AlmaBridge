@@ -1,9 +1,11 @@
 const User = require("../models/User");
+const { Sequelize, json } = require("sequelize");
 const jwt = require("jsonwebtoken");
 const logAction = require("../utils/logService");
 const bcrypt = require("bcrypt");
 const {validationResult} = require("express-validator");
-const { sendVerificationEmail, verifyCode } = require("../utils/mailService");
+const { sendVerificationEmail, verifyCode, sendForgotPasswordMail, verifyResetToken } = require("../utils/mailService");
+const { handleValidationErrors } = require('../utils/errorHandler');
 const UserProfile = require("../models/UserProfile");
 const path = require('path');
 require('dotenv').config({ path: path.resolve(__dirname, '../../.env') });
@@ -19,75 +21,94 @@ const generateToken = (userId) => {
     return jwt.sign({id: userId}, process.env.JWT_SECRET, {expiresIn: "1h"});
 };
 
-//FUNCTION TO HANDLE VALIDATION ERRORS
-const handleValidationErrors = (errors) => {
-    return { status: 400, response: { errors: errors.array() } };
-};
 
 //REGISTER USER
 const register = async (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
         const { status, response } = handleValidationErrors(errors);
-        await logAction("User Registration Failed", null, `Validation errors: ${JSON.stringify(errors.array())}`, "failure");
+        await logAction(
+            "User Registration Failed",
+            null,
+            `Validation errors: ${JSON.stringify(errors.array())}`,
+            "failure"
+        );
         return res.status(status).json(response);
     }
 
-    const { firstName, lastName, email, password, role } = req.body;
+    const { firstName, lastName, email, password, role, studentEmail } = req.body;
+
+    const transaction = await Sequelize.transaction();
+
     try {
         const existingUser = await User.findOne({ where: { email } });
         if (existingUser) {
+            await logAction("User Registration Failed", null, `User already exists: ${email}`, "failure");
             return res.status(409).json({ message: "User Already Exists" });
         }
 
         const hashedPassword = await hashPassword(password);
-        const user = await User.create({
-            firstName,
-            lastName,
-            email,
-            password: hashedPassword,
-            role,
-            isActive: true,
-        });
-        
-        const userId = user.id;
-        
-        const isMailSend = await sendVerificationEmail(userId, email);
-        if (!isMailSend) {
-            await User.destroy({where: {userId} });
+
+        const user = await User.create(
+            {
+                firstName,
+                lastName,
+                email,
+                password: hashedPassword,
+                role,
+                isActive: true,
+            },
+            { transaction }
+        );
+
+        const userProfileData = {
+            userId: user.id,
+            ...(role === "student" && { secondaryEmail: studentEmail }),
+        };
+
+        await UserProfile.create(userProfileData, { transaction });
+
+        const isMailSent = await sendVerificationEmail(user.id, email);
+        if (!isMailSent) {
+            await transaction.rollback();
             await logAction(
                 "Verification Email Failed",
                 user.id,
-                `Issue While Sending Verification Mail`,
+                `Failed to send verification email to: ${email}`,
                 "failure"
             );
-
             return res.status(400).json({
-                message: "Issue While Sending Verification Mail",
+                message: "Failed to send verification email. Please check the email address or try again later.",
             });
         }
 
-        await logAction("User Registration", user.id, `New user registered with email: ${email}`);
-        const userProfileData = {
-            userId: user.id,
-            ...(role === "student" && { secondaryEmail: req.body.studentEmail }), // Add secondaryEmail only if role is "student"
-        };
-        
-        await UserProfile.create(userProfileData);
-        
+        await transaction.commit();
+        await logAction(
+            "User Registration",
+            user.id,
+            `New user registered successfully: ${email}`,
+            "success"
+        );
+
         const token = generateToken(user.id);
-        return res.status(201).json({ message: "User Registered Successfully.", token: token });
+
+        return res.status(201).json({
+            message: "User Registered Successfully.",
+            token,
+        });
     } catch (error) {
+        if (transaction) await transaction.rollback();
         await logAction("User Registration Failed", null, error.message, "failure");
         return res.status(500).json({
             message: "Server error",
-            error: error.message || "An unexpected error occurred",
+            error: error.message || "An unexpected error occurred.",
         });
     }
 };
 
 
 
+// Login User
 const login = async (req, res) => {
     const errors = validationResult(req);
     if(!errors.isEmpty()) {
@@ -192,7 +213,7 @@ const getUser = async (req, res) => {
             return res.status(404).json({ message: "User Not Found" });
         }
         await logAction("User Retrieve Successful", userId, `ID: ${userId} get the user Data`);
-        return res.status(200).json({ user });
+        return res.status(200).json({ firstName: user.firstName, lastName: user.lastName, email: user.email, role: user.role });
     } catch(error) {
         await logAction("User Data Retrieval Failed", userId, "Error Occur's While Retrieve User Data", "failure");
         return res.status(500).json({ message: error.message });
@@ -200,34 +221,139 @@ const getUser = async (req, res) => {
 };
 
 
-const updateUser = async (req, res) => {
-    // Extract userId and omit it from updateData
-    const { userId, ...updateData } = req.body;
+const forgotPassword = async (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        const {status, response} = handleValidationErrors(errors);
+        await logAction(
+            "Forgot Password Failed",
+            null,
+            "Email not provided in the request.",
+            "failure"
+        );
+        return res.status(status).json(response);
+    }
+
+    const { email } = req.body;
+
     try {
-        const user = await User.findByPk(userId);
+        const user = await User.findOne({ where: { email } });
         if (!user) {
-            await logAction("User Retrieval Failed", userId, "Error Occured while Update the User Data", "failure");
-            return res.status(404).json({ message: 'User not found' });
+            await logAction(
+                "Forgot Password Failed",
+                null,
+                `User Not Found of Provided Email: ${email}`,
+                "failure"
+            );
+            return res.status(404).json({ message: "User with this email does not exist." });
         }
-    
-        // Update the user with new data
-        await user.update(updateData);
-        await logAction("User Data Update", userId, "User Data Updated Successfully");
-    
-        // Return the updated user
-        return res.status(200).json({
-            message: 'User updated successfully',
-            user,
-        });
-  
+
+        const isMailSent = await sendForgotPasswordMail(user.id, email);
+        if (!isMailSent) {
+            await logAction("Forgot Password Failed", user.id, `Issue While Sending Reset Password Mail`, "failure");
+            return res.status(400).json({ message: "Issue While Sending Reset Password Mail" });
+        }
+
+        await logAction(
+            "Forgot Password Email Sent",
+            user.id,
+            `Password reset email sent successfully to ${email}.`,
+            "success"
+        );
+
+        return res.status(200).json({ message: "Password reset email sent successfully. Please check your inbox."});
     } catch (error) {
-        await logAction("User Updation Failed", userId, "Error Occured while Update the User Data", "failure");
+        await logAction(
+            "Email Validation Failed",
+            null,
+            error.message || "An unexpected error occurred.",
+            "failure"
+        );
+
         return res.status(500).json({
-            message: 'An error occurred while updating the user',
-            error: error.message,
+            message: "Server error",
+            error: error.message || "An unexpected error occurred.",
+        });
+    }
+
+}
+
+const validateResetPassword = async (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        const {status, response} = handleValidationErrors(errors);
+        await logAction(
+            "Reset Password Validation Failed",
+            null,
+            "Reset Token not provided in the request.",
+            "failure"
+        );
+        return res.status(status).json(response);
+    }
+
+    try{
+        const { resetToken } = req.body;
+        const result = await verifyResetToken(resetToken);
+        if(!result.success) {
+            return res.status(400).json({isLinkValid: false, message: "Link is not valid" });
+        }
+        return res.status(200).json({ isLinkValid: true, userId: result.userId });
+    } catch (error) {
+        return res.status(500).json({
+            message: "Server error",
+            error: error.message || "An unexpected error occurred.",
         });
     }
 };
+
+
+
+const updatePassword = async (req, res) => {
+    
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        const {status, response} = handleValidationErrors(errors);
+        await logAction(
+            "Forgot Password Failed",
+            null,
+            "UserId or Password not provided in the request.",
+            "failure"
+        );
+        return res.status(status).json(response);
+    }
+
+    const { userId, password } = req.body;
+
+    try {
+        const user = await User.findOne({ where: { userId } });
+
+        const hashedPassword = await hashPassword(password);
+
+        await user.update({ password: hashedPassword });
+
+        await logAction(
+            "Password Change Success",
+            userId,
+            "User password changed successfully.",
+            "success"
+        );
+
+        return res.status(200).json({ message: "Password changed successfully." });
+    } catch (error) {
+        await logAction(
+            "Forgot Password Failed",
+            null,
+            error.message || "An unexpected error occurred.",
+            "failure"
+        );
+
+        return res.status(500).json({
+            message: "Server error",
+            error: error.message || "An unexpected error occurred.",
+        });
+    }
+};
+
 
 
 const deleteUser = async (req, res) => {
@@ -270,4 +396,8 @@ const destroyUser = async (req, res) => {
     }
 };
 
-module.exports = {register, login, verifyAccount, reSendVerificationCode, getUser, updateUser, deleteUser, destroyUser};
+
+
+
+
+module.exports = {register, login, verifyAccount, reSendVerificationCode, getUser, deleteUser, destroyUser, updatePassword, forgotPassword, validateResetPassword};

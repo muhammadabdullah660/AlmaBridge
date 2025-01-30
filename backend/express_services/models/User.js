@@ -14,16 +14,16 @@ const User = sequelize.define(
     },
     email: {
       type: DataTypes.STRING,
-      allowNull: true,
+      allowNull: false,
       unique: true,
     },
     password: {
       type: DataTypes.STRING,
-      allowNull: true,
+      allowNull: false,
     },
     role: {
       type: DataTypes.ENUM("student", "alumni", "admin", "uniAdmin"),
-      allowNull: true,
+      allowNull: false,
     },
     isVerified: {
       type: DataTypes.BOOLEAN,

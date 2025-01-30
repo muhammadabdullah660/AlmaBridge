@@ -1,29 +1,67 @@
 const express = require("express");
-const multer = require("multer");
+const { verifyToken } = require("../middlewares/authMiddleware");
+const { uploadFileMiddleware } = require('../middlewares/uploadMiddleware');
+const rateLimit = require("express-rate-limit");
 const {
   createAchievement,
   getAllAchievements,
   updateAchievement,
   deleteAchievement,
 } = require("../controllers/achievementsController");
+const { check } = require("express-validator");
 
 const router = express.Router();
 
-const storage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    cb(null, "./uploadsAchieverPhotos"); // Specify the upload directory
-  },
-  filename: function (req, file, cb) {
-    cb(null, Date.now() + "-" + file.originalname);
-  },
+// Rate limiter for auth-related routes
+const limiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 100,
+  message: "Too many requests from this IP, please try again after 15 minutes",
 });
 
-const upload = multer({ storage: storage });
+
+
 
 //User Profile Routes
-router.post("/create", upload.single("achieverPicture"), createAchievement);
-router.get("/get", getAllAchievements);
-router.put("/update/:id", upload.single("achieverPicture"), updateAchievement);
-router.delete("/delete/:id", deleteAchievement);
+router.post(
+  "/achievement",
+  [
+    check("achievementName", "achievementName is required").exists(),
+    check("achieverName", "achieverName is required").exists(),
+    check("achievementDescription", "achievementDescription is required").exists(),
+  ],
+  limiter,
+  uploadFileMiddleware,
+  verifyToken, 
+  createAchievement
+);
+
+// Get All Achievement Route
+router.get(
+  "/achievements",
+  limiter,
+  verifyToken,
+  getAllAchievements
+);
+
+// Update Achievement Route
+router.put(
+  "/achievement/:id",
+  [
+    check("achievementName", "achievementName is required").exists(),
+    check("achieverName", "achieverName is required").exists(),
+    check("achievementDescription", "achievementDescription is required").exists(),
+  ],
+  limiter,
+  uploadFileMiddleware,
+  verifyToken,
+  updateAchievement
+);
+
+// Delete Achievement Route
+router.delete(
+  "/achievement/:id",
+  deleteAchievement
+);
 
 module.exports = router;

@@ -1,12 +1,15 @@
 const express = require("express");
 const {
-  register, login, verifyAccount, reSendVerificationCode, getUser, updateUser,
+  register, login, verifyAccount, reSendVerificationCode, getUser,
   deleteUser,
-  destroyUser
+  destroyUser,
+  updatePassword,
+  forgotPassword,
+  validateResetPassword
 } = require("../controllers/userController");
 const { check } = require("express-validator");
 const rateLimit = require("express-rate-limit");
-const { verifyToken, verifyRole, verifyIsAdmin } = require("../middlewares/authMiddleware");
+const { verifyToken, verifyIsAdmin } = require("../middlewares/authMiddleware");
 
 
 const router = express.Router();
@@ -60,14 +63,40 @@ router.post("/resendCode", limiter, verifyToken , reSendVerificationCode);
 // Get user Data
 router.get("/user", limiter ,verifyToken, getUser);
 
-// Update User Data
-router.put("/user",limiter, verifyToken, updateUser);
-
 // Delete User Data
 router.post("/delUser", limiter, verifyToken, deleteUser);
 
 // Destroy User Data
 router.delete("/user", limiter, verifyToken, verifyIsAdmin, destroyUser);
 
+// Send Reset Password Request
+router.post(
+  "/forgotPassword",
+  [
+    check("email", "Please include a valid email").isEmail(),
+  ], 
+  limiter,
+  forgotPassword
+);
+
+// Update Password
+router.post(
+  "/updatePassword",
+  [
+    check("userId", "Please include a valid email").exists(),
+    check("password", "Please include a valid password").exists(),
+  ], 
+  limiter,
+  updatePassword
+);
+
+router.post(
+  "/validateLink",
+  [
+    check("resetToken", "Reset Token is required").exists(),
+  ],
+  limiter,
+  validateResetPassword
+);
 
 module.exports = router;

@@ -1,11 +1,11 @@
 const express = require("express");
-const multer = require("multer");
 const {
   getUserProfile,
   updateUserProfile,
   getAllUserProfiles,
 } = require("../controllers/userProfileController");
 const { verifyToken, verifyRole } = require("../middlewares/authMiddleware");
+const { uploadFileMiddleware } = require('../middlewares/uploadMiddleware');
 const rateLimit = require("express-rate-limit");
 const router = express.Router();
 
@@ -16,24 +16,12 @@ const limiter = rateLimit({
   message: "Too many requests from this IP, please try again after 15 minutes",
 });
 
-const storage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    cb(null, "./uploads");
-  },
-  filename: function (req, file, cb) {
-    cb(null, Date.now() + "-" + file.originalname);
-  },
-});
-
-const upload = multer({ storage: storage });
-
-//User Profile Routes
 
 // TO CREATE OR UPDATE USER PROFILE DATA
 router.post(
   "/profile",
   limiter,
-  upload.single("resume"),
+  uploadFileMiddleware,
   verifyToken,
   updateUserProfile
 );
