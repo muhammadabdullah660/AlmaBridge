@@ -120,12 +120,12 @@ const sendVerificationEmail = async (userId, email) => {
               }
 
               .logo-container {
-                  width: 100%;
-                  margin: 0 auto -20px;
+                  width: 140px;
+                  height: 140px;
+                  margin: 0 auto -30px;
                   display: flex;
                   align-items: center;
                   justify-content: center;
-                  text-align: center;
               }
 
               .logo-image {
@@ -224,6 +224,11 @@ const sendVerificationEmail = async (userId, email) => {
                       padding: 30px 15px;
                   }
 
+                  .logo-container {
+                      width: 120px;
+                      height: 120px;
+                  }
+
                   .content {
                       padding: 30px 20px;
                   }
@@ -292,11 +297,11 @@ const sendVerificationEmail = async (userId, email) => {
     }
 
     const transporter = nodeMailer.createTransport({
-      host: smtpServer.trim(),
-      port: parseInt(smtpPort),
+      host: smtpServer,
+      port: smtpPort,
       secure: true,
       auth: {
-        user: senderEmail.trim(),
+        user: senderEmail,
         pass: emailPassword
       },
     });
@@ -308,38 +313,20 @@ const sendVerificationEmail = async (userId, email) => {
       html: htmlContent,
     };
 
-    await transporter.verify();
-
     await transporter.sendMail(mailOptions);
     await logAction("Verification Mail Send", userId, `A verification mail sent to user email whose email is ${email} and it's userID is ${userId}`);
     return true;
 
   } catch (error) {
 
-    if (error.code === "EENVELOPE" || error.code === "EINVALIDRECIPIENT") {
-        await logAction(
-          "Invalid Email Address", 
-          userId, 
-          `Email address ${email} is invalid or undeliverable. Error: ${error.message}`,
-          "failure"
-        );
-    } else if (
-        error.response?.includes("550") || 
-        (typeof error.message === 'string' && error.message.includes("550"))
-    ) {
-        await logAction(
-          "Undeliverable Email", 
-          userId, 
-          `Failed to deliver email to ${email}: ${error.message}`, 
-          "failure"
-        );
+    if (error.code === "EENVELOPE") {
+      await logAction("Invalid Email Address", userId, `Email address ${email} is invalid or undeliverable. Error: ${error.message}`,
+      "failure"
+      );
+    } else if (error.response && error.response.includes("550")) {
+      await logAction("Undeliverable Email", userId, `Failed to deliver email to ${email}: ${error.response}`, "failure");  
     } else {
-        await logAction(
-          "Failed Verification Code", 
-          userId, 
-          `Unexpected error: ${error.message}`, 
-          "failure"
-        );
+      await logAction("Failed Verification Code", userId, `Unexpected error: ${error.message}`, "failure");
     }
     return false;
   }
@@ -416,12 +403,12 @@ const sendForgotPasswordMail = async (userId, email) => {
               }
 
               .logo-container {
-                  width: 100%;
+                  width: 120px;
+                  height: 120px;
                   margin: 0 auto -20px;
                   display: flex;
                   align-items: center;
                   justify-content: center;
-                  text-align: center;
               }
 
               .logo-image {
@@ -537,6 +524,11 @@ const sendForgotPasswordMail = async (userId, email) => {
                       font-size: 28px;
                   }
 
+                  .logo-container {
+                      width: 100px;
+                      height: 100px;
+                  }
+
                   .content {
                       padding: 30px 20px;
                   }
@@ -612,11 +604,11 @@ const sendForgotPasswordMail = async (userId, email) => {
     }
 
     const transporter = nodeMailer.createTransport({
-      host: smtpServer.trim(),
-      port: parseInt(smtpPort),
+      host: smtpServer,
+      port: smtpPort,
       secure: true,
       auth: {
-        user: senderEmail.trim(),
+        user: senderEmail,
         pass: emailPassword
       },
     });
@@ -627,8 +619,6 @@ const sendForgotPasswordMail = async (userId, email) => {
       subject: "Reset Password",
       html: htmlContent,
     };
-
-    await transporter.verify();
 
     await transporter.sendMail(mailOptions);
     await logAction("Reset Password Mail Send", userId, `A verification mail sent to user email whose email is ${email} and it's userID is ${userId}`);

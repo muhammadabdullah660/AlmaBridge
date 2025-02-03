@@ -1,210 +1,120 @@
-import { Users, Briefcase, MessageSquare, Brain, BarChartIcon as ChartBar, Shield, Facebook, Twitter, LinkedinIcon as LinkedIn, Instagram, ThumbsUp, Network
-  ,Home, FileText, Activity, Trophy, Lightbulb, Settings, CreditCard, HelpCircle
-} from "lucide-react"
-import { TeamMember, Notification } from "./types";
-
-// export const members: member[] = [
-//     {
-//       name: "Muhammad Abdullah",
-//       position: "Lead Developer",
-//       img: "/assets/me.webp",
-//     },
-//     {
-//       name: "Fatima Awais",
-//       position: "Lead Developer",
-//       img: "/assets/fatima.webp",
-//     },
-//     {
-//       name: "Muhammad Shahzaib Ijaz",
-//       position: "Lead Developer",
-//       img: "/assets/shahzaib.webp",
-//     },
-//     {
-//       name: "Zoya Naveed",
-//       position: "Lead Developer",
-//       img: "/assets/zoya.webp",
-//     },
-// ];
-
-export const faqs = [
-  {
-    question: "How does AlmaBridge match students with mentors?",
-    answer:
-      "AlmaBridge uses advanced AI algorithms to analyze profiles, interests, and career goals to create the most compatible student-mentor matches.",
-  },
-  {
-    question: "Is AlmaBridge free for students?",
-    answer:
-      "Yes, AlmaBridge is free for students. We believe in providing equal opportunities for all students to access mentorship and career guidance.",
-  },
-  {
-    question: "How can alumni get involved?",
-    answer:
-      "Alumni can sign up as mentors on our platform. They can set their availability, areas of expertise, and preferences for mentoring.",
-  },
-  {
-    question: "What kind of support does AlmaBridge offer?",
-    answer:
-      "AlmaBridge offers mentorship, job placement assistance, skill development resources, and networking opportunities for both students and alumni.",
-  },
-];
-
-export const gender = ["Male", "Female", "Other"]
-
-
-export const features = [
-  {
-    icon: Brain,
-    title: "AI-Powered Matchmaking",
-    description:
-      "Our advanced algorithms ensure perfect mentor-student matches based on goals, interests, and expertise.",
-  },
-  {
-    icon: Users,
-    title: "Global Network",
-    description: "Connect with mentors and peers from prestigious institutions worldwide.",
-  },
-  {
-    icon: Briefcase,
-    title: "Career Opportunities",
-    description: "Access exclusive job postings and internship opportunities from partner companies.",
-  },
-  {
-    icon: MessageSquare,
-    title: "Seamless Communication",
-    description: "Built-in chat, video calls, and collaboration tools for effective mentorship.",
-  },
-  {
-    icon: ChartBar,
-    title: "Progress Tracking",
-    description: "Monitor your growth with detailed analytics and milestone tracking.",
-  },
-  {
-    icon: Shield,
-    title: "Verified Network",
-    description: "All mentors are verified professionals from top institutions and companies.",
-  },
-]
-
-
-export const socialIcons = [
-  { Icon: Facebook, href: "#", hoverColor: "hover:text-[#1877F2]" },
-  { Icon: Twitter, href: "#", hoverColor: "hover:text-[#1DA1F2]" },
-  { Icon: LinkedIn, href: "#", hoverColor: "hover:text-[#0A66C2]" },
-  { Icon: Instagram, href: "#", hoverColor: "hover:text-[#E4405F]" },
-]
-
-export const footerLinks = ["All Jobs", "Alumni Highlights", "Community Posts", "Latest Events", "Donate"]
-
-
-export const metrics = [
-  { value: "90%", label: "Candidate match rate", icon: Users },
-  { value: "95%", label: "Alumni satisfaction rate", icon: ThumbsUp },
-  { value: "1200+", label: "Active connections", icon: Network },
-]
-
-export const scrambleText = "Transform your career journey with AlmaBridge - where innovation meets opportunity, and dreams become reality."
-
-export const highlightWords = ["Transform", "innovation", "opportunity", "dreams"]
+import { TeamMember } from "./types";
 
 export const teamMembers: TeamMember[] = [
   {
     name: "Muhammad Abdullah",
-    role: "Lead Developer",
-    image: "/assets/abdullah.webp",
-    bio: "Full-stack developer skilled in web development, SaaS, and tech mentoring.",
-  },
-  {
-    name: "Muhammad Shahzaib",
-    role: "Lead Developer",
-    image: "/assets/shahzaib.webp",
-    bio: "Digital magician casting spells with code that *somehow* works, fueled by Lotus Cake."
+    position: "Lead Developer",
+    img: "/assets/me.webp",
   },
   {
     name: "Fatima Awais",
-    role: "Lead Developer",
-    image: "/assets/fatima.webp",
-    bio: "Developer, dedicated to driving innovation and collaborating for impactful solutions.",
+    position: "Lead Developer",
+    img: "/assets/fatima.webp",
+  },
+  {
+    name: "Shahzaib Ijaz",
+    position: "Lead Developer",
+    img: "/assets/shahzaib.webp",
   },
   {
     name: "Zoya Naveed",
-    role: "Lead Developer",
-    image: "/assets/zoya.webp",
-    bio: "Developer, dedicated to crafting intuitive, and impactful UX with a touch of creativity.",
+    position: "Lead Developer",
+    img: "/assets/zoya.webp",
   },
-]
-
-
-export const placeholderRoutes = ["teams", "activity", "people", "suggestions", "settings" ,"messages", "reports", "billing", "help"]
-
-export const notifications: Notification[] = [
+];
+export const discussions = [
   {
     id: 1,
-    title: "New Connection",
-    message: "Sarah Lee has accepted your connection request",
-    time: "5m ago",
-    unread: true,
+    name: "Haseeb Storey",
+    time: "10:50 AM",
+    message:
+      "Nulla aute nisi quis nostrud reprehenderit nisi cillum mollit anim elit mollit non esse. Pariatur no",
+    description:
+      "Eu laborum fugiat magna reprehenderit reprehenderit tempor aliquip nisi officia irure qui ad. Labore pariatur ex ut aliquip ad exercitation deserunt eu nisi do velit mollit consequat in quis. Adipisicing magna consectetur incididunt",
+    likes: 23,
+    comments: 3,
+    shares: 20,
+    avatar: "/avatars/user1.jpg",
   },
   {
     id: 2,
-    title: "New Job Match",
-    message: "A new job matching your profile has been posted",
-    time: "1h ago",
-    unread: true,
+    name: "Emilis Kendall",
+    time: "10:50 AM",
+    message:
+      "Aliqua nostrud ullamco consequat velit dolore amet dolore officia ex excepteur dolore culpa veni",
+    description:
+      "Eu laborum fugiat magna reprehenderit reprehenderit tempor aliquip nisi officia irure qui ad. Labore pariatur ex ut aliquip ad exercitation deserunt eu nisi do velit mollit consequat in quis. Adipisicing magna consectetur incididunt",
+    likes: 15,
+    comments: 5,
+    shares: 10,
+    avatar: "/avatars/user2.jpg",
   },
   {
     id: 3,
-    title: "Mentorship Session",
-    message: "Upcoming session with John Doe tomorrow",
-    time: "2h ago",
-    unread: false,
-  },
-]
-
-export const menuItems = [
-  {
-    category: "MAIN MENU",
-    items: [
-      { icon: Home, label: "Home", href: "/dashboard" },
-      { icon: Users, label: "Teams", href: "/dashboard/teams" },
-      { icon: Activity, label: "Activity", href: "/dashboard/activity" },
-      { icon: MessageSquare, label: "Messages", href: "/dashboard/messages" },
-      { icon: FileText, label: "Reports", href: "/dashboard/reports" },
-    ],
+    name: "David Rodriquez",
+    time: "10:50 AM",
+    message:
+      "Aliqua nostrud ullamco consequat velit dolore amet dolore officia ex excepteur dolore culpa veni",
+    description:
+      "Eu laborum fugiat magna reprehenderit reprehenderit tempor aliquip nisi officia irure qui ad. Labore pariatur ex ut aliquip ad exercitation deserunt eu nisi do velit mollit consequat in quis. Adipisicing magna consectetur incididunt",
+    likes: 30,
+    comments: 10,
+    shares: 40,
+    avatar: "/avatars/user3.jpg",
   },
   {
-    category: "FEATURES",
-    items: [
-      { icon: Trophy, label: "Achievements", href: "/dashboard/achievements" },
-      { icon: Users, label: "People you Know", href: "/dashboard/people" },
-      { icon: Lightbulb, label: "Suggestions", href: "/dashboard/suggestions" },
-      { icon: Briefcase, label: "Jobs", href: "/dashboard/jobs" },
-    ],
+    id: 4,
+    name: "Richie Benton",
+    time: "10:50 AM",
+    message:
+      "Aliqua nostrud ullamco consequat velit dolore amet dolore officia ex excepteur dolore culpa veni",
+    description:
+      "Eu laborum fugiat magna reprehenderit reprehenderit tempor aliquip nisi officia irure qui ad. Labore pariatur ex ut aliquip ad exercitation deserunt eu nisi do velit mollit consequat in quis. Adipisicing magna consectetur incididunt",
+    likes: 20,
+    comments: 4,
+    shares: 25,
+    avatar: "/avatars/user4.jpg",
   },
-  {
-    category: "SETTINGS",
-    items: [
-      { icon: Settings, label: "Settings", href: "/dashboard/settings" },
-      { icon: CreditCard, label: "Billing", href: "/dashboard/billing" },
-      { icon: HelpCircle, label: "Help & Support", href: "/dashboard/help" },
-    ],
-  },
-]
+];
 
-
-export const performanceData = [
-  { name: "Mon", value: 65 },
-  { name: "Tue", value: 75 },
-  { name: "Wed", value: 85 },
-  { name: "Thu", value: 70 },
-  { name: "Fri", value: 90 },
-]
-
-export const pieData = [
-  { name: "Active", value: 65 },
-  { name: "Inactive", value: 35 },
-]
-
-export const COLORS = ["#8B5CF6", "#1F2937"]
-
-export const departments = ["Computer Science", "Computer Engineering", "Mechatronics", "Civil Engineering"]
+export const events = [
+        {
+            id: 1,
+            department: "UET Lahore",
+            title: "Annual Alumni Reunion",
+            description: "Ex nisi in in minim dolore ad nostrud cillum. Fugiat veniam adipisicing nulla amet...",
+            date: "Sept 2, 2024",
+            buttonText: "Register Now",
+            imageUrl: "/images/event1.jpg",
+        },
+        {
+            id: 2,
+            department: "Department of Computer Science & Data Science",
+            title: "Annual AI Conference",
+            description: "Ex nisi in in minim dolore ad nostrud cillum. Fugiat veniam adipisicing nulla amet...",
+            date: "Sept 2, 2024",
+            buttonText: "Register Now",
+            imageUrl: "/images/event2.jpg",
+        },
+        {
+            id: 3,
+            department: "Department of Civil Engineering",
+            title: "Alumni Lunch",
+            description: "Ex nisi in in minim dolore ad nostrud cillum. Fugiat veniam adipisicing nulla amet...",
+            date: "May 22, 2024",
+            buttonText: "See Media",
+            imageUrl: "/images/event3.jpg",
+        },
+    ];
+// export const socialIcons: Icon[] = [
+//   { iconPath: "/path/to/facebook/icon.svg", color: "#2e6fe8" },
+//   { iconPath: "/path/to/twitter/icon.svg", color: "#2e64e8" },
+//   { iconPath: "/path/to/youtube/icon.svg", color: "#e82e2e" },
+//   { iconPath: "/path/to/linkedin/icon.svg", color: "#2e6fe8" },
+// ];
+// test
+// export const metrics: Metric[] = [
+//   { number: "0%", label: "Candidate match rate" },
+//   { number: "0", label: "Students" },
+//   { number: "0", label: "Alumni" },
+// ];
