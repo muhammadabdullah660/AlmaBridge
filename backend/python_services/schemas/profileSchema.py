@@ -3,6 +3,7 @@ from typing import List, Optional, Dict
 
 
 class ProfileSchema(BaseModel):
+    profileUrl: str
     name: str
     email: Optional[EmailStr] = None
     phone: Optional[str] = None

@@ -2,6 +2,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
+import AchievementsPage from "@/app/achievements/page";
 
 const Navbar: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -15,7 +16,9 @@ const Navbar: React.FC = () => {
     { href: "/#faq", label: "FAQ" },
     { href: "/#team", label: "Team" },
     { href: "/#features", label: "Features" },
-    { href: "/", label: "Alumni Highlights" },
+    { href: "/achievements", label: "Achievements" },
+    {href:"/suggestionsPage", label: "Suggestions"},
+    {href:"/jobPosting", label: "Jobs"},
   ];
 
   return (

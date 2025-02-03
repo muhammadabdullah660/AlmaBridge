@@ -7,3 +7,10 @@ google-generativeai>=0.1.0
 pymongo>=4.5.0
 pydantic>=1.10.7
 flask-cors>=3.0.10
+spacy
+scikit-learn
+pandas
+numpy
+selenium
+beautifulsoup4
+python-dotenv

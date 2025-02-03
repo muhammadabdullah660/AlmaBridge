@@ -1,7 +1,16 @@
-const express = require('express');
-const { register, login, verifyEmail } = require('../controllers/userController');
-const { check } = require('express-validator');
-const rateLimit = require('express-rate-limit');
+const express = require("express");
+const {
+  register, login, verifyAccount, reSendVerificationCode, getUser,
+  deleteUser,
+  destroyUser,
+  updatePassword,
+  forgotPassword,
+  validateResetPassword
+} = require("../controllers/userController");
+const { check } = require("express-validator");
+const rateLimit = require("express-rate-limit");
+const { verifyToken, verifyIsAdmin } = require("../middlewares/authMiddleware");
+
 
 const router = express.Router();
 
@@ -9,16 +18,17 @@ const router = express.Router();
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000,
   max: 100,
-  message: 'Too many requests from this IP, please try again after 15 minutes'
+  message: "Too many requests from this IP, please try again after 15 minutes",
 });
-
 
 // Register route
 router.post(
-  '/register',
+  "/register",
   [
-    check('email', 'Please include a valid email').isEmail(),
-    check('password', 'Password must be 6 or more characters').isLength({ min: 6 }),
+    check("email", "Please include a valid email").isEmail(),
+    check("password", "Password must be 6 or more characters").isLength({
+      min: 6,
+    }),
   ],
   limiter,
   register
@@ -26,16 +36,67 @@ router.post(
 
 // Login route
 router.post(
-  '/login',
+  "/login",
   [
-    check('email', 'Please include a valid email').isEmail(),
-    check('password', 'Password is required').exists(),
+    check("email", "Please include a valid email").isEmail(),
+    check("password", "Password is required").exists(),
   ],
   limiter,
   login
 );
 
-// Email verification route
-router.get('/verify-email', verifyEmail);
+// Account Verification Route
+router.post(
+  "/verifyAccount",
+  [
+    check("verificationCode", "Verification Code is required").exists(),
+  ],
+  limiter,
+  verifyToken,
+  verifyAccount
+);
+
+
+// Re-Send Verification Route
+router.post("/resendCode", limiter, verifyToken , reSendVerificationCode);
+
+// Get user Data
+router.get("/user", limiter ,verifyToken, getUser);
+
+// Delete User Data
+router.post("/delUser", limiter, verifyToken, deleteUser);
+
+// Destroy User Data
+router.delete("/user", limiter, verifyToken, verifyIsAdmin, destroyUser);
+
+// Send Reset Password Request
+router.post(
+  "/forgotPassword",
+  [
+    check("email", "Please include a valid email").isEmail(),
+  ], 
+  limiter,
+  forgotPassword
+);
+
+// Update Password
+router.post(
+  "/updatePassword",
+  [
+    check("userId", "Please include a valid email").exists(),
+    check("password", "Please include a valid password").exists(),
+  ], 
+  limiter,
+  updatePassword
+);
+
+router.post(
+  "/validateLink",
+  [
+    check("resetToken", "Reset Token is required").exists(),
+  ],
+  limiter,
+  validateResetPassword
+);
 
 module.exports = router;

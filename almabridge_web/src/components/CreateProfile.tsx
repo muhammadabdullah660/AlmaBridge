@@ -1,85 +1,197 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Image from "next/image";
 import { FaPencilAlt, FaCamera, FaPlus, FaTrash } from "react-icons/fa";
 import { Education } from "../types";
 import { WorkExperience } from "../types";
 import { Certification } from "../types";
+import { useRouter } from "next/navigation";
 import axios from "axios";
+
 export default function CreateProfile() {
+  const router = useRouter();
   const [isEditing, setIsEditing] = useState(false);
-  const [profileData, setProfileData] = useState({
-    // dummy data
-    firstName: "Jane",
-    lastName: "Doe",
-    address: "456 Elm Street, Metropolis, USA",
-    aboutMe:
-      "A dedicated full-stack developer enthusiastic about building impactful and scalable software solutions.",
-    linkedin: "https://linkedin.com/in/jane-doe",
-    bio: "Creative problem-solver with a strong background in web technologies and a passion for delivering high-quality user experiences.",
-    gender: "Female",
-    primaryEmail: "janedoe@example.com",
-    secondaryEmail: "contact@janedoe.dev",
-    education: [
-      {
-        school: "Metropolis University",
-        degree: "Master of Science",
-        fieldOfStudy: "Software Engineering",
-        graduationYear: "2023",
-      },
-      {
-        school: "Central Tech Institute",
-        degree: "Bachelor of Technology",
-        fieldOfStudy: "Information Technology",
-        graduationYear: "2020",
-      },
-    ],
-    workExperience: [
-      {
-        company: "Tech Giants Inc.",
-        role: "Full-Stack Developer",
-        startDate: "2023-03-01",
-        endDate: "Present",
-        description:
-          "Developing enterprise-level applications, improving performance, and collaborating with cross-functional teams to deliver seamless solutions.",
-      },
-      {
-        company: "Startup Solutions",
-        role: "Junior Developer",
-        startDate: "2021-01-15",
-        endDate: "2023-02-28",
-        description:
-          "Built user-friendly interfaces and worked on integrating RESTful APIs. Collaborated with the team to successfully deploy multiple client projects.",
-      },
-    ],
-    skills: [
-      { name: "React", rating: 8 },
-      { name: "Node.js", rating: 7 },
-      { name: "MongoDB", rating: 6 },
-      { name: "Python", rating: 9 },
-      { name: "Docker", rating: 5 },
-    ],
-    certifications: [
-      {
-        name: "AWS Certified Developer - Associate",
-        issuer: "Amazon Web Services",
-        date: "2024-01-15",
-      },
-      {
-        name: "Certified Kubernetes Administrator",
-        issuer: "CNCF",
-        date: "2023-07-10",
-      },
-    ],
-    resume: "",
-    portfolio: "https://janedoe.dev",
+  const [profileData, setProfileData] = useState<{
+    id: number;
+    firstName: string;
+    lastName: string;
+    address: string;
+    aboutMe: string;
+    linkedin: string;
+    bio: string;
+    gender: string;
+    primaryEmail: string;
+    secondaryEmail: string;
+    education: Education[];
+    workExperience: WorkExperience[];
+    skills: { name: string; rating: number }[];
+    certifications: Certification[];
+    resume: null;
+    portfolio: string;
+    linktree: string;
+  }>({
+    id: 0,
+    firstName: "",
+    lastName: "",
+    address: "",
+    aboutMe: "",
+    linkedin: "",
+    bio: "",
+    gender: "",
+    primaryEmail: "",
+    secondaryEmail: "",
+    education: [],
+    workExperience: [],
+    skills: [],
+    certifications: [],
+    resume: null,
+    portfolio: "",
     linktree: "",
   });
 
-  const [profilePicture, setProfilePicture] = useState("/assets/fatima.webp");
+  const [profilePicture, setProfilePicture] = useState("/assets/Default_pfp.jpg");
 
   const toggleEdit = () => setIsEditing(!isEditing);
+
+  let token: string | null = null;
+  if (typeof window !== "undefined") {
+    token = localStorage.getItem("token");
+    //console.log("Token:", token);
+  }
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const token = localStorage.getItem("token");
+
+      if (!token) {
+        return;
+      }
+    }
+    axios
+      .get("http://127.0.0.1:3001/api/user", {
+        headers: { Authorization: `Bearer ${token}` }, // Pass token in headers
+      })
+      .then((response) => {
+        // Populate profile data if response is successful
+        //console.log(response.data);
+        const { id, firstName, lastName, email } = response.data.user;
+        //console.log(firstName, lastName, email);
+        setProfileData((prev) => ({
+          ...prev,
+          id,
+          firstName,
+          lastName,
+          primaryEmail: email,
+        }));
+        //console.log(profileData);
+      })
+      .catch((err) => {
+        // Handle errors, like token expiration or invalid token
+        console.error("Error fetching user data:", err);
+      });
+  }, []);
+
+  // Function to update the user profile
+  const updateUserProfile = async () => {
+    try {
+      const token = localStorage.getItem("token");
+      if (!token) throw new Error("No token found");
+
+      // Map arrays to match backend expectations
+      const formattedEducation = profileData.education.map((edu) => ({
+        degree: edu.degree,
+        school: edu.school,
+        fieldOfStudy: edu.fieldOfStudy,
+        graduationYear: edu.graduationYear,
+      }));
+
+      const formattedWorkExperience = profileData.workExperience.map((exp) => ({
+        role: exp.role,
+        company: exp.company,
+        startDate: exp.startDate,
+        endDate: exp.endDate,
+        description: exp.description,
+      }));
+      console.log(profileData.skills);
+      const formattedSkills = profileData.skills.map((skill) => ({
+        skill: skill.name, // Rename 'name' to 'skillName'
+        rating: skill.rating,
+      }));
+
+      const formattedCertifications = profileData.certifications.map(
+        (cert) => ({
+          certificationName: cert.name, // Rename 'name' to 'certificationName'
+          issuer: cert.issuer,
+          date: cert.date,
+        })
+      );
+
+      // Construct the payload
+      const updatedProfileData = {
+        firstName: profileData.firstName,
+        lastName: profileData.lastName,
+        address: profileData.address,
+        aboutMe: profileData.aboutMe,
+        linkedin: profileData.linkedin,
+        bio: profileData.bio,
+        gender: profileData.gender,
+        secondaryEmail: profileData.secondaryEmail,
+        education: formattedEducation,
+        experiences: formattedWorkExperience,
+        skills: formattedSkills,
+        certifications: formattedCertifications,
+        resume: profileData.resume,
+        portfolio: profileData.portfolio,
+        linktree: profileData.linktree,
+      };
+
+      console.log(updatedProfileData);
+
+      // Send the updated profile data to the backend
+      const response = await axios.post(
+        `http://127.0.0.1:3001/api/profile`,
+        updatedProfileData,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+
+      console.log("User profile updated successfully:", response.data);
+      router.push("/userDashboard");
+    } catch (error) {
+      console.error("Error updating user profile:", error);
+    }
+  };
+
+  // Function to update basic user information (firstName and lastName)
+  // const updateUserBasicInfo = async () => {
+  //   try {
+  //     const token = localStorage.getItem("token"); // Retrieve the token
+  //     if (!token) {
+  //       throw new Error("No token found");
+  //     }
+
+  //     const response = await axios.put(
+  //       `http://127.0.0.1:3001/api/update/${profileData.id}`, // User API
+  //       {
+  //         firstName: profileData.firstName,
+  //         lastName: profileData.lastName,
+  //       },
+  //       {
+  //         headers: {
+  //           Authorization: `Bearer ${token}`,
+  //         },
+  //       }
+  //     );
+
+  //     console.log("User basic information updated successfully:", response.data);
+  //   } catch (error) {
+  //     console.error("Error updating user basic information:", error);
+  //   }
+  // };
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -95,7 +207,7 @@ export default function CreateProfile() {
       formData.append("file", file);
 
       axios
-        .post("http://127.0.0.1:5000/api/resumeExtract", formData, {
+        .post("http://127.0.0.1:5001/api/resumeExtract", formData, {
           headers: {
             "Content-Type": "multipart/form-data",
           },
@@ -141,24 +253,24 @@ export default function CreateProfile() {
             // Map Skills
             if (parsedData.Skills) {
               const combinedSkills = [
-                ...parsedData.Skills.Languages.map((lang: string) => ({
+                ...(parsedData.Skills.Languages?.map((lang: string) => ({
                   name: lang,
                   rating: 5, // default rating
-                })),
-                ...parsedData.Skills.Frameworks.map((fw: string) => ({
+                })) || []),
+                ...(parsedData.Skills.Frameworks?.map((fw: string) => ({
                   name: fw,
                   rating: 5,
-                })),
-                ...parsedData.Skills.Libraries.map((lib: string) => ({
+                })) || []),
+                ...(parsedData.Skills.Libraries?.map((lib: string) => ({
                   name: lib,
                   rating: 5,
-                })),
-                ...parsedData.Skills["Developer Tools"]?.map(
+                })) || []),
+                ...(parsedData.Skills["Developer Tools"]?.map(
                   (tool: string) => ({
                     name: tool,
                     rating: 5,
                   })
-                ),
+                ) || []),
               ];
               updatedProfile.skills = combinedSkills;
             }
@@ -406,7 +518,7 @@ export default function CreateProfile() {
           ) : (
             <div className="mb-5">
               <a
-                href={profileData.resume}
+                //href={profileData.resume}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-[#00BDD6] hover:underline"
@@ -972,7 +1084,11 @@ export default function CreateProfile() {
         <div className="text-center mt-8 mb-8">
           <button
             type="submit"
-            onClick={toggleEdit}
+            onClick={() => {
+              toggleEdit();
+              updateUserProfile();
+              // updateUserBasicInfo();
+            }}
             className="bg-[#00BDD6] text-gray-900 font-semibold px-6 py-2 rounded hover:bg-[#00a5c2] focus:outline-none focus:ring-2 focus:ring-[#00BDD6]"
           >
             Save Changes

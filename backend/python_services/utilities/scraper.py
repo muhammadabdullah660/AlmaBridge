@@ -269,6 +269,7 @@ def scrape_profile_contacts(driver, profile_url: str):
 def scrape_profile(profile_url: str):
     """Scrape LinkedIn profile data and return extracted information."""
     profile_data = {
+        "profile_url": None,
         "name": None,
         "email": None,
         "phone": None,
@@ -295,6 +296,9 @@ def scrape_profile(profile_url: str):
             logging.info("User name extracted")
         except Exception as e:
             logging.warning(f"Failed to extract name: {e}")
+
+        # Extract profile_url
+        profile_data["profile_url"] = profile_url
 
         # Extract job title
         try:

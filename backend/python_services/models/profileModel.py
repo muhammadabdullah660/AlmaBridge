@@ -1,13 +1,10 @@
-from pymongo import MongoClient
 from bson.objectid import ObjectId
 from schemas.profileSchema import ProfileSchema
-
+from config.db import db
 
 class ProfileModel:
-    def __init__(self, db_url="mongodb://localhost:27017", db_name="scraping_DB"):
-        self.client = MongoClient(db_url)
-        self.db = self.client[db_name]
-        self.collection = self.db["profiles"]
+    def __init__(self):
+        self.collection = db["scraped_profiles"]
     
 
     def insert_profiles(self, profile_data: dict) -> str:
