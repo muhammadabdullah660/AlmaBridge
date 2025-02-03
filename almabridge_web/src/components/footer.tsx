@@ -1,125 +1,82 @@
-const Footer = () => {
+"use client"
+
+import { motion } from "framer-motion"
+import { Button } from "@/components/ui/Button"
+import { Input } from "@/components/ui/Input"
+import { socialIcons, footerLinks } from "@/data"
+
+
+
+export default function Footer() {
   return (
-    <footer className="bg-[#191919] text-white py-10">
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex flex-col md:flex-row justify-between items-center md:items-start space-y-10 md:space-y-0">
-          {/* Left Section - Logo and Language Selector */}
-          <div className="flex flex-col items-center md:items-start space-y-4">
-            {/* Logo */}
-            <img
-              src="/assets/logo.png"
-              alt="Logo"
-              className="w-40 h-40 rounded-full shadow-lg"
-            />
-
-            {/* Language Selector */}
-            <div>
-              <select className="bg-white text-black py-2 px-4 rounded-md border-none w-[230px] mt-10">
-                <option value="en">English</option>
-                <option value="es">Spanish</option>
-                <option value="fr">French</option>
-                <option value="ur">Urdu</option>
-                {/* Add more languages as needed */}
-              </select>
-            </div>
-          </div>
-
-          {/* Middle Section - Links */}
-          <div className="text-center md:text-left">
-            <h2 className="text-lg font-semibold mb-6 text-[#00BDD6]">
-              Features
-            </h2>
-            <ul className="space-y-3">
-              <li>
-                <a href="#" className="hover:text-[#00BDD6] transition-colors">
-                  All Jobs
-                </a>
-              </li>
-              <li>
-                <a href="#" className="hover:text-[#00BDD6] transition-colors">
-                  Alumni Highlights
-                </a>
-              </li>
-              <li>
-                <a href="#" className="hover:text-[#00BDD6] transition-colors">
-                  Community Posts
-                </a>
-              </li>
-              <li>
-                <a href="#" className="hover:text-[#00BDD6] transition-colors">
-                  Latest Events
-                </a>
-              </li>
-              <li>
-                <a href="#" className="hover:text-[#00BDD6] transition-colors">
-                  Donate
-                </a>
-              </li>
+    <footer className="bg-black text-white py-12 relative overflow-hidden">
+      <div className="absolute inset-0 bg-gradient-to-t from-black via-black/50 to-black" />
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8 }}
+            viewport={{ once: true }}
+          >
+            <h3 className="text-xl font-bold mb-4 font-space-grotesk">Features</h3>
+            <ul className="space-y-2">
+              {footerLinks.map((link, index) => (
+                <li key={index}>
+                  <a href="#" className="text-gray-400 hover:text-white transition-colors duration-200">
+                    {link}
+                  </a>
+                </li>
+              ))}
             </ul>
-          </div>
-
-          {/* Right Section - Newsletter */}
-          <div className="text-center md:text-left">
-            <h2 className="text-lg font-semibold mb-4 text-[#00BDD6]">
-              Subscribe to our UETALUMNI newsletter
-            </h2>
-            <p className="mb-4 text-sm text-insights">
-              For product announcements and exclusive insights
-            </p>
-            <div className="flex flex-col md:flex-row space-y-4 md:space-y-0 md:space-x-2 items-center md:items-start">
-              <input
+          </motion.div>
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.2 }}
+            viewport={{ once: true }}
+            className="lg:col-span-2"
+          >
+            <h3 className="text-xl font-bold mb-4 font-space-grotesk">Subscribe to our UETALUMNI newsletter</h3>
+            <p className="text-gray-400 mb-4">For product announcements and exclusive insights</p>
+            <form className="flex space-x-2">
+              <Input
                 type="email"
                 placeholder="Input your email"
-                className="bg-[#191919] border-none border-b border-white py-3 px-4 rounded-md text-black w-full md:w-auto focus:outline-none focus:ring-2 focus:ring-teal-400"
+                className="bg-white/5 border-white/10 text-white placeholder-gray-500"
               />
-              <button className="bg-[#00BDD6] text-white py-3 px-6 rounded-md shadow-lg hover:bg-teal-600 transition-colors">
+              <Button type="submit" className="bg-white text-black hover:bg-white/90">
                 Subscribe
-              </button>
+              </Button>
+            </form>
+          </motion.div>
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.4 }}
+            viewport={{ once: true }}
+            className="lg:ps-5"
+          >
+            <h3 className="text-xl font-bold mb-4 font-space-grotesk">Connect with us</h3>
+            <div className="flex space-x-4">
+              {socialIcons.map(({ Icon, href, hoverColor }, index) => (
+                <a key={index} href={href} className={`text-gray-400 ${hoverColor} transition-colors duration-200`}>
+                  <Icon className="w-6 h-6 hover:text-blue" />
+                </a>
+              ))}
             </div>
-
-            {/* Social Media Icons */}
-            <div className="flex justify-center md:justify-start space-x-6 mt-20">
-              <div className="icons-fws">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  viewBox="0 0 448 512"
-                  className="fill-[#2e6fe8]"
-                >
-                  <path d="M416 32H31.9C14.3 32 0 46.5 0 64.3v383.4C0 465.5 14.3 480 31.9 480H416c17.6 0 32-14.5 32-32.3V64.3c0-17.8-14.4-32.3-32-32.3zM135.4 416H69V202.2h66.5V416zm-33.2-243c-21.3 0-38.5-17.3-38.5-38.5S80.9 96 102.2 96c21.2 0 38.5 17.3 38.5 38.5 0 21.3-17.2 38.5-38.5 38.5zm282.1 243h-66.4V312c0-24.8-.5-56.7-34.5-56.7-34.6 0-39.9 27-39.9 54.9V416h-66.4V202.2h63.7v29.2h.9c8.9-16.8 30.6-34.5 62.9-34.5 67.2 0 79.7 44.3 79.7 101.9V416z" />
-                </svg>
-              </div>
-              <div className="icons-fws">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  viewBox="0 0 576 512"
-                  className="fill-[#e82e2e]"
-                >
-                  <path d="M549.7 124.1c-6.3-23.7-24.8-42.3-48.3-48.6C458.8 64 288 64 288 64S117.2 64 74.6 75.5c-23.5 6.3-42 24.9-48.3 48.6-11.4 42.9-11.4 132.3-11.4 132.3s0 89.4 11.4 132.3c6.3 23.7 24.8 41.5 48.3 47.8C117.2 448 288 448 288 448s170.8 0 213.4-11.5c23.5-6.3 42-24.2 48.3-47.8 11.4-42.9 11.4-132.3 11.4-132.3s0-89.4-11.4-132.3zm-317.5 213.5V175.2l142.7 81.2-142.7 81.2z" />
-                </svg>
-              </div>
-              <div className="icons-fws">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  viewBox="0 0 512 512"
-                  className="fill-[#2e64e8]"
-                >
-                  <path d="M459.4 151.7c.3 4.5 .3 9.1 .3 13.6 0 138.7-105.6 298.6-298.6 298.6-59.5 0-114.7-17.2-161.1-47.1 8.4 1 16.6 1.3 25.3 1.3 49.1 0 94.2-16.6 130.3-44.8-46.1-1-84.8-31.2-98.1-72.8 6.5 1 13 1.6 19.8 1.6 9.4 0 18.8-1.3 27.6-3.6-48.1-9.7-84.1-52-84.1-103v-1.3c14 7.8 30.2 12.7 47.4 13.3-28.3-18.8-46.8-51-46.8-87.4 0-19.5 5.2-37.4 14.3-53 51.7 63.7 129.3 105.3 216.4 109.8-1.6-7.8-2.6-15.9-2.6-24 0-57.8 46.8-104.9 104.9-104.9 30.2 0 57.5 12.7 76.7 33.1 23.7-4.5 46.5-13.3 66.6-25.3-7.8 24.4-24.4 44.8-46.1 57.8 21.1-2.3 41.6-8.1 60.4-16.2-14.3 20.8-32.2 39.3-52.6 54.3z" />
-                </svg>
-              </div>
-              <div className="icons-fws">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  viewBox="0 0 512 512"
-                  className="fill-[#2e6fe8]"
-                >
-                  <path d="M512 256C512 114.6 397.4 0 256 0S0 114.6 0 256C0 376 82.7 476.8 194.2 504.5V334.2H136.4V256H194.2V199.8C194.2 142.3 230.6 108.8 282.7 108.8C307.2 108.8 331.8 113.2 331.8 113.2V167.8H304.1C276.1 167.8 263.7 184.8 263.7 202.4V256H328.5L316.3 334.2H263.7V504.5C375.3 476.8 458 376 458 256C512 114.6 397.4 0 256 0z" />
-                </svg>
-              </div>
-            </div>
-          </div>
+          </motion.div>
         </div>
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8, delay: 0.6 }}
+          viewport={{ once: true }}
+          className="mt-12 pt-8 border-t border-white/10 text-center text-gray-400"
+        >
+          <p>&copy; {new Date().getFullYear()} AlmaBridge. All rights reserved.</p>
+        </motion.div>
       </div>
     </footer>
-  );
-};
-export default Footer;
+  )
+}

@@ -1,7 +1,22 @@
+import Navbar from "@/components/Navbar";
+import Hero from "@/components/Hero";
+import Features from "@/components/Features";
+import QuotationAndMetrics from "@/components/QuotationAndMetrics";
+import Team from "@/components/Team";
+import FAQ from "@/components/FAQ";
+import Footer from "@/components/Footer";
 
-// src/app/page.tsx
-import LandingPage from './landingPage/page';
 
 export default function Home() {
-  return <LandingPage />;
+  return (
+    <div className="min-h-screen bg-black text-white">
+      <Navbar />
+      <Hero />
+      <Features />
+      <QuotationAndMetrics />
+      <Team />
+      <FAQ />
+      <Footer />
+    </div>
+  )
 }
