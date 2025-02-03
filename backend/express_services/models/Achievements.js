@@ -20,7 +20,7 @@ const Achievements = sequelize.define('Achievements', {
     allowNull: false,
   },
   achieverCategory: {
-    type: DataTypes.ENUM("student", "alumni"),
+    type: DataTypes.ENUM("student", "alumni", "other"),
     allowNull: true,
   },
   achievementsDescription: {

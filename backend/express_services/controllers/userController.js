@@ -1,5 +1,5 @@
 const User = require("../models/User");
-const { Sequelize, json } = require("sequelize");
+const sequelize = require("../config/database");
 const jwt = require("jsonwebtoken");
 const logAction = require("../utils/logService");
 const bcrypt = require("bcrypt");
@@ -38,7 +38,7 @@ const register = async (req, res) => {
 
     const { firstName, lastName, email, password, role, studentEmail } = req.body;
 
-    const transaction = await Sequelize.transaction();
+    const transaction = await sequelize.transaction();
 
     try {
         const existingUser = await User.findOne({ where: { email } });
