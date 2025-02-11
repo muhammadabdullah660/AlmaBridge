@@ -1,119 +1,98 @@
-"use client"; // Marks the file as a Client Component
-import { useState } from "react";
-import Link from "next/link";
-import Image from "next/image";
-import AchievementsPage from "@/app/achievements/page";
+"use client"
 
-const Navbar: React.FC = () => {
-  const [isOpen, setIsOpen] = useState(false);
+import { useState, useEffect } from "react"
+import { motion, useScroll } from "framer-motion"
+import { Button } from "@/components/ui/Button"
+import Link from "next/link"
+import { useRouter } from "next/navigation"
+import Image from "next/image"
 
-  const toggleMenu = () => {
-    setIsOpen(!isOpen);
-  };
+export default function Navbar() {
+  const [isScrolled, setIsScrolled] = useState(false)
+  const [isClient, setIsClient] = useState(false)
+  const { scrollY } = useScroll()
 
-  const navItems = [
-    { href: "/#", label: "About" },
-    { href: "/#faq", label: "FAQ" },
-    { href: "/#team", label: "Team" },
-    { href: "/#features", label: "Features" },
-    { href: "/achievements", label: "Achievements" },
-    {href:"/suggestionsPage", label: "Suggestions"},
-    {href:"/jobPosting", label: "Jobs"},
-  ];
+  const router = useRouter();
+  
+  const navigateTo = (path: string): void => {
+    if (isClient) {
+      router.push(path);
+    }
+  }
+
+  useEffect(() => {
+    setIsClient(true);
+    const unsubscribe = scrollY.on("change", (latest) => {
+      setIsScrolled(latest > 50)
+    })
+    return () => unsubscribe()
+  }, [scrollY])
 
   return (
-    <nav className="bg-black text-white sticky top-0 z-10">
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8 flex justify-between items-center h-16">
-        {/* Logo Section */}
-        <div className="flex items-center">
-          <Image src="/assets/logo.png" alt="Logo" width={112} height={112} />
-        </div>
-
-        {/* Navigation Links for Desktop */}
-        <div className="hidden md:flex space-x-8">
-          {navItems.map((item) => (
-            <Link
-              key={item.href}
-              href={item.href}
-              className="hover:text-gray-400"
-            >
-              {item.label}
-            </Link>
-          ))}
-        </div>
-
-        {/* Sign-in/Sign-up Section */}
-        <div className="hidden md:flex space-x-4 items-center">
-          <Link
-            href="/signin"
-            className="text-[#00BDD6] font-bold text-sm lg:text-base transition-colors duration-300"
+    <motion.nav
+      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
+        isScrolled ? "backdrop-blur-md bg-black/50" : ""
+      }`}
+      initial={{ y: -100 }}
+      animate={{ y: 0 }}
+      transition={{ duration: 0.6 }}
+    >
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="flex items-center justify-between h-20">
+          <motion.div
+            className="flex-shrink-0"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.5 }}
           >
-            Sign in
-          </Link>
-          <Link
-            href="/signup"
-            className="bg-[#00BDD6] text-white font-bold text-sm lg:text-base py-2 px-4 rounded-full hover:bg-[#00a9c2] transition duration-300"
-          >
-            Sign up
-          </Link>
-        </div>
+            <Link href="/" className="flex items-center space-x-2">
+              <div className="w-12 h-12 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center">
+                {/* <span className="text-2xl font-bold text-white">A</span> */}
+                <Image
+                    alt="Your Company"
+                    src="/assets/logo.webp"
+                    width={120}
+                    height={120}
+                    className="mx-auto"
+                />
+              </div>
+              <span className="text-xl font-bold text-white">AlmaBridge</span>
+            </Link>
+          </motion.div>
 
-        {/* Hamburger Icon for Mobile */}
-        <div className="md:hidden flex items-center">
-          <button
-            onClick={toggleMenu}
-            type="button"
-            className="text-gray-400 hover:text-white focus:outline-none"
-          >
-            <svg
-              className="h-6 w-6"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-              xmlns="http://www.w3.org/2000/svg"
+          <div className="hidden md:block">
+            <motion.div
+              className="flex space-x-8"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.5, delay: 0.2 }}
             >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M4 6h16M4 12h16m-7 6h7"
-              />
-            </svg>
-          </button>
-        </div>
-      </div>
-
-      {/* Mobile Menu */}
-      <div
-        className={`${
-          isOpen ? "block" : "hidden"
-        } md:hidden bg-black border-t border-gray-700`}
-      >
-        <div className="px-4 py-3 space-y-2">
-          {navItems.map((item) => (
-            <Link
-              key={item.href}
-              href={item.href}
-              className="block text-gray-300 hover:text-white"
-            >
-              {item.label}
-            </Link>
-          ))}
-          <div className="pt-4 border-t border-gray-700">
-            <Link href="/signin" className="block text-[#00BDD6] font-bold">
-              Sign in
-            </Link>
-            <Link
-              href="/signup"
-              className="block bg-[#00BDD6] text-white py-2 px-4 rounded-full text-center mt-2"
-            >
-              Sign up
-            </Link>
+              {["Features", "Team", "Metrics", "FAQ's"].map((item) => (
+                <Link
+                  key={item}
+                  href={`#${item.toLowerCase()}`}
+                  className="text-gray-300 hover:text-white transition-colors duration-200"
+                >
+                  {item}
+                </Link>
+              ))}
+            </motion.div>
           </div>
+
+          <motion.div
+            className="hidden md:flex items-center space-x-4"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.5, delay: 0.4 }}
+          >
+            <Button onClick={() => navigateTo('/sign-in')} variant="ghost" className="text-white hover:text-white hover:bg-white/10">
+              Sign In
+            </Button>
+            <Button onClick={() => navigateTo('/sign-up')} className="bg-white text-black hover:bg-white/90">Sign Up</Button>
+          </motion.div>
         </div>
       </div>
-    </nav>
-  );
-};
+    </motion.nav>
+  )
+}
 
-export default Navbar;
