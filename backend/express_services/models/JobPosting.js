@@ -29,7 +29,7 @@ const JobPosting = sequelize.define("JobPosting", {
       allowNull: true,
     },
     jobType: {
-      type: DataTypes.ENUM("full-time", "part-time", "internship", "contract", "fellowship"),
+      type: DataTypes.ENUM("Hybrid", "Onsite", "Remote"),
       allowNull: true,
     },
   },

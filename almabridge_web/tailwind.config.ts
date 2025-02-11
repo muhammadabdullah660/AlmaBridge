@@ -1,28 +1,19 @@
-/** @type {import('tailwindcss').Config} */
-import tailwindcssAnimate from "tailwindcss-animate";
+import type { Config } from "tailwindcss";
 
-module.exports = {
-  darkMode: ["class"], // Enable dark mode based on class
+const config: Config = {
   content: [
-    "./pages/**/*.{ts,tsx}", 
-    "./components/**/*.{ts,tsx}", 
-    "./app/**/*.{ts,tsx}", 
-    "./src/**/*.{ts,tsx}"
+    "./src/pages/**/*.{js,ts,jsx,tsx,mdx}",
+    "./src/components/**/*.{js,ts,jsx,tsx,mdx}",
+    "./src/app/**/*.{js,ts,jsx,tsx,mdx}",
   ],
   theme: {
     extend: {
-      fontFamily: {
-        sans: ["var(--font-space-grotesk)"], // Default sans font
-        "space-grotesk": ["var(--font-space-grotesk)"], // Explicit custom font
-      },
       colors: {
-        background: "hsl(var(--background))", // Background color
-        foreground: "hsl(var(--foreground))", // Foreground color
-        accent: "hsl(var(--accent))",         // Accent color
+        background: "var(--background)",
+        foreground: "var(--foreground)",
       },
     },
   },
-  plugins: [
-    tailwindcssAnimate, // Use imported plugin
-  ],
+  plugins: [],
 };
+export default config;
