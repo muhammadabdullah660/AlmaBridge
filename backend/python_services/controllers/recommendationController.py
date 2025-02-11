@@ -22,8 +22,9 @@ class RecommendationController:
             print("User education:", education)  # Debugging line
             print("User skills:", skills)  # Debugging line
             print("User bio:", bio)  # Debugging line
-
-            recommendations = MatchmakingService.get_recommendations(education, skills, bio)
+            s = MatchmakingService()
+            # recommendations = s.get_recommendations(education, skills, bio)
+            recommendations = s.fetch_from_mongodb()
             return jsonify({"recommendations": recommendations}), 200
         except Exception as e:
             print("Error processing request:", str(e))  # Debugging line

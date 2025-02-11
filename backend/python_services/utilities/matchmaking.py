@@ -9,7 +9,7 @@ nlp = spacy.load("en_core_web_md")
 
 
 class MatchmakingService:
-    def __init__(self, mongo_uri, db_name, collection_name):
+    def __init__(self):
         self.mongo_uri = "mongodb://almabridge-mongodb:c6fANRO9ma2J5kqgbgm0bENUsd10z4Tczf2etQgvVS6UNJ5tQtLpiZtu2Ctmj3mFC9JVif45MRLrACDb515UQA==@almabridge-mongodb.mongo.cosmos.azure.com:10255/?ssl=true&retrywrites=false&replicaSet=globaldb&maxIdleTimeMS=120000&appName=@almabridge-mongodb@" 
         self.db_name = "almabridge_mongodb"
         self.collection_name = "scraped_profiles"
@@ -23,6 +23,9 @@ class MatchmakingService:
             db = client[self.db_name]
             collection = db[self.collection_name]
             documents = list(collection.find(query))
+            for doc in documents:
+                doc["_id"] = str(doc["_id"])  # Convert ObjectId to string
+            
             return documents
         except Exception as e:
             print(f"Error fetching data from MongoDB: {e}")

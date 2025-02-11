@@ -43,7 +43,7 @@ export interface ProfileData {
   certification: Certification[];
   portfolio?: string;
   linktree?: string;
-  file?: File; 
+  file?: File;
 }
 
 export interface Education {
@@ -67,44 +67,41 @@ export interface Certification {
   issuer?: string;
 }
 
-
 export interface Notification {
-  id: number
-  title: string
-  message: string
-  time: string
-  unread: boolean
+  id: number;
+  title: string;
+  message: string;
+  time: string;
+  unread: boolean;
 }
 
 export interface Job {
-  id: string
-  jobName: string
-  jobDescription: string
-  salaryRange?: string
-  location?: string
-  jobType?: string
+  id: string;
+  jobName: string;
+  jobDescription: string;
+  salaryRange?: string;
+  location?: string;
+  jobType?: string;
 }
-
 
 export interface Achievement {
-  id: string
-  achievementName: string
-  achieverName: string
-  description: string
-  department?: string
-  session?: string
-  link?: string
-  achievementPicture?: string
-  achieverCategory?: "student" | "alumni" | "other" | undefined
+  id: string;
+  achievementName: string;
+  achieverName: string;
+  description: string;
+  department?: string;
+  session?: string;
+  link?: string;
+  achievementPicture?: string;
+  achieverCategory?: "student" | "alumni" | "other" | undefined;
 }
 
-import { Vector3 } from "three"
+import { Vector3 } from "three";
 
 export interface FloatingTextProps {
   position: Vector3 | [number, number, number];
   children: React.ReactNode;
 }
-
 
 export interface LoginCredentials {
   email: string;
@@ -140,7 +137,6 @@ export interface RegisterFormErrors {
   studentEmail?: string;
 }
 
-
 export interface AuthFormData {
   verifCode: string;
 }
@@ -159,14 +155,13 @@ export interface ForgotPasswordFormErrors {
 
 export interface ResetTokenProps {
   params: {
-    resetToken: string
-  }
+    resetToken: string;
+  };
 }
 
 export interface ResetPasswordProps {
-  resetToken: string
+  resetToken: string;
 }
-
 
 export interface ResetPasswordForm {
   password: string;
@@ -218,8 +213,6 @@ interface Skills {
   "Developer Tools"?: string[];
 }
 
-
-
 export interface ResumeData {
   Name?: string;
   Email?: string;
@@ -232,52 +225,50 @@ export interface ResumeData {
   Skills?: Skills;
 }
 
-
 export interface JobPostingListProps {
-  jobs: Job[]
-  onEdit: (job: Job) => void
-  onDelete: (id: string) => void
-  isStudent: boolean
-  onApply?: (job: Job) => void
+  jobs: Job[];
+  onEdit: (job: Job) => void;
+  onDelete: (id: string) => void;
+  isStudent: boolean;
+  onApply?: (job: Job) => void;
 }
-
 
 export interface JobPostingFormProps {
-  initialData?: Job | null
-  onSubmit: ((jobData: Omit<Job, "id">) => void) | ((jobData: Job) => void)
-  onCancel: () => void
-  isOpen: boolean
-  isUpdateForm: boolean
+  initialData?: Job | null;
+  onSubmit: ((jobData: Omit<Job, "id">) => void) | ((jobData: Job) => void);
+  onCancel: () => void;
+  isOpen: boolean;
+  isUpdateForm: boolean;
 }
 
-
 export interface NoPlaceholderProps {
-  icon?: React.ReactNode
-  title?: string
-  description?: string
-  className?: string
+  icon?: React.ReactNode;
+  title?: string;
+  description?: string;
+  className?: string;
 }
 
 export interface AchievementFilterProps {
-  onDepartmentChange: (department: string) => void
-  onSessionChange: (session: string) => void
-  onCategoryChange: (category: "all" | "student" | "alumni" | "other") => void
+  onDepartmentChange: (department: string) => void;
+  onSessionChange: (session: string) => void;
+  onCategoryChange: (category: "all" | "student" | "alumni" | "other") => void;
 }
 
 export interface AchievementFormProps {
-  isOpen: boolean
-  initialData?: Achievement | null
-  onSubmit: ((data: Omit<Achievement, "id">) => void) | ((data: Achievement) => void)
-  onCancel: () => void
-  isUpdateForm: boolean
+  isOpen: boolean;
+  initialData?: Achievement | null;
+  onSubmit:
+    | ((data: Omit<Achievement, "id">) => void)
+    | ((data: Achievement) => void);
+  onCancel: () => void;
+  isUpdateForm: boolean;
 }
 
 export interface AchievementListProps {
-  achievements: Achievement[]
-  onEdit: (achievement: Achievement) => void
-  onDelete: (id: string) => void
+  achievements: Achievement[];
+  onEdit: (achievement: Achievement) => void;
+  onDelete: (id: string) => void;
 }
-
 
 export interface ApiJob {
   id: number;
@@ -286,7 +277,13 @@ export interface ApiJob {
   jobDescription: string;
   salaryRange: string | null;
   location: string | null;
-  jobType: "full-time" | "part-time" | "internship" | "fellowship" | "contract" | null;
+  jobType:
+    | "full-time"
+    | "part-time"
+    | "internship"
+    | "fellowship"
+    | "contract"
+    | null;
 }
 
 export interface JobData {
@@ -297,16 +294,15 @@ export interface JobData {
   jobType?: string;
 }
 
-
 export interface AchievementData {
-  achievementName: string
-  achieverName: string
-  description: string
-  department?: string
-  session?: string
-  link?: string
-  achievementPicture?: string
-  achieverCategory?: "student" | "alumni" | "other" | undefined
+  achievementName: string;
+  achieverName: string;
+  description: string;
+  department?: string;
+  session?: string;
+  link?: string;
+  achievementPicture?: string;
+  achieverCategory?: "student" | "alumni" | "other" | undefined;
 }
 
 export interface ApiAchievement {
@@ -320,4 +316,16 @@ export interface ApiAchievement {
   department: string | null;
   Link: string | null;
   achievementPicture: string | null;
-} 
+}
+
+export interface AlumniSuggestions {
+  name: string;
+  title: string;
+  about: string;
+  image_url: string;
+  session: string;
+  department: string;
+  education: [];
+  headline: string;
+  status: "alumni" | "student";
+}
