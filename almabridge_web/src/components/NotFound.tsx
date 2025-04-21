@@ -132,8 +132,17 @@
     )
   }
 
+const messages = [
+      "404: Page has wobbled away",
+      "Oops! This jelly isn't the page you're looking for",
+      "Looks like we're in a sticky situation",
+      "Error 404: Jelly.js not responding",
+      "This page has jiggled out of existence",
+      "Whoops! You've bounced into the wrong place",
+    ]
+
   export default function NotFound() {
-    const [message, setMessage] = useState("404: Page has wobbled away")
+    const [message, setMessage] = useState(funnyMessages[0])
 
     const router = useRouter();
 
@@ -145,21 +154,14 @@
       }
     }
 
-    const messages = [
-      "404: Page has wobbled away",
-      "Oops! This jelly isn't the page you're looking for",
-      "Looks like we're in a sticky situation",
-      "Error 404: Jelly.js not responding",
-      "This page has jiggled out of existence",
-      "Whoops! You've bounced into the wrong place",
-    ]
+    
 
     useEffect(() => {
       const interval = setInterval(() => {
         setMessage(messages[Math.floor(Math.random() * messages.length)])
       }, 4000)
       return () => clearInterval(interval)
-    }, [messages])
+    }, [])
 
     return (
       <div className="h-screen  flex flex-col items-center justify-center p-4">
