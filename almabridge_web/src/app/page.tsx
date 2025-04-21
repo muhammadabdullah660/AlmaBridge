@@ -4,7 +4,7 @@ import Features from "@/components/Features";
 import QuotationAndMetrics from "@/components/QuotationAndMetrics";
 import Team from "@/components/Team";
 import FAQ from "@/components/FAQ";
-import Footer from "@/components/Footer";
+import Footer from "@/components/footer";
 
 
 export default function Home() {
