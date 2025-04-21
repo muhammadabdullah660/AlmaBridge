@@ -142,7 +142,7 @@ const messages = [
     ]
 
   export default function NotFound() {
-    const [message, setMessage] = useState(funnyMessages[0])
+    const [message, setMessage] = useState(messages[0])
 
     const router = useRouter();
 
