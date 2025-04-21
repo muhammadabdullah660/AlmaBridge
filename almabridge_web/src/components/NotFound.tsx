@@ -159,7 +159,7 @@
         setMessage(messages[Math.floor(Math.random() * messages.length)])
       }, 4000)
       return () => clearInterval(interval)
-    }, [])
+    }, [messages])
 
     return (
       <div className="h-screen  flex flex-col items-center justify-center p-4">
