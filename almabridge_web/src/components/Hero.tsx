@@ -1,14 +1,28 @@
 "use client"
 
-import { motion, useScroll, useTransform } from "framer-motion"
+import { motion, useScroll, useTransform , MotionValue} from "framer-motion"
 import { Button } from "@/components/ui/Button"
 import { useEffect, useRef, useState } from "react"
+
+
+
+
+type BackgroundElement = {
+  id: number;
+  top: number;
+  left: number;
+  width: number;
+  height: number;
+  opacity: number;
+  duration: number;
+}
+
 
 export default function Hero() {
   const containerRef = useRef<HTMLDivElement>(null)
   const { scrollY } = useScroll()
   const [containerHeight, setContainerHeight] = useState(0)
-  const [backgroundElements, setBackgroundElements] = useState<any[]>([])
+  const [backgroundElements, setBackgroundElements] = useState<BackgroundElement[]>([])
 
   useEffect(() => {
     if (containerRef.current) {
@@ -96,7 +110,8 @@ export default function Hero() {
   )
 }
 
-function AnimatedBackground({ y, elements }: { y: any, elements: any[] }) {
+
+function AnimatedBackground({ y, elements }: { y: MotionValue<number>, elements: BackgroundElement[] }) {
   return (
     <div className="absolute inset-0 z-0">
       <motion.div className="absolute inset-0 opacity-50" style={{ y }}>
