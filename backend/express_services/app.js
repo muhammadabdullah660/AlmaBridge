@@ -5,21 +5,17 @@ const userRoutes = require("./routes/userRoutes");
 const profileRoutes = require("./routes/profileRoutes");
 const jobRoutes = require("./routes/jobRoutes");
 const achievementsRoutes = require("./routes/achievementsRoutes");
+const eventRoutes = require("./routes/eventRoutes");
 
-const path = require("path");
 
-// Serve uploaded images as static files
-app.use(
-  "/uploadsAchieverPhotos",
-  express.static(path.join(__dirname, "uploadsAchieverPhotos"))
-);
-
+app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(cors());
 
 app.use("/api", userRoutes);
 app.use("/api", profileRoutes);
-app.use("/api/jobposting", jobRoutes);
-app.use("/api/achievements", achievementsRoutes);
+app.use("/api", jobRoutes);
+app.use("/api", achievementsRoutes);
+app.use("/api", eventRoutes);
 
 module.exports = app;

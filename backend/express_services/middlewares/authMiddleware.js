@@ -92,4 +92,19 @@ const verifyIsAdmin = async (req, res, next) => {
   }
 };
 
-module.exports = { verifyToken, verifyRole, verifyIsAdmin };
+
+const adminAuth = (req, res, next) => {
+  const token = req.headers.authorization?.split(' ')[1];
+  if (!token) return res.status(401).json({ error: 'No token provided' });
+
+  try {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    console.log(decoded);
+    req.body.userId = decoded.id;
+    next();
+  } catch (error) {
+    res.status(401).json({ error: 'Invalid token' });
+  }
+};
+
+module.exports = { verifyToken, verifyRole, verifyIsAdmin, adminAuth };

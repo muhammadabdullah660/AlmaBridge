@@ -11,6 +11,7 @@ const createJobPosting = async (req, res) => {
   const errors = validationResult(req);
   if(!errors.isEmpty()) {
     const { status, response } = handleValidationErrors(errors);
+    console.log(req.body);
     await logAction(
         "Job Post Creation Failed",
         null,
@@ -77,16 +78,17 @@ const updateJobPosting = async (req, res) => {
     const { id } = req.params;
     const updates = req.body;
 
-    const [updated] = await JobPosting.update(updates, {
+    const [updatedCount, [updatedJobPosting]] = await JobPosting.update(updates, {
       where: { id },
+      returning: true
     });
 
-    if (!updated) {
+    if (updatedCount === 0) {
       await logAction("Job Post Updation Fail", userId, `Such Job does not Exist in the System`, "failure");
       return res.status(404).json({ message: "Job posting not found" });
     }
     await logAction("Job Post Updated", userId, `UserId: ${userId} has updated the Job Post Successfully`);
-    res.status(200).json({ message: "Job Post Updated Successfully" });
+    res.status(200).json(updatedJobPosting);
   } catch (error) {
     await logAction("Job Post Updation Fail", userId, error, "failure");
     res.status(500).json({ message: "Error updating job posting", error });

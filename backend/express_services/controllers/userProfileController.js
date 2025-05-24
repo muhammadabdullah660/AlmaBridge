@@ -69,81 +69,29 @@ const updateUserProfile = async (req, res) => {
       await user.update(updatedUserData);
     }
 
-    if (
-      req.body.education &&
-      Array.isArray(req.body.educations) &&
-      req.body.educations.length > 0
-    ) {
-      await bulkInsert(UserEducation, req.body.educations, existingProfile.id);
-    }
-    if (
-      req.body.experiences &&
-      Array.isArray(req.body.experiences) &&
-      req.body.experiences.length > 0
-    ) {
-      await bulkInsert(
-        UserExperience,
-        req.body.experiences,
-        existingProfile.id
-      );
-    }
-    if (
-      req.body.skills &&
-      Array.isArray(req.body.skills) &&
-      req.body.skills.length > 0
-    ) {
-      await bulkInsert(UserSkill, req.body.skills, existingProfile.id);
-    }
-
-    if (
-      req.body.certificates &&
-      Array.isArray(req.body.certificates) &&
-      req.body.certificates.length > 0
-    ) {
-      await bulkInsert(
-        UserCertificate,
-        req.body.certificates,
-        existingProfile.id
-      );
-    }
+    await updateRelatedData(UserEducation, req.body.educations, existingProfile.id);
+    await updateRelatedData(UserExperience, req.body.experiences, existingProfile.id);
+    
+    await updateRelatedData(UserSkill, req.body.skills, existingProfile.id);
+    await updateRelatedData(UserCertificate, req.body.certificates, existingProfile.id);
+    
 
     // Success response
-    await logAction(
-      "Profile Updated",
-      userId,
-      "User profile and related data updated successfully",
-      "success"
-    );
-    return res
-      .status(200)
-      .json({ message: "User profile updated successfully" });
+    await logAction("Profile Updated", userId, "User profile and related data updated successfully", "success");
+    return res.status(200).json({ message: "User profile updated successfully" });
+    
   } catch (error) {
     console.error("Error updating user profile:", error);
-
-    // Error response
-    await logAction(
-      "Profile Update Failed",
-      req.body.userId,
-      `Error occurred: ${error.message}`,
-      "failure"
-    );
-
-    return res.status(500).json({
-      message: "Failed to update user profile",
-      error: error.message,
-    });
+    await logAction("Profile Update Failed", userId, `Error occurred: ${error.message}`, "failure");
+    return res.status(500).json({ message: "Failed to update user profile", error: error.message });
   }
 };
 
-const bulkInsert = async (Model, records, userProfileId) => {
+
+const updateRelatedData = async (Model, records, userProfileId) => {
   if (Array.isArray(records) && records.length > 0) {
     await Model.destroy({ where: { userProfileId } });
-    await Model.bulkCreate(
-      records.map((record) => ({
-        ...record,
-        userProfileId,
-      }))
-    );
+    await Model.bulkCreate(records.map((record) => ({...record, userProfileId})));
   }
 };
 
@@ -193,7 +141,7 @@ const getUserProfile = async (req, res) => {
             {
               model: UserSkill,
               as: "skills",
-              attributes: ["skill", "rating"],
+              attributes: ["skillName", "rating"],
             },
             {
               model: UserCertificate,
@@ -206,30 +154,15 @@ const getUserProfile = async (req, res) => {
     });
 
     if (!user) {
-      await logAction(
-        "Profile Not Found",
-        userId,
-        "User profile not found",
-        "failure"
-      );
+      await logAction("Profile Not Found", userId, "User profile not found", "failure");
       return res.status(404).json({ message: "User Not Found" });
     }
 
-    return res.status(200).json({
-      message: "User Profile Retrieved Successfully",
-      data: user,
-    });
+    return res.status(200).json({ message: "User Profile Retrieved Successfully", data: user });
+
   } catch (error) {
-    await logAction(
-      "Failed to Retrieve User Profile",
-      req.body.userId,
-      error.message,
-      "failure"
-    );
-    res.status(500).json({
-      message: "Failed to retrieve user profile",
-      error: error.message,
-    });
+    await logAction("Failed to Retrieve User Profile", userId, error.message, "failure");
+    res.status(500).json({ message: "Failed to retrieve user profile", error: error.message });
   }
 };
 
@@ -277,7 +210,7 @@ const getAllUserProfiles = async (req, res) => {
             {
               model: UserSkill,
               as: "skills",
-              attributes: ["skill", "rating"],
+              attributes: ["skillName", "rating"],
             },
             {
               model: UserCertificate,
@@ -290,30 +223,15 @@ const getAllUserProfiles = async (req, res) => {
     });
 
     if (users.length === 0) {
-      await logAction(
-        "No Profiles Found",
-        userId,
-        "No user profiles found",
-        "failure"
-      );
+      await logAction("No Profiles Found", userId, "No user profiles found", "failure");
       return res.status(404).json({ message: "No User Profiles Found" });
     }
 
-    return res.status(200).json({
-      message: "All User Profiles Retrieved Successfully",
-      data: users,
-    });
+    return res.status(200).json({ message: "All User Profiles Retrieved Successfully", data: users });
+
   } catch (error) {
-    await logAction(
-      "Failed to Retrieve User Profiles",
-      userId,
-      error.message,
-      "failure"
-    );
-    res.status(500).json({
-      message: "Failed to retrieve user profiles",
-      error: error.message,
-    });
+    await logAction("Failed to Retrieve User Profiles", userId, error.message, "failure");
+    res.status(500).json({ message: "Failed to retrieve user profiles", error: error.message });
   }
 };
 

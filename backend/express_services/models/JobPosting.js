@@ -23,6 +23,9 @@ const JobPosting = sequelize.define("JobPosting", {
     salaryRange: {
       type: DataTypes.STRING,
       allowNull: true,
+      validate: {
+        is: /^\d+-\d+$/,
+      },
     },
     location: {
       type: DataTypes.STRING(500),

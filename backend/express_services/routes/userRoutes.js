@@ -5,7 +5,8 @@ const {
   destroyUser,
   updatePassword,
   forgotPassword,
-  validateResetPassword
+  validateResetPassword,
+  getUserWithProfile
 } = require("../controllers/userController");
 const { check } = require("express-validator");
 const rateLimit = require("express-rate-limit");
@@ -83,7 +84,7 @@ router.post(
 router.post(
   "/updatePassword",
   [
-    check("userId", "Please include a valid email").exists(),
+    check("userId", "Please include a valid userId").exists().isNumeric(),
     check("password", "Please include a valid password").exists(),
   ], 
   limiter,
@@ -98,5 +99,14 @@ router.post(
   limiter,
   validateResetPassword
 );
+
+
+router.get(
+  "/userWithProfile",
+  limiter,
+  verifyToken,
+  getUserWithProfile
+)
+
 
 module.exports = router;

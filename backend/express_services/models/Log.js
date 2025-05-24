@@ -13,7 +13,7 @@ const Log = sequelize.define(
       allowNull: true, // Can be null if the action is not related to a user
     },
     description: {
-      type: DataTypes.STRING,
+      type: DataTypes.TEXT,
       allowNull: true,
     },
     status: {

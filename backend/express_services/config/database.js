@@ -12,7 +12,14 @@ const sequelize = new Sequelize(
     host: process.env.DB_HOST,
     dialect: "postgres",
     logging: false,
-  }
+    pool: {
+      max: 20,
+      min: 0,
+      acquire: 30000,
+      idle: 10000,
+    },
+  },
 );
+
 
 module.exports = sequelize;

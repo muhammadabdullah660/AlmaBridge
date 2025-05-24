@@ -3,6 +3,8 @@ const path = require("path");
 require("dotenv").config({ path: path.resolve(__dirname, "../../.env") });
 
 
+const WORKER_URL = process.env.WORKER_URL;
+
 
 
 const checkFileName = (sendingFileName, savedFileName) => {
@@ -16,14 +18,20 @@ const checkFileName = (sendingFileName, savedFileName) => {
 // Function to upload a file
 const uploadFile = async (file, userId, folderName) => {
     const formData = new FormData();
-    formData.append("file", file.buffer, file.originalname);
+
+    const bolb = new Blob([file.buffer], {type: file.mimetype});
+    formData.append("file", bolb, file.originalname);
     formData.append("userId", userId);
     formData.append("folderName", folderName);
   
     try {
-      const response = await axios.post(`${process.env.WORKER_URL}upload`, formData, {
+      const response = await axios.post(`${WORKER_URL}upload`, formData, {
         headers: {
           "Content-Type": "multipart/form-data",
+          ...formData.getHeaders?.(),
+        },
+        transformRequest: (data, headers) => {
+          return data;
         },
       });
   

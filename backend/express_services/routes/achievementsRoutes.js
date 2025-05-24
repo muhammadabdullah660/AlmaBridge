@@ -25,13 +25,13 @@ const limiter = rateLimit({
 //User Profile Routes
 router.post(
   "/achievement",
+  limiter,
+  uploadFileMiddleware,
   [
     check("achievementName", "achievementName is required").exists(),
     check("achieverName", "achieverName is required").exists(),
     check("achievementDescription", "achievementDescription is required").exists(),
   ],
-  limiter,
-  uploadFileMiddleware,
   verifyToken, 
   createAchievement
 );
@@ -47,13 +47,13 @@ router.get(
 // Update Achievement Route
 router.put(
   "/achievement/:id",
+  limiter,
+  uploadFileMiddleware,
   [
     check("achievementName", "achievementName is required").exists(),
     check("achieverName", "achieverName is required").exists(),
     check("achievementDescription", "achievementDescription is required").exists(),
   ],
-  limiter,
-  uploadFileMiddleware,
   verifyToken,
   updateAchievement
 );

@@ -5,6 +5,27 @@ const { handleValidationErrors } = require('../utils/errorHandler');
 const { uploadFile, deleteFile, checkFileName } = require('../utils/cloudflareService');
 
 
+// helper function to handle file uploads
+const handleFileUpload = async (file, userId, existingFileName, folder) => {
+  if (!file) return existingFileName;
+
+  try{
+    if(!existingFileName) {
+      return await uploadFile(file, userId, folder);
+    } else if (checkFileName(file.originalname, existingFileName)) {
+      return existingFileName;
+    } else {
+      await deleteFile(existingFileName);
+      return await uploadFile(file, userId, folder);
+    }
+  } catch(error) {
+    console.error("Error handling file upload: ", error);
+    throw new Error("File processing failed. Please try again.");
+  }
+
+}
+
+
 
 // Controllers
 const createAchievement = async (req, res) => {
@@ -18,37 +39,32 @@ const createAchievement = async (req, res) => {
         `Validation errors: ${JSON.stringify(errors.array())}`,
         "failure"
     );
+    console.log(errors);
     return res.status(status).json(response);
   }  
 
-  const { userId, achievementName, achieverName, achieverCategory, achievementsDescription, session, department, Link } = req.body;
+  const { userId, achievementName, achieverName, achieverCategory, achievementDescription, session, department, link } = req.body;
   try {
-    let filePath = null;
-    if (req.file) {
-      try {
-        filePath = await uploadFile(req.file, userId, "achievementImages");
-      } catch (error) {
-        console.error("Error handling file upload:", error.message);
-        throw new Error("File processing failed. Please try again.");
-      }
-    }
+
+    const filePath = await handleFileUpload(req.file, userId, null, "achievementImages");
 
     const newAchievement = await Achievement.create({
+      userId,
       achievementName,
       achieverName,
       achieverCategory,
-      achievementsDescription,
+      achievementDescription,
       session,
       department,
-      Link,
+      Link: link,
       achievementPicture: filePath,
     });
 
-    await logAction("Achievement Created", userId, `User: ${userId} has created a achievement successfully`);
-    res.status(201).json({ message: "Achievement Created Successfully" });
+    await logAction("Achievement Created", userId, `Achievement created successfully for user: ${userId}`);
+    res.status(201).json(newAchievement);
   } catch (error) {
-    await logAction("Achievement Creation Fail", userId, `User:${userId} has tried to created Achievement but failure due to ${error}`, "failure");
-    res.status(500).json({ message: "Error creating achievement", error });
+    await logAction("Achievement Creation Fail", userId, `Failed to create achievement for user: ${userId}. Error: ${error.message}`, "failure");
+    res.status(500).json({ message: "Error creating achievement", error: error.message });
   }
 };
 
@@ -58,11 +74,11 @@ const getAllAchievements = async (req, res) => {
   const { userId } = req.body;
   try {
     const achievements = await Achievement.findAll();
-    await logAction("Achievement Retrieval", userId, "This User get all Achievements Successfully");
+    await logAction("Achievement Retrieval", userId, `All achievements retrieved successfully by user: ${userId}`);
     res.status(200).json(achievements);
   } catch (error) {
-    await logAction("Achievement Retrieval Fails", userId, `Error occured while retrieving achievements: ${error}`);
-    res.status(500).json({ message: "Error fetching achievements", error });
+    await logAction("Achievement Retrieval Fails", userId, `Failed to retrieve achievements for user: ${userId}. Error: ${error.message}`, "failure");
+    res.status(500).json({ message: "Error fetching achievements", error: error.message });
   }
 };
 
@@ -82,89 +98,58 @@ const updateAchievement = async (req, res) => {
     return res.status(status).json(response);
   } 
   
-  const { userId, achievementName, achieverName, achieverCategory, achievementsDescription, session, department, Link } = req.body;
+  const { userId, achievementName, achieverName, achieverCategory, achievementDescription, session, department, link } = req.body;
+  const { id } = req.params;
   try {
-    const { id } = req.params;
 
-    const existingAchievement = await Achievement.findOne({ where: {id} });
+    const existingAchievement = await Achievement.findByPk(id);
 
-    if (existingAchievement) {
-      await logAction(
-        "Achievement Not Found",
-        userId,
-        "Achievement not found while updating achievement",
-        "failure"
-      );
+    if (!existingAchievement) {
+      await logAction("Achievement Not Found", userId, `Achievement not found for ID: ${id}`, "failure");
       return res.status(404).json({ message: "Achievement not found" });
     }
 
-    let filePath = null;
-
-    if (req.file) {
-      const existingFileName = existingAchievement?.achievementPicture;
-      try {
-        if (!existingFileName) {
-          filePath = await uploadFile(req.file, userId, "achievementImages");
-        }
-        else if (checkFileName(req.file.originalname, existingFileName)) {
-          filePath = existingFileName;
-        }
-        else {
-          await deleteFile(existingFileName);
-          filePath = await uploadFile(req.file, userId);
-        }
-      } catch (error) {
-        console.error("Error handling file upload:", error.message);
-        throw new Error("File processing failed. Please try again.");
-      }
-    }
-
+    const filePath = await handleFileUpload(req.file, userId, existingAchievement.achievementPicture, "achievementImages");
 
     const updatedAchievementData = {
-      achievementName,
-      achieverName,
+      achievementName: achievementName || existingAchievement.achievementName,
+      achieverName: achieverName || existingAchievement.achieverName,
       achieverCategory: achieverCategory || existingAchievement.achieverCategory,
-      achievementsDescription,
+      achievementDescription: achievementDescription || existingAchievement.achievementDescription,
       session: session || existingAchievement.session,
       department: department || existingAchievement.department,
-      Link: Link || existingAchievement.Link,
+      Link: link || existingAchievement.Link,
       achievementPicture: filePath,
-    }; 
+    };
 
     await existingAchievement.update(updatedAchievementData);
-
-    await logAction(
-      "Achievement Updated",
-      userId,
-      "Achievement updated successfully",
-      "success"
-    );
-    res.status(200).json({ message: "Achievement Updated Successfully" });
+    await logAction("Achievement Updated", userId, `Achievement updated successfully for ID: ${id}`);
+    
+    res.status(200).json(existingAchievement);
+  
   } catch (error) {
-    await logAction("Achievement Updation Fail", userId, `User:${userId} has tried to update Achievement but failure due to ${error}`, "failure");
-    res.status(500).json({ message: "Error updating achievement", error });
+    await logAction("Achievement Update Fail", userId, `Failed to update achievement for ID: ${id}. Error: ${error.message}`, "failure");
+    res.status(500).json({ message: "Error updating achievement", error: error.message });
   }
 };
 
+// Delete Achievement
 const deleteAchievement = async (req, res) => {
   const { userId } = req.body;
+  const { id } = req.params;
+
   try {
-    const { id } = req.params;
-
-    const deleted = await Achievement.destroy({
-      where: { id },
-    });
-
+    const deleted = await Achievement.destroy({ where: { id } });
     if (!deleted) {
-      await logAction("Achievement Deletion Fail", userId, `Such Achievement does not Exist in the System`, "failure");
+      await logAction("Achievement Deletion Fail", userId, `Achievement not found for ID: ${id}`, "failure");
       return res.status(404).json({ message: "Achievement not found" });
     }
-    
-    await logAction("Achievement Deleted", userId, `UserId: ${userId} has deleted the Achievement Successfully`);
+
+    await logAction("Achievement Deleted", userId, `Achievement deleted successfully for ID: ${id}`);
     res.status(204).json({ message: "Achievement deleted successfully" });
   } catch (error) {
-    await logAction("Achievement Deletion Fail", userId, error, "failure");
-    res.status(500).json({ message: "Error deleting achievement", error });
+    await logAction("Achievement Deletion Fail", userId, `Failed to delete achievement for ID: ${id}. Error: ${error.message}`, "failure");
+    res.status(500).json({ message: "Error deleting achievement", error: error.message });
   }
 };
 

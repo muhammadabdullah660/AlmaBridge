@@ -6,7 +6,8 @@ const UserCertificate = require('./Certification');
 const UserSkills = require('./Skills');
 const Achievements = require('./Achievements');
 const JobPosts = require('./JobPosting');
-
+const ChatMessage = require('./ChatMessage');
+const Event = require('./Event');
 const sequelize = require('../config/database');
 
 
@@ -101,6 +102,38 @@ JobPosts.belongsTo(User, {
     as: "user",
 });
 
+// Associations for ChatMessage
+ChatMessage.belongsTo(User, {
+    foreignKey: 'senderId',
+    as: "sender",
+});
 
-module.exports = {User, UserProfile, UserEducation, UserCertificate, UserSkills, UserExperience};
+ChatMessage.belongsTo(User, {
+    foreignKey: 'receiverId',
+    as: "receiver",
+});
+
+User.hasMany(ChatMessage, {
+    foreignKey: 'senderId',
+    as: "sentMessages",
+    onDelete: 'CASCADE',
+});
+
+User.hasMany(ChatMessage, {
+    foreignKey: 'receiverId',
+    as: "receivedMessages",
+    onDelete: 'CASCADE',
+});
+
+User.hasMany(Event, {
+    foreignKey: 'createdBy',
+    onDelete: "CASCADE"
+});
+
+Event.belongsTo(User, {
+    foreignKey: "createdBy",
+})
+
+
+module.exports = {User, UserProfile, UserEducation, UserCertificate, UserSkills, UserExperience, ChatMessage};
 
