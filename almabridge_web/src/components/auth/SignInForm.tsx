@@ -59,6 +59,7 @@ export default function SignInForm() {
         localStorage.setItem("firstName", response.firstName);
         localStorage.setItem("lastName", response.lastName);
         localStorage.setItem("email", response.email);
+        localStorage.setItem("role", response.role);
 
         if (response.isVerified) {
           router.push("/dashboard")

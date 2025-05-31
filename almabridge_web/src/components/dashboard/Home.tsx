@@ -6,10 +6,39 @@ import { ArrowUpRight, ArrowDownRight, MoreHorizontal, ChevronRight } from "luci
 import { Button } from "@/components/ui/Button"
 import Link from "next/link"
 import { performanceData, pieData, COLORS } from "@/data"
+import { useCallback, useEffect, useState } from "react"
+import { toast } from "react-toastify"
+
 
 
 
 export default function Home() {
+  const [firstName, setFirstName] = useState<string>("");
+  const [userRole, setUserRole] = useState<"admin" | "student" | "alumni">("student");
+  
+  const getUserRole = (): "admin" | "student" | "alumni" => {
+    const role = localStorage.getItem("role");
+    return (role as "admin" | "student" | "alumni") || "student";
+  };
+  
+  useEffect(() => {
+    setUserRole(getUserRole());
+  }, []);
+
+  const fetchUser = useCallback(() => {
+      try {
+        const userFirstName = localStorage.getItem("firstName") ?? "";
+        setFirstName(userFirstName);
+      } catch (error) {
+        console.error("Error fetching user data:", error);
+        toast.error("Failed to load user profile");
+      }
+    }, []);
+
+  useEffect(() => {
+      fetchUser()
+  }, [fetchUser])
+
   return (
     <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.5 }} className="space-y-6">
       {/* Breadcrumb */}
@@ -24,19 +53,34 @@ export default function Home() {
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold">Welcome back, ERROR!</h1>
+          <h1 className="text-2xl font-bold">Welcome back, {firstName}!</h1>
           <p className="text-gray-400">Here&apos;s what&apos;s happening with your network</p>
         </div>
-        <Button className="bg-purple-600 hover:bg-purple-700 text-white">View Analytics</Button>
       </div>
 
       {/* Stats Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        <StatsCard title="Total Connections" value="2,543" change="+12.5%" isPositive={true} delay={0.1} />
-        <StatsCard title="Profile Views" value="1,234" change="+18.2%" isPositive={true} delay={0.2} />
-        <StatsCard title="Messages" value="342" change="-5.1%" isPositive={false} delay={0.3} />
-        <StatsCard title="Job Applications" value="28" change="+8.9%" isPositive={true} delay={0.4} />
-      </div>
+      {userRole === "admin" && (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          <StatsCard title="Total Connections" value="2,543" change="+12.5%" isPositive={true} delay={0.1} />
+          <StatsCard title="Profile Views" value="1,234" change="+18.2%" isPositive={true} delay={0.2} />
+          <StatsCard title="Messages" value="342" change="-5.1%" isPositive={false} delay={0.3} />
+          <StatsCard title="Job Applications" value="28" change="+8.9%" isPositive={true} delay={0.4} />
+        </div>  
+      )}
+      {userRole === "student" && (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <StatsCard title="My Connections" value="150" change="+5%" isPositive={true} delay={0.1} />
+          <StatsCard title="Profile Views" value="300" change="+10%" isPositive={true} delay={0.2} />
+          <StatsCard title="Messages" value="50" change="-2%" isPositive={false} delay={0.3} />
+        </div>  
+      )}
+      {userRole === "alumni" && (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <StatsCard title="Connections" value="1,000" change="+8%" isPositive={true} delay={0.1} />
+          <StatsCard title="Activity" value="500" change="+15%" isPositive={true} delay={0.2} />
+          <StatsCard title="Messages" value="200" change="-3%" isPositive={false} delay={0.3} />
+        </div>  
+      )}
 
       {/* Charts Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
@@ -67,7 +111,8 @@ export default function Home() {
         </motion.div>
 
         {/* Activity Distribution */}
-        <motion.div
+        {userRole === "admin" && (
+          <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.6 }}
@@ -111,10 +156,12 @@ export default function Home() {
             </div>
           </div>
         </motion.div>
+        )}
       </div>
 
       {/* Recent Activity */}
-      <motion.div
+      {userRole === "admin" && (
+        <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.7 }}
@@ -140,6 +187,7 @@ export default function Home() {
           ))}
         </div>
       </motion.div>
+      )}
     </motion.div>
   )
 }

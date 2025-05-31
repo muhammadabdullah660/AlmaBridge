@@ -1,12 +1,14 @@
 "use client"
 
-import React, { useEffect, useRef, useState } from "react"
+import React, { useCallback, useEffect, useRef, useState } from "react"
 import { motion, AnimatePresence } from "framer-motion"
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
 import Image from "next/image";
 import { Search, Bell, Sun, ChevronDown, Moon } from "lucide-react";
 import { notifications } from "@/data";
+import { toast } from "react-toastify";
+import { useRouter } from "next/navigation";
 
 
 export default function Header() {
@@ -17,11 +19,38 @@ export default function Header() {
     const [isProfileOpen, setIsProfileOpen] = useState(false)
     const notificationRef = useRef<HTMLDivElement>(null);
     const profileRef = useRef<HTMLDivElement>(null);
+    const [firstName, setFirstName] = useState<string>("");
+    const [email, setEmail] = useState<string>("");
+    const router = useRouter();
+
+    const fetchUser = useCallback(() => {
+          try {
+            const userFirstName = localStorage.getItem("firstName") ?? "";
+            const userEmail = localStorage.getItem("email") ?? "";
+            setFirstName(userFirstName);
+            setEmail(userEmail);
+          } catch (error) {
+            console.error("Error fetching user data:", error);
+            toast.error("Failed to load user profile");
+          }
+        }, []);
+    
+    useEffect(() => {
+        fetchUser()
+    }, [fetchUser])
 
 
     const toggleTheme = () => {
         // Still Add Logic to convert theme
         setIsDark(!isDark);
+    }
+
+    const handleRoute = (path: string): void => {
+        if (path === '/') {
+            clearAllCookies();
+        }
+        setIsProfileOpen(false);
+        router.push(path);
     }
 
     const handleClickEvent = (event: MouseEvent) => {
@@ -42,6 +71,13 @@ export default function Header() {
             document.removeEventListener("mousedown", handleClickEvent);
         };
     }, []);
+
+    const clearAllCookies = () => {
+        document.cookie.split(";").forEach((cookie) => {
+            const name = cookie.split("=")[0].trim();
+            document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/`;
+        });
+    };
 
 
     return (
@@ -137,14 +173,14 @@ export default function Header() {
                         <div className="w-10 h-10 rounded-full overflow-hidden">
                             <Image src="/assets/placeholder.svg" alt="Profile" width={40} height={40} className="object-cover" />
                         </div>
-                        <div>
-                            <h4 className="font-medium">ERROR_AI</h4>
-                            <p className="text-sm text-gray-400">error@almabridge.com</p>
+                        <div className="flex-1 min-w-0">
+                            <h4 className="font-medium">{firstName}</h4>
+                            <p className="text-sm text-gray-400 truncate">{email}</p>
                         </div>
                         </div>
                     </div>
                     <nav className="p-2">
-                        <Button variant="ghost" className="w-full justify-start text-left">
+                        <Button onClick={() => handleRoute('/dashboard/profile')} variant="ghost" className="w-full justify-start text-left">
                             View Profile
                         </Button>
                         <Button variant="ghost" className="w-full justify-start text-left">
@@ -153,7 +189,7 @@ export default function Header() {
                         <Button variant="ghost" className="w-full justify-start text-left">
                             Help & Support
                         </Button>
-                        <Button variant="ghost" className="w-full justify-start text-left text-red-400">
+                        <Button onClick={() => handleRoute('/')} variant="ghost" className="w-full justify-start text-left text-red-400">
                             Sign Out
                         </Button>
                     </nav>

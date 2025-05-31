@@ -69,7 +69,7 @@ export default function AccountAuthentificationForm() {
       try {
         const message = await UserAccountAuth(formData)
         console.log("Message: ", message)
-        router.push("/createProfile")
+        router.push("/create-profile")
       } catch (error) {
         console.error("Something Went Wrong: ", error)
         setError({ verifCode: "Invalid Verification Code or Server Error" })

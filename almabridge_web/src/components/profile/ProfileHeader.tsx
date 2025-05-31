@@ -61,13 +61,13 @@ const ProfileHeader = memo(
             <>
               <div className="absolute inset-0 bg-black/50 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-200">
                 <Camera className="w-6 h-6 text-white" />
+                <Input
+                  type="file"
+                  accept="image/*"
+                  onChange={handlePictureUpload}
+                  className="absolute top-10 inset-0 opacity-0 cursor-pointer rounded-full"
+                />
               </div>
-              <Input
-                type="file"
-                accept="image/*"
-                onChange={handlePictureUpload}
-                className="absolute inset-0 opacity-0 cursor-pointer rounded-full"
-              />
             </>
           )}
         </div>

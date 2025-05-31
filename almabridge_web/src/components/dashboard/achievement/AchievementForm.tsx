@@ -1,28 +1,24 @@
-import { useEffect, useState } from "react"
-import { motion, AnimatePresence } from "framer-motion"
-import { Button } from "@/components/ui/Button"
-import { Input } from "@/components/ui/Input"
-import { Textarea } from "@/components/ui/Textarea"
-import { Label } from "@/components/ui/Label"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/Select"
-import { Achievement, AchievementFormProps } from "@/types"
-import { departments } from "@/data"
-import { toast } from "react-toastify"
-import { CreateAcievement, UpdateAchievement } from "@/lib/api/achievementService"
+import { useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { Button } from "@/components/ui/Button";
+import { Input } from "@/components/ui/Input";
+import { Textarea } from "@/components/ui/Textarea";
+import { Label } from "@/components/ui/Label";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/Select";
+import { Achievement, AchievementFormProps } from "@/types";
+import { departments } from "@/data";
+import { toast } from "react-toastify";
+import { CreateAchievement, UpdateAchievement } from "@/lib/api/achievementService";
 
-
-
-export default function AchievementForm({ 
-  isOpen, 
-  initialData = null, 
-  onSubmit, 
+export default function AchievementForm({
+  isOpen,
+  initialData = null,
+  onSubmit,
   onCancel,
-  isUpdateForm
+  isUpdateForm,
 }: AchievementFormProps) {
-
   const [achievementId, setAchievementId] = useState<string | undefined>(initialData?.id);
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
-  const [token, setToken] = useState<string>("");
 
   const [formData, setFormData] = useState<Omit<Achievement, "id">>({
     achievementName: initialData?.achievementName || "",
@@ -35,50 +31,37 @@ export default function AchievementForm({
     achieverCategory: initialData?.achieverCategory || "student",
   });
 
-  useEffect(() => {
-    if (typeof window !== "undefined") {
-      const storedToken = localStorage.getItem("token");
-      setToken(storedToken || "");
-    }
-  }, []);
-
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    const { name, value } = e.target
-    setFormData((prev) => ({ ...prev, [name]: value }))
-  }
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
+  };
 
   const handleSelectChange = (name: string, value: string) => {
-    setFormData((prev) => ({ ...prev, [name]: value }))
-  }
+    setFormData((prev) => ({ ...prev, [name]: value }));
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-
-    if (token === "") {
-      toast.error("Token not Found");
-      return;
-    }
+    e.preventDefault();
     setIsSubmitting(true);
 
     try {
       if (!isUpdateForm) {
-        const createdAchievement = await CreateAcievement(formData, token);
+        const createdAchievement = await CreateAchievement(formData);
         setAchievementId(createdAchievement.id);
         onSubmit(createdAchievement);
       } else {
-        const updateAchievement = await UpdateAchievement(formData, token, achievementId);
-        onSubmit(updateAchievement);
+        const updatedAchievement = await UpdateAchievement(formData, achievementId || "");
+        onSubmit(updatedAchievement);
       }
-    } catch(error) {
-      console.error("Error while creating job: ", error);
-      toast.error("Failed to create or Updating a job post");
+    } catch (error) {
+      console.error("Error while creating/updating achievement: ", error);
+      toast.error("Failed to create or update achievement");
     } finally {
       setIsSubmitting(false);
     }
+  };
 
-  }
-
-  if (!isOpen) return null
+  if (!isOpen) return null;
 
   return (
     <AnimatePresence>
@@ -124,8 +107,8 @@ export default function AchievementForm({
           </div>
           <div>
             <Label htmlFor="department">Department *</Label>
-            <Select 
-              onValueChange={(value) => handleSelectChange("department", value)} 
+            <Select
+              onValueChange={(value) => handleSelectChange("department", value)}
               value={formData.department}
             >
               <SelectTrigger>
@@ -142,29 +125,29 @@ export default function AchievementForm({
           </div>
           <div>
             <Label htmlFor="session">Session</Label>
-            <Input 
-              id="session" 
-              name="session" 
-              value={formData.session} 
-              onChange={handleInputChange} 
+            <Input
+              id="session"
+              name="session"
+              value={formData.session}
+              onChange={handleInputChange}
             />
           </div>
           <div>
             <Label htmlFor="link">Link</Label>
-            <Input 
-              id="link" 
-              name="link" 
-              value={String(formData.link)} 
-              onChange={handleInputChange} 
+            <Input
+              id="link"
+              name="link"
+              value={String(formData.link)}
+              onChange={handleInputChange}
             />
           </div>
           <div>
             <Label htmlFor="image">Image URL</Label>
-            <Input 
-              id="image" 
-              name="image" 
-              value={String(formData.achievementPicture)} 
-              onChange={handleInputChange} 
+            <Input
+              id="image"
+              name="image"
+              value={String(formData.achievementPicture)}
+              onChange={handleInputChange}
             />
           </div>
           <div>
@@ -189,10 +172,12 @@ export default function AchievementForm({
             <Button type="button" variant="outline" onClick={onCancel}>
               Cancel
             </Button>
-            <Button type="submit" disabled={isSubmitting}> { isSubmitting ? "Submitting..." :  initialData ? "Update" : "Add Achievement"} </Button>
+            <Button type="submit" disabled={isSubmitting}>
+              {isSubmitting ? "Submitting..." : initialData ? "Update" : "Add Achievement"}
+            </Button>
           </div>
         </form>
       </motion.div>
     </AnimatePresence>
-  )
+  );
 }

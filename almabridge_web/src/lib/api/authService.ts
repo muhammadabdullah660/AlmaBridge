@@ -25,7 +25,7 @@ export const RegisterUser = async (credentials: RegisterCredentials): Promise<Au
                 'Content-Type': 'application/json'
             } 
         });
-        return response.data.message;
+        return response.data;
     } catch (error) {
         throw error;
     }
