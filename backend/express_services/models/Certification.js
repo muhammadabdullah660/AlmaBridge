@@ -4,8 +4,13 @@ const sequelize = require("../config/database");
 const UserCertificate = sequelize.define(
   "UserCertificates",
   {
+    id: {
+      type: DataTypes.UUID,
+      defaultValue: DataTypes.UUIDV4,
+      primaryKey: true,
+    },
     userProfileId: {
-      type: DataTypes.INTEGER,
+      type: DataTypes.UUID,
       allowNull: false,
       references: {
         model: "UserProfiles",

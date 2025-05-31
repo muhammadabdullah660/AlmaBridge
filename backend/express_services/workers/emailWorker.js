@@ -1,5 +1,5 @@
 const emailQueue = require("../utils/queue");
-const processEmail = require("../utils/emailJobHandler");
+const processEmail = require('../utils/extendedEmailJobHandler');
 
 emailQueue.process(async (job) => {
   try {

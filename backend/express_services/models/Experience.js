@@ -4,8 +4,13 @@ const sequelize = require("../config/database");
 const UserExperience = sequelize.define(
   "UserExperiences",
   {
+    id: {
+      type: DataTypes.UUID,
+      defaultValue: DataTypes.UUIDV4,
+      primaryKey: true,
+    },
     userProfileId: {
-      type: DataTypes.INTEGER,
+      type: DataTypes.UUID,
       allowNull: false,
       references: {
         model: "UserProfiles",

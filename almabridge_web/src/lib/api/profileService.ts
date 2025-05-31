@@ -1,13 +1,14 @@
 import axios from "axios"
+axios.defaults.withCredentials = true;
 
-export const UpdateProfile = async (formData: FormData, token: string): Promise<string> => {
+export const UpdateProfile = async (formData: FormData): Promise<string> => {
     try{
         const response = await axios.post(
-            `http://127.0.0.1:3001/api/profile`,
+            `http://localhost:3001/api/profile`,
             formData,
             {
+                withCredentials: true,
                 headers: {
-                    Authorization: `Bearer ${token}`,
                     "Content-Type": "multipart/form-data",
                 }
             }

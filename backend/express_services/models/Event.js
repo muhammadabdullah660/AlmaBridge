@@ -20,7 +20,7 @@ const Event = sequelize.define('Event', {
     allowNull: false,
   },
   createdBy: {
-    type: DataTypes.INTEGER,
+    type: DataTypes.UUID,
     allowNull: false,
     references: {
       model: 'Users',

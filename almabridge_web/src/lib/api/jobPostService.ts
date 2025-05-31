@@ -5,7 +5,7 @@ import { Job, ApiJob, JobData } from '@/types';
 
 export const GetAllJobs = async (): Promise<Job[]>  => {
   try {
-    const response = await axios.get<ApiJob[]>(`http://127.0.0.1:3001/api/jobs`);
+    const response = await axios.get<ApiJob[]>(`http://localhost:3001/api/jobs`);
     return response.data.map(transformApiJobToJob);
   } catch (error) {
     throw error;
@@ -14,7 +14,7 @@ export const GetAllJobs = async (): Promise<Job[]>  => {
 
 export const GetJobById = async (id: string): Promise<Job> => {
   try {
-      const response = await axios.get<ApiJob>(`http://127.0.0.1:3001/api/job/${id}`);
+      const response = await axios.get<ApiJob>(`http://localhost:3001/api/job/${id}`);
       return transformApiJobToJob(response.data);
   } catch (error) {
       console.error(`Error fetching job with id ${id}:`, error);
@@ -26,7 +26,7 @@ export const GetJobById = async (id: string): Promise<Job> => {
 export const CreateJob = async (formData: JobData, token: string): Promise<Job> => {
   try{
     const response = await axios.post<ApiJob>(
-      `http://127.0.0.1:3001/api/job`,
+      `http://localhost:3001/api/job`,
       formData,
       {
         headers: {
@@ -46,7 +46,7 @@ export const CreateJob = async (formData: JobData, token: string): Promise<Job> 
 export const UpdateJob = async (formData: JobData, token: string, id?: string ): Promise<Job> => {
   try{
     const response = await axios.put<ApiJob>(
-      `http://127.0.0.1:3001/api/job/${id}`,
+      `http://localhost:3001/api/job/${id}`,
       formData,
       {
         headers: {
@@ -66,7 +66,7 @@ export const UpdateJob = async (formData: JobData, token: string, id?: string ):
 export const DeleteJob = async (id: string, token: string): Promise<string> => {
   try{
     const response = await axios.delete(
-      `http://127.0.0.1:3001/api/job/${id}`,
+      `http://localhost:3001/api/job/${id}`,
       {
         headers: {
           Authorization: `Bearer ${token}`,

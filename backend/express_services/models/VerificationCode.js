@@ -2,23 +2,39 @@ const { DataTypes } = require("sequelize");
 const sequelize = require("../config/database");
 
 const VerificationCode = sequelize.define(
-  "VerificationCode",
+  "VerificationCodes",
   {
+    id: {
+      type: DataTypes.UUID,
+      defaultValue: DataTypes.UUIDV4,
+      primaryKey: true,
+    },
     userId: {
-      type: DataTypes.INTEGER,
-      allowNull: true,
+      type: DataTypes.UUID,
+      allowNull: false,
+      references: {
+        model: "Users",
+        key: "id",
+      },
+      onDelete: "CASCADE",
     },
     code: {
       type: DataTypes.STRING,
-      allowNull: true,
+      allowNull: false,
     },
     expiry: {
       type: DataTypes.DATE,
-      allowNull: true,
+      allowNull: false,
     },
   },
   {
     timestamps: true,
+    indexes: [
+      {
+        unique: false,
+        fields: ["userId"],
+      },
+    ],
   }
 );
 

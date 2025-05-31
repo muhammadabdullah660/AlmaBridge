@@ -4,8 +4,13 @@ const sequelize = require("../config/database");
 const ChatMessage = sequelize.define(
   "ChatMessages",
   {
+    id: {
+      type: DataTypes.UUID,
+      defaultValue: DataTypes.UUIDV4,
+      primaryKey: true,
+    },
     senderId: {
-      type: DataTypes.INTEGER,
+      type: DataTypes.UUID,
       allowNull: false,
       references: {
         model: "Users",
@@ -14,7 +19,7 @@ const ChatMessage = sequelize.define(
       onDelete: "CASCADE",
     },
     receiverId: {
-      type: DataTypes.INTEGER,
+      type: DataTypes.UUID,
       allowNull: false,
       references: {
         model: "Users",

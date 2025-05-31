@@ -11,6 +11,7 @@ const UserProfile = require("../models/UserProfile");
 const path = require('path');
 require('dotenv').config({ path: path.resolve(__dirname, '../../.env') });
 
+
 //FUNCTION TO HASH PASSWORD
 const hashPassword = async (password) => {
     const salt = await bcrypt.genSalt(10);
@@ -19,6 +20,7 @@ const hashPassword = async (password) => {
 
 //FUNCTION TO CREATE JWT TOKEN
 const generateToken = (userId) => {
+    console.log(userId);
     return jwt.sign({id: userId}, process.env.JWT_SECRET, {expiresIn: "4h"});
 };
 
@@ -41,18 +43,10 @@ const register = async (req, res) => {
         );
         return res.status(status).json(response);
     }
-
     const { firstName, lastName, email, password, role, studentEmail } = req.body;
 
     const transaction = await sequelize.transaction();
     try {
-
-        const isValidEmail = await checkEmailValidity(email);
-        if (!isValidEmail) {
-            await transaction.rollback();
-            await logAction( "User Registration Failed", null, `Invalid email address: ${email}`, "failure" );
-            return res.status(400).json({ message: "Invalid email address. Please provide a valid email."});
-        }
         const [user, created] = await User.findOrCreate({
             where: {email},
             defaults: {
@@ -70,7 +64,7 @@ const register = async (req, res) => {
             await logAction("User Registration Failed", null, `User already exists: ${email}`, "failure");
             return res.status(409).json({ message: "User Already Exists" });
         }
-
+        
         const userProfileData = {
             userId: user.id,
             ...(role === "student" && { secondaryEmail: studentEmail }),
@@ -90,10 +84,15 @@ const register = async (req, res) => {
 
         const token = generateToken(user.id);
 
-        return res.status(201).json({
-            message: "User Registered Successfully.",
-            token,
+        res.cookie('token', token, {
+            httpOnly: true,
+            secure: false,
+            sameSite: 'lax',
+            maxAge: 14400 * 1000,
+            path: '/'
         });
+
+        return res.status(201).json({isVerified: user.isVerified, role: user.role, firstName: user.firstName, lastName: user.lastName, email: user.email});
     } catch (error) {
         if (transaction) await transaction.rollback();
         return handleError(res, error, "User Registration Failed");
@@ -132,8 +131,15 @@ const login = async (req, res) => {
         }
 
         const token = generateToken(user.id);
+        res.cookie('token', token, {
+            httpOnly: true,
+            secure: false,
+            sameSite: 'lax',
+            maxAge: 14400 * 1000,
+            path: '/',
+        });
         await logAction("User Logged In", user.id, `User Logged In: ${email}`, "success");
-        return res.status(200).json({ token: token, isVerified: user.isVerified, role: user.role });
+        return res.status(200).json({ isVerified: user.isVerified, role: user.role, firstName: user.firstName, lastName: user.lastName, email: user.email });
     }
     catch (error) {
         return handleError(res, error, "Login Attempt Failed");

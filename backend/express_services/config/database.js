@@ -3,7 +3,7 @@ const path = require("path");
 require("dotenv").config({ path: path.resolve(__dirname, "../../.env") });
 var pg = require("pg");
 pg.defaults.ssl = true;
-
+console.log(process.env.DB_PASSWORD);
 const sequelize = new Sequelize(
   process.env.DB_NAME,
   process.env.DB_USER,

@@ -5,11 +5,12 @@ const logAction = require("../utils/logService");
 
 const verifyToken = (req, res, next) => {
   
-  const token = req.headers.authorization?.split(' ')[1];
-
+  // const token = req.headers.authorization?.split(' ')[1];
+  const token = req.cookies?.token || null
   if (!token) {
     return res.status(401).json({ message: 'No token provided' });
   }
+
 
   if (!process.env.JWT_SECRET) {
     return res.status(500).json({ message: 'JWT_SECRET is not defined' });

@@ -43,7 +43,7 @@ router.post(
     check("password", "Password is required").exists(),
   ],
   limiter,
-  login
+  login,
 );
 
 // Account Verification Route

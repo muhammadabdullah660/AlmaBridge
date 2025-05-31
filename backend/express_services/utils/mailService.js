@@ -1,4 +1,4 @@
-const nodeMailer = require("nodemailer");
+const nodemailer = require("nodemailer");
 const VerificationCode = require('../models/VerificationCode');
 const logAction = require('./logService');
 const path = require('path');
@@ -6,41 +6,56 @@ require('dotenv').config({ path: path.resolve(__dirname, '../../.env') });
 
 
 const checkEmailValidity = async (email) => {
-    const emailPassword = process.env.TITAN_SENDER_PASSWORD;
-    const smtpServer = process.env.SMTP_SERVER;
-    const smtpPort = process.env.SMTP_PORT;
-    const senderEmail = process.env.TITAN_SENDER_MAIL;
+  const emailPassword = process.env.TITAN_SENDER_PASSWORD;
+  const smtpServer = process.env.SMTP_SERVER;
+  const smtpPort = process.env.SMTP_PORT;
+  const senderEmail = process.env.TITAN_SENDER_MAIL;
 
-    // VALIDATE ENVIRONMENT VARIABLES
-    if (!emailPassword || !smtpServer || !smtpPort || !senderEmail) {
-      throw new Error("Missing email configuration in environment variables.");
-      return;
-    }
-    
-    try{
-        const transporter = nodeMailer.createTransport({
-            host: smtpServer.trim(),
-            port: parseInt(smtpPort),
-            secure: true,
-            auth: {
-              user: senderEmail.trim(),
-              pass: emailPassword
-            },
-        });
+  // Validate environment variables
+  if (!emailPassword || !smtpServer || !smtpPort || !senderEmail) {
+    console.error('Missing email configuration in environment variables.');
+    return false;
+  }
 
-        const verification = await transporter.verify();
-        if (!verification) return false;
+  try {
+    const transporter = nodemailer.createTransport({
+      host: smtpServer.trim(),
+      port: parseInt(smtpPort),
+      secure: true,
+      auth: {
+        user: senderEmail.trim(),
+        pass: emailPassword.trim(),
+      },
+    });
 
-        return true;
-    } catch(error) {
-        if (error.code === "EENVELOPE" || 
-            error.code === "EINVALIDRECIPIENT" ||
-            error.response?.includes("550") ||
-            (typeof error.message === 'string' && error.message.includes("550"))) {
-          return false;
+    // Verify SMTP connection
+    await transporter.verify();
+
+    // Attempt to validate recipient email
+    return new Promise((resolve) => {
+      transporter.sendMail(
+        {
+          from: senderEmail,
+          to: email,
+          subject: 'Test Email Validity',
+          text: 'This is a test to verify email validity.',
+        },
+        (error) => {
+          if (error) {
+            // Log error for debugging but return false
+            console.error('Email validation error:', error);
+            resolve(false);
+          } else {
+            resolve(true);
+          }
         }
-        throw error;
-    }
+      );
+    });
+  } catch (error) {
+    // Log any SMTP connection or other errors and return false
+    console.error('SMTP connection or validation error:', error);
+    return false;
+  }
 };
 
 

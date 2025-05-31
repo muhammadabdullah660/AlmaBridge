@@ -5,7 +5,7 @@ import axios from "axios";
 
 export const GetAllAchievements = async (): Promise<Achievement[]> => {
     try{
-        const response = await axios.get<ApiAchievement[]>(`http://127.0.0.1:3001/api/achievements`);
+        const response = await axios.get<ApiAchievement[]>(`http://localhost:3001/api/achievements`);
         return response.data.map(transformApiAchievementToAchievement);
     } catch (error) {
         throw error;
@@ -15,7 +15,7 @@ export const GetAllAchievements = async (): Promise<Achievement[]> => {
 export const CreateAcievement = async (formData: AchievementData, token: string): Promise<Achievement> => {
     try{
       const response = await axios.post<ApiAchievement>(
-        `http://127.0.0.1:3001/api/job`,
+        `http://localhost:3001/api/job`,
         formData,
         {
           headers: {
@@ -35,7 +35,7 @@ export const CreateAcievement = async (formData: AchievementData, token: string)
 export const UpdateAchievement = async (formData: AchievementData, token: string, id?: string ): Promise<Achievement> => {
     try{
       const response = await axios.put<ApiAchievement>(
-        `http://127.0.0.1:3001/api/job/${id}`,
+        `http://localhost:3001/api/job/${id}`,
         formData,
         {
           headers: {
@@ -55,7 +55,7 @@ export const UpdateAchievement = async (formData: AchievementData, token: string
 export const DeleteAchievement = async (id: string, token: string): Promise<string> => {
     try{
         const response = await axios.delete(
-            `http://127.0.0.1:3001:/api/achievement/${id}`,
+            `http://localhost:3001:/api/achievement/${id}`,
             {
                 headers: {
                   Authorization: `Bearer ${token}`,

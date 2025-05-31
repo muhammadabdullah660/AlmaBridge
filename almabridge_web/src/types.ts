@@ -22,7 +22,7 @@ export interface TeamMember {
 //   number: string;
 //   label: string;
 // }
-interface Skill {
+export interface Skill {
   name: string;
   rating: number;
 }
@@ -109,8 +109,11 @@ export interface LoginCredentials {
 }
 
 export interface AuthResponse {
-  token: string;
+  role: string;
   isVerified: boolean;
+  firstName: string;
+  lastName: string;
+  email: string;
 }
 
 export interface FormErrors {

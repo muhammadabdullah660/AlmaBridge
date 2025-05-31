@@ -1,14 +1,16 @@
 import axios from "axios";
 import { UserDataResponse } from "@/types";
 
+axios.defaults.withCredentials = true;
 
-export const GetUserInfo = async (token: string): Promise<UserDataResponse> => {
+export const GetUserInfo = async (): Promise<UserDataResponse> => {
     try{
         const response = await axios.get(
-            `http://127.0.0.1:3001/api/user`,
+            `http://localhost:3001/api/user`,
             {
+                withCredentials: true,
                 headers: {
-                    Authorization: `Bearer ${token}`,
+                    'Content-Type': 'application/json'
                 }
             }
         );

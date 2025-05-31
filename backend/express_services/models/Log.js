@@ -9,7 +9,7 @@ const Log = sequelize.define(
       allowNull: true,
     },
     userId: {
-      type: DataTypes.INTEGER,
+      type: DataTypes.UUID,
       allowNull: true, // Can be null if the action is not related to a user
     },
     description: {

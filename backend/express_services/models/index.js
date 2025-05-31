@@ -9,6 +9,7 @@ const JobPosts = require('./JobPosting');
 const ChatMessage = require('./ChatMessage');
 const Event = require('./Event');
 const sequelize = require('../config/database');
+const VerificationCode = require('./VerificationCode');
 
 
 
@@ -58,6 +59,18 @@ User.hasOne(UserProfile, {
     as: "profile",
     onDelete: "CASCADE",
 });
+
+
+// Association of User with VC
+User.hasMany(VerificationCode, {
+    foreignKey: "userId",
+    as: "VerificationCode",
+});
+
+VerificationCode.belongsTo(User, {
+    foreignKey: "userId",
+    as: "user",
+})
 
 
 // Association with UserProfile Model
@@ -135,5 +148,5 @@ Event.belongsTo(User, {
 })
 
 
-module.exports = {User, UserProfile, UserEducation, UserCertificate, UserSkills, UserExperience, ChatMessage};
+module.exports = {User, UserProfile, UserEducation, UserCertificate, UserSkills, UserExperience, ChatMessage, VerificationCode, Event};
 
