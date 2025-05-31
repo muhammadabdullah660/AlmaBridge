@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react"
+import React, { useState, useEffect } from "react"
 import { motion, AnimatePresence } from "framer-motion"
 import { Button } from "@/components/ui/Button"
 import { Input } from "@/components/ui/Input"
@@ -8,19 +8,23 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Job, JobPostingFormProps } from "@/types"
 import { CreateJob, UpdateJob } from "@/lib/api/jobPostService"
 import { toast } from "react-toastify"
+import { Loader2 } from "lucide-react"
 
-
-export default function JobPostingForm({ 
-  initialData = null, 
-  onSubmit, 
-  onCancel, 
+export default function JobPostingForm({
+  initialData = null,
+  onSubmit,
+  onCancel,
   isOpen,
   isUpdateForm,
 }: JobPostingFormProps) {
+  const parseSalaryRange = (salaryRange: string | undefined) => {
+    if (!salaryRange) return { minSalary: "", maxSalary: "" }
+    const [min, max] = salaryRange.split("-")
+    return { minSalary: min || "", maxSalary: max || "" }
+  }
 
-  const [jobId, setJobId] = useState<string | undefined>(initialData?.id);
-  const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
-  const [token, setToken] = useState<string>("");
+  const [jobId, setJobId] = useState<string | undefined>(initialData?.id)
+  const [isSubmitting, setIsSubmitting] = useState<boolean>(false)
   const [formData, setFormData] = useState<Omit<Job, "id">>({
     jobName: initialData?.jobName || "",
     jobDescription: initialData?.jobDescription || "",
@@ -28,18 +32,31 @@ export default function JobPostingForm({
     location: initialData?.location || "",
     jobType: initialData?.jobType || "",
   })
-
+  const [salary, setSalary] = useState({
+    minSalary: parseSalaryRange(initialData?.salaryRange).minSalary,
+    maxSalary: parseSalaryRange(initialData?.salaryRange).maxSalary,
+  })
 
   useEffect(() => {
-      if (typeof window !== "undefined") {
-        const storedToken = localStorage.getItem("token");
-        setToken(storedToken || "");
-      }
-  }, []);
+    setJobId(initialData?.id)
+    setFormData({
+      jobName: initialData?.jobName || "",
+      jobDescription: initialData?.jobDescription || "",
+      salaryRange: initialData?.salaryRange || "",
+      location: initialData?.location || "",
+      jobType: initialData?.jobType || "",
+    })
+    setSalary(parseSalaryRange(initialData?.salaryRange))
+  }, [initialData])
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target
     setFormData((prev) => ({ ...prev, [name]: value }))
+  }
+
+  const handleSalaryChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target
+    setSalary((prev) => ({ ...prev, [name]: value }))
   }
 
   const handleSelectChange = (name: string, value: string) => {
@@ -47,28 +64,48 @@ export default function JobPostingForm({
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+    e.preventDefault()
+    setIsSubmitting(true)
 
-    if (token === "") {
-      toast.error("Token not found");
-      return;
+    const min = parseFloat(salary.minSalary)
+    const max = parseFloat(salary.maxSalary)
+    if (salary.minSalary && salary.maxSalary && (isNaN(min) || isNaN(max))) {
+      toast.error("Please enter valid numbers for salary range")
+      setIsSubmitting(false)
+      return
+    }
+    if (salary.minSalary && salary.maxSalary && min > max) {
+      toast.error("Minimum salary cannot be greater than maximum salary")
+      setIsSubmitting(false)
+      return
     }
 
-    setIsSubmitting(true);
-    try{
-      if(!isUpdateForm) {
-        const createdJob = await CreateJob(formData, token);
-        setJobId(createdJob.id);
-        onSubmit(createdJob);
+    const salaryRange = salary.minSalary && salary.maxSalary ? `${salary.minSalary}-${salary.maxSalary}` : ""
+
+    try {
+      const updatedFormData = { ...formData, salaryRange }
+      if (!isUpdateForm) {
+        const createdJob = await CreateJob(updatedFormData)
+        setJobId(createdJob.id)
+        onSubmit(createdJob)
+        // Reset form
+        setFormData({
+          jobName: "",
+          jobDescription: "",
+          salaryRange: "",
+          location: "",
+          jobType: "",
+        })
+        setSalary({ minSalary: "", maxSalary: "" })
       } else {
-        const updatedJob = await UpdateJob(formData, token, jobId);
-        onSubmit(updatedJob);
+        const updatedJob = await UpdateJob(updatedFormData, jobId)
+        onSubmit(updatedJob)
       }
-    } catch(error) {
-      console.error("Error while creating job: ", error);
-      toast.error("Failed to create a job post");
+    } catch (error) {
+      console.error("Error while creating/updating job: ", error)
+      toast.error("Failed to create/update job post")
     } finally {
-      setIsSubmitting(false);
+      setIsSubmitting(false)
     }
   }
 
@@ -86,12 +123,12 @@ export default function JobPostingForm({
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
             <Label htmlFor="jobName">Job Name *</Label>
-            <Input 
-              id="jobName" 
-              name="jobName" 
-              value={formData.jobName} 
-              onChange={handleInputChange} 
-              required 
+            <Input
+              id="jobName"
+              name="jobName"
+              value={formData.jobName}
+              onChange={handleInputChange}
+              required
             />
           </div>
           <div>
@@ -104,22 +141,37 @@ export default function JobPostingForm({
               required
             />
           </div>
-          <div>
-            <Label htmlFor="salaryRange">Salary Range</Label>
-            <Input 
-              id="salaryRange" 
-              name="salaryRange" 
-              value={formData.salaryRange} 
-              onChange={handleInputChange} 
-            />
+          <div className="flex space-x-4">
+            <div className="flex-1">
+              <Label htmlFor="minSalary">Minimum Salary</Label>
+              <Input
+                id="minSalary"
+                name="minSalary"
+                type="number"
+                value={salary.minSalary}
+                onChange={handleSalaryChange}
+                placeholder="e.g., 10000"
+              />
+            </div>
+            <div className="flex-1">
+              <Label htmlFor="maxSalary">Maximum Salary</Label>
+              <Input
+                id="maxSalary"
+                name="maxSalary"
+                type="number"
+                value={salary.maxSalary}
+                onChange={handleSalaryChange}
+                placeholder="e.g., 20000"
+              />
+            </div>
           </div>
           <div>
             <Label htmlFor="location">Location</Label>
-            <Input 
-              id="location" 
-              name="location" 
-              value={formData.location} 
-              onChange={handleInputChange} 
+            <Input
+              id="location"
+              name="location"
+              value={formData.location}
+              onChange={handleInputChange}
             />
           </div>
           <div>
@@ -147,7 +199,12 @@ export default function JobPostingForm({
               Cancel
             </Button>
             <Button type="submit" disabled={isSubmitting}>
-              {isSubmitting ? "Submitting..." : initialData ? "Update" : "Add Job"}
+              {isSubmitting ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  Submitting...
+                </>
+              ) : initialData ? "Update" : "Add Job"}
             </Button>
           </div>
         </form>

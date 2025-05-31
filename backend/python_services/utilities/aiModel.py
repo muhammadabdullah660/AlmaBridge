@@ -19,7 +19,40 @@ def resume_parser(resume_data, api_key):
     - Languages
     - Hobbies
     - References
-    
+
+    ### Instructions for Certifications:
+    - Each certification should be extracted as an object with the following structure:
+    {
+        name: string;       // The name of the certification
+        date: string;      // The date of certification (if available)
+        issuer: string;    // The issuer of the certification (if available)
+    }
+
+    ### Instructions for Work Experience
+    {
+        Company: string;     // The company name
+        Title: string;   
+        Dates: string;       // The date of Work Experience (if available)
+        Description: string;
+        Location: string;   // The location of Work Experience (if available)
+    }
+
+    ### Instructions for Education
+    {
+        Institution: string;     // The school, university, college name
+        Degree: string;   
+        Dates: string;       // The date of Education (if available)
+        CGPA: string;   // The CGPA of Education (if available)
+    }
+
+    ### Instructions for Skills
+    {
+        Languages: string[];     // The skills name, programming languages name or programming technologies name
+        Frameworks: string[];   // The name of  frameworks (if available)
+        Libraries: string[];       // The name of libraries (if available)
+        Developer Tools: string[];   // The name of developer tool (if available)
+    }
+
     Provide the extracted information in JSON format.
     '''
     

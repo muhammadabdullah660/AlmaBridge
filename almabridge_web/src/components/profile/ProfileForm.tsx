@@ -72,48 +72,51 @@ const ProfileForm = memo(() => {
   }, [])
 
   const handleResumeUpload = useCallback(async (file: File) => {
-    try {
-      const parsedData = await ResumeParser(file)
+  try {
+    const parsedData = await ResumeParser(file);
+    console.log('Parsed resume data:', parsedData);
 
-      setProfileData((prev) => ({
-        ...prev,
-        address: parsedData.Address || prev.address,
-        workExperience:
-          parsedData["Work Experience"]?.map((exp) => ({
-            company: exp.Company,
-            role: exp.Title,
-            startDate: exp.Dates?.split("–")[0]?.trim() || "",
-            endDate: exp.Dates?.split("–")[1]?.trim() || "Present",
-            description: exp.Description,
-          })) || prev.workExperience,
-        skills: [
-          ...(parsedData.Skills?.Languages?.map((lang) => ({ name: lang, rating: 5 })) || []),
-          ...(parsedData.Skills?.Frameworks?.map((fw) => ({ name: fw, rating: 5 })) || []),
-          ...(parsedData.Skills?.Libraries?.map((lib) => ({ name: lib, rating: 5 })) || []),
-          ...(parsedData.Skills?.["Developer Tools"]?.map((tool) => ({ name: tool, rating: 5 })) || []),
-        ],
-        education: parsedData.Education
-          ? [
-              {
-                school: parsedData.Education.University,
-                degree: parsedData.Education.Degree,
-                fieldOfStudy: "",
-                graduationYear: parsedData.Education.Dates?.split("–")[1]?.trim() || "",
-              },
-            ]
-          : prev.education,
-        certification:
-          parsedData.Certifications?.map((cert) => ({
-            name: cert.name,
-            issuer: cert.issuer || "",
-            date: cert.date || "",
-          })) || prev.certification,
-      }))
-    } catch (error) {
-      console.error("Error uploading resume:", error)
-      toast.error("Failed to parse resume")
-    }
-  }, [])
+    setProfileData((prev) => ({
+      ...prev,
+      firstName: parsedData.Name?.split(' ')[0] || prev.firstName,
+      lastName: parsedData.Name?.split(' ').slice(1).join(' ') || prev.lastName,
+      primaryEmail: parsedData.Email || prev.primaryEmail,
+      address: parsedData.Address || prev.address,
+      workExperience:
+        parsedData['Work Experience']?.map((exp) => ({
+          company: exp.Company,
+          role: exp.Title,
+          startDate: exp.Dates?.split('–')[0]?.trim() || '',
+          endDate: exp.Dates?.split('–')[1]?.trim() || 'Present',
+          description: exp.Description,
+        })) || prev.workExperience,
+      skills: [
+        ...(parsedData.Skills?.Languages?.map((lang) => ({ name: lang, rating: 5 })) || []),
+        ...(parsedData.Skills?.Frameworks?.map((fw) => ({ name: fw, rating: 5 })) || []),
+        ...(parsedData.Skills?.Libraries?.map((lib) => ({ name: lib, rating: 5 })) || []),
+        ...(parsedData.Skills?.['Developer Tools']?.map((tool) => ({ name: tool, rating: 5 })) || []),
+      ],
+      education:
+        parsedData.Education?.map((edu) => ({
+          school: edu.Institution || '',
+          degree: edu.Degree || '',
+          fieldOfStudy: '',
+          graduationYear: edu.Dates?.split('–')[1]?.trim() || '',
+        })) || prev.education,
+      certification:
+        parsedData.Certifications?.map((cert) => ({
+          name: cert.name,
+          issuer: cert.issuer || '',
+          date: cert.date || '',
+        })) || prev.certification,
+    }));
+
+    toast.success('Resume uploaded and parsed successfully');
+  } catch (error) {
+    console.error('Error uploading resume:', error);
+    toast.error('Failed to parse resume');
+  }
+}, []);
 
   const updateUserProfile = useCallback(async () => {
     try {

@@ -92,7 +92,7 @@ const register = async (req, res) => {
             path: '/'
         });
 
-        return res.status(201).json({isVerified: user.isVerified, role: user.role, firstName: user.firstName, lastName: user.lastName, email: user.email});
+        return res.status(201).json({isVerified: false, role: user.role, firstName: user.firstName, lastName: user.lastName, email: user.email});
     } catch (error) {
         if (transaction) await transaction.rollback();
         return handleError(res, error, "User Registration Failed");

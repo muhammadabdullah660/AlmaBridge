@@ -7,7 +7,9 @@ import { Button } from "@/components/ui/Button"
 import Link from "next/link"
 import Image from "next/image"
 import { usePathname } from "next/navigation"
-import { menuItems } from "@/data"
+import { roleBasedMenuItems } from "@/data"
+
+
 
 
 
@@ -16,7 +18,20 @@ export default function AsideMenu() {
   const [isMenuCollapsed, setIsMenuCollapsed] = useState(false)
   const [isMobile, setIsMobile] = useState(false)
   const pathname = usePathname()
-
+  const [userRole, setUserRole] = useState<"admin" | "student" | "alumni">("student");
+  const menuItems = roleBasedMenuItems[userRole];
+  
+  useEffect(() => {
+    setUserRole(getUserRole());
+  }, []);
+  // Function to get user role from localStorage (browser-only)
+  const getUserRole = (): "admin" | "student" | "alumni" => {
+    if (typeof window !== "undefined") {
+      const role = localStorage.getItem("role") ?? "";
+      return (role as "admin" | "student" | "alumni") || "student";
+    }
+    return "student";
+  };
 
   useEffect(() => {
     const checkMobile = () => setIsMobile(window.innerWidth < 768)
@@ -85,25 +100,6 @@ export default function AsideMenu() {
             </div>
           ))}
         </nav>
-
-        <div
-          className={`pt-4 border-t border-white/10 transition-all duration-300 ease-in-out`}
-        >
-          <div className="flex items-center space-x-3 p-2">
-            <div className="relative">
-              <div className="relative w-10 h-10 rounded-full overflow-hidden">
-                <Image src="/assets/placeholder.svg" alt="Profile" width={40} height={40} className="object-cover" />
-              </div>
-              <div className="absolute bottom-0 right-0 w-3 h-3 bg-green-500 rounded-full border-2 border-black" />
-            </div>
-            <div
-              className={`flex-1 transition-all duration-300 ease-in-out ${isMenuCollapsed ? "opacity-0 w-0" : "opacity-100 w-auto"}`}
-            >
-              <h4 className="text-sm font-medium">Error</h4>
-              <p className="text-xs text-gray-400">error@almabridge.com</p>
-            </div>
-          </div>
-        </div>
       </aside>
 
       {/* Mobile menu button */}

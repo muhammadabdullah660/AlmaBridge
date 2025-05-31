@@ -1,11 +1,12 @@
 import axios from 'axios';
-import { Job, ApiJob, JobData } from '@/types';
+import { Job, ApiJob, JobData, JobApplication } from '@/types';
 
+axios.defaults.withCredentials = true;
 
 
 export const GetAllJobs = async (): Promise<Job[]>  => {
   try {
-    const response = await axios.get<ApiJob[]>(`http://localhost:3001/api/jobs`);
+    const response = await axios.get<ApiJob[]>(`http://localhost:3001/api/jobs`, { withCredentials: true, headers: { 'Content-Type': 'application/json' } });
     return response.data.map(transformApiJobToJob);
   } catch (error) {
     throw error;
@@ -14,7 +15,7 @@ export const GetAllJobs = async (): Promise<Job[]>  => {
 
 export const GetJobById = async (id: string): Promise<Job> => {
   try {
-      const response = await axios.get<ApiJob>(`http://localhost:3001/api/job/${id}`);
+      const response = await axios.get<ApiJob>(`http://localhost:3001/api/job/${id}`, { withCredentials: true, headers: { 'Content-Type': 'application/json' } });
       return transformApiJobToJob(response.data);
   } catch (error) {
       console.error(`Error fetching job with id ${id}:`, error);
@@ -23,15 +24,16 @@ export const GetJobById = async (id: string): Promise<Job> => {
 }
 
 
-export const CreateJob = async (formData: JobData, token: string): Promise<Job> => {
+export const CreateJob = async (formData: JobData): Promise<Job> => {
   try{
+    console.log(formData);
     const response = await axios.post<ApiJob>(
       `http://localhost:3001/api/job`,
       formData,
       {
+        withCredentials: true,
         headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "multipart/form-data",
+          "Content-Type": "application/json",
         }
       }
     );
@@ -43,15 +45,15 @@ export const CreateJob = async (formData: JobData, token: string): Promise<Job> 
 }
 
 
-export const UpdateJob = async (formData: JobData, token: string, id?: string ): Promise<Job> => {
+export const UpdateJob = async (formData: JobData, id?: string ): Promise<Job> => {
   try{
     const response = await axios.put<ApiJob>(
       `http://localhost:3001/api/job/${id}`,
       formData,
       {
+        withCredentials: true,
         headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "multipart/form-data",
+          "Content-Type": "application/json",
         }
       }
     );
@@ -63,13 +65,13 @@ export const UpdateJob = async (formData: JobData, token: string, id?: string ):
 }
 
 
-export const DeleteJob = async (id: string, token: string): Promise<string> => {
+export const DeleteJob = async (id: string): Promise<string> => {
   try{
     const response = await axios.delete(
       `http://localhost:3001/api/job/${id}`,
       {
+        withCredentials: true,
         headers: {
-          Authorization: `Bearer ${token}`,
           "Content-Type": "multipart/form-data",
         }
       }
@@ -80,6 +82,36 @@ export const DeleteJob = async (id: string, token: string): Promise<string> => {
   }
 }
 
+export async function SubmitJobApplication(application: JobApplication): Promise<string> {
+  const { jobId, resume, linkedin, github, description } = application;
+
+  if (!jobId || !resume) {
+    throw new Error("Job ID and resume are required")
+  }
+
+  try {
+    const formData = new FormData();
+    formData.append("jobId", jobId);
+    formData.append("resume", resume);
+    if (linkedin) formData.append("linkedin", linkedin);
+    if (github) formData.append("github", github);
+    formData.append("description", description);
+
+    const response = await axios.post(`http://localhost:3001/api/job/apply`, 
+      {
+        withCredentials: true,
+        headers: {
+          "Content-Type": "multipart/form-data",
+        }
+      }
+    );
+
+    return response.data.message;
+  } catch (error) {
+    console.error("Error saving application:", error)
+    throw new Error("Failed to submit application")
+  }
+}
 
 
 

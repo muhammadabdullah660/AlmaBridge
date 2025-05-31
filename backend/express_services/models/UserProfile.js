@@ -35,7 +35,7 @@ const UserProfile = sequelize.define(
       allowNull: true,
     },
     gender: {
-      type: DataTypes.ENUM("Male", "Female", "Other"),
+      type: DataTypes.ENUM("Male", "Female", "LGTV", "Hizru Boy", "Alma Paglu", "Nonchalant" ,"Other"),
       allowNull: true,
     },
     secondaryEmail: {

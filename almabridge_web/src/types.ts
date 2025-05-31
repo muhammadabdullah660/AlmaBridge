@@ -187,7 +187,7 @@ export interface UserDataResponse {
   email: string;
 }
 
-interface ResumeWorkExperience {
+export interface ResumeWorkExperience {
   Company: string;
   Title: string;
   Dates?: string;
@@ -203,7 +203,7 @@ interface ResumeProject {
 }
 
 interface ResumeEducation {
-  University: string;
+  Institution: string;
   Degree: string;
   Dates?: string;
   CGPA?: string;
@@ -221,7 +221,7 @@ export interface ResumeData {
   Email?: string;
   Address?: string;
   PhoneNumber?: string;
-  Education?: ResumeEducation;
+  Education?: ResumeEducation[];
   Certifications?: Certification[];
   "Work Experience"?: ResumeWorkExperience[];
   Projects?: ResumeProject[];
@@ -270,7 +270,7 @@ export interface AchievementFormProps {
 export interface AchievementListProps {
   achievements: Achievement[];
   onEdit: (achievement: Achievement) => void;
-  onDelete: (id: string) => void;
+  onDelete?: (id: string) => void;
 }
 
 export interface ApiJob {
@@ -331,4 +331,29 @@ export interface AlumniSuggestions {
   education: [];
   headline: string;
   status: "alumni" | "student";
+}
+
+
+export interface JobApplication {
+  jobId: string;
+  resume: File | null;
+  linkedin: string;
+  github: string;
+  description: string;
+}
+
+export interface JobApplicationFormProps {
+  job: Job;
+  onSubmit: (application: JobApplication) => void;
+  onCancel: () => void;
+  isOpen: boolean;
+}
+
+export type UserRole = 'admin' | 'alumni' | 'student';
+
+
+export interface AchievementFilterProps {
+  onDepartmentChange: (value: string) => void;
+  onSessionChange: (value: string) => void;
+  onCategoryChange: (value: "all" | "student" | "alumni" | "other") => void;
 }

@@ -49,7 +49,7 @@ export const faqs = [
   },
 ];
 
-export const gender = ["Male", "Female", "Other"]
+export const gender = ["Male", "Female", "LGTV", "Hizru Boy", "Alma Paglu", "Nonchalant" ,"Other"]
 
 
 export const features = [
@@ -161,35 +161,120 @@ export const notifications: Notification[] = [
   },
 ]
 
-export const menuItems = [
-  {
-    category: "MAIN MENU",
-    items: [
-      { icon: Home, label: "Home", href: "/dashboard" },
-      { icon: Users, label: "Teams", href: "/dashboard/teams" },
-      { icon: Activity, label: "Activity", href: "/dashboard/activity" },
-      { icon: MessageSquare, label: "Messages", href: "/dashboard/messages" },
-      { icon: FileText, label: "Reports", href: "/dashboard/reports" },
-    ],
-  },
-  {
-    category: "FEATURES",
-    items: [
-      { icon: Trophy, label: "Achievements", href: "/dashboard/achievements" },
-      { icon: Users, label: "People you Know", href: "/dashboard/people" },
-      { icon: Lightbulb, label: "Suggestions", href: "/dashboard/suggestions" },
-      { icon: Briefcase, label: "Jobs", href: "/dashboard/jobs" },
-    ],
-  },
-  {
-    category: "SETTINGS",
-    items: [
-      { icon: Settings, label: "Settings", href: "/dashboard/settings" },
-      { icon: CreditCard, label: "Billing", href: "/dashboard/billing" },
-      { icon: HelpCircle, label: "Help & Support", href: "/dashboard/help" },
-    ],
-  },
-]
+// export const menuItems = [
+//   {
+//     category: "MAIN MENU",
+//     items: [
+//       { icon: Home, label: "Home", href: "/dashboard" },
+//       { icon: Users, label: "Teams", href: "/dashboard/teams" },
+//       { icon: Activity, label: "Activity", href: "/dashboard/activity" },
+//       { icon: MessageSquare, label: "Messages", href: "/dashboard/messages" },
+//       { icon: FileText, label: "Reports", href: "/dashboard/reports" },
+//     ],
+//   },
+//   {
+//     category: "FEATURES",
+//     items: [
+//       { icon: Trophy, label: "Achievements", href: "/dashboard/achievements" },
+//       { icon: Users, label: "People you Know", href: "/dashboard/people" },
+//       { icon: Lightbulb, label: "Suggestions", href: "/dashboard/suggestions" },
+//       { icon: Briefcase, label: "Jobs", href: "/dashboard/jobs" },
+//     ],
+//   },
+//   {
+//     category: "SETTINGS",
+//     items: [
+//       { icon: Settings, label: "Settings", href: "/dashboard/settings" },
+//       { icon: CreditCard, label: "Billing", href: "/dashboard/billing" },
+//       { icon: HelpCircle, label: "Help & Support", href: "/dashboard/help" },
+//     ],
+//   },
+// ]
+
+
+export const roleBasedMenuItems = {
+  admin: [
+    {
+      category: "MAIN MENU",
+      items: [
+        { icon: Home, label: "Home", href: "/dashboard" },
+        { icon: MessageSquare, label: "Messages", href: "/dashboard/messages" },
+        { icon: FileText, label: "Admin Reports", href: "/dashboard/admin-reports" },
+      ],
+    },
+    {
+      category: "FEATURES",
+      items: [
+        { icon: Trophy, label: "Achievements", href: "/dashboard/achievements" },
+        { icon: Users, label: "Manage Users", href: "/dashboard/manage-users" },
+        { icon: Lightbulb, label: "Admin Suggestions", href: "/dashboard/admin-suggestions" },
+        { icon: Briefcase, label: "Job Postings", href: "/dashboard/job-postings" },
+      ],
+    },
+    {
+      category: "SETTINGS",
+      items: [
+        { icon: Settings, label: "Admin Settings", href: "/dashboard/admin-settings" },
+        { icon: CreditCard, label: "Billing", href: "/dashboard/billing" },
+        { icon: HelpCircle, label: "Help & Support", href: "/dashboard/help" },
+      ],
+    },
+  ],
+  student: [
+    {
+      category: "MAIN MENU",
+      items: [
+        { icon: Home, label: "Home", href: "/dashboard" },
+        { icon: MessageSquare, label: "Messages", href: "/dashboard/messages" },
+      ],
+    },
+    {
+      category: "FEATURES",
+      items: [
+        { icon: Trophy, label: "Achievements", href: "/dashboard/achievements" },
+        { icon: Users, label: "People you Know", href: "/dashboard/people" },
+        { icon: Lightbulb, label: "Suggestions", href: "/dashboard/suggestions" },
+        { icon: Briefcase, label: "Jobs", href: "/dashboard/jobs" },
+      ],
+    },
+    {
+      category: "SETTINGS",
+      items: [
+        { icon: Settings, label: "Settings", href: "/dashboard/settings" },
+        { icon: HelpCircle, label: "Help & Support", href: "/dashboard/help" },
+      ],
+    },
+  ],
+  alumni: [
+    {
+      category: "MAIN MENU",
+      items: [
+        { icon: Home, label: "Home", href: "/dashboard" },
+        { icon: Users, label: "Manage Teams", href: "/dashboard/manage-teams" },
+        { icon: Activity, label: "Team Activity", href: "/dashboard/team-activity" },
+        { icon: MessageSquare, label: "Messages", href: "/dashboard/messages" },
+        { icon: FileText, label: "Team Reports", href: "/dashboard/team-reports" },
+      ],
+    },
+    {
+      category: "FEATURES",
+      items: [
+        { icon: Trophy, label: "Achievements", href: "/dashboard/team-achievements" },
+        { icon: Users, label: "Members", href: "/dashboard/team-members" },
+        { icon: Lightbulb, label: "Suggestions", href: "/dashboard/team-suggestions" },
+        { icon: Briefcase, label: "Jobs", href: "/dashboard/job-approvals" },
+      ],
+    },
+    {
+      category: "SETTINGS",
+      items: [
+        { icon: Settings, label: "Settings", href: "/dashboard/team-settings" },
+        { icon: CreditCard, label: "Billing", href: "/dashboard/billing" },
+        { icon: HelpCircle, label: "Help & Support", href: "/dashboard/help" },
+      ],
+    },
+  ],
+};
 
 
 export const performanceData = [

@@ -2,10 +2,10 @@
 "use client";
 
 import { motion, useMotionValue, useSpring, useTransform } from "framer-motion";
-// import Image from "next/image";
 import { useEffect, useState } from "react";
 import { GetAllSuggestions } from "@/lib/api/suggestionsService";
 import { AlumniSuggestions } from "@/types";
+
 function TeamMemberCard({ member }: { member: AlumniSuggestions }) {
   const [isHovered, setIsHovered] = useState(false);
   const x = useMotionValue(0);
@@ -80,6 +80,9 @@ function TeamMemberCard({ member }: { member: AlumniSuggestions }) {
 
 export default function Suggestions() {
   const [suggestions, setSuggestions] = useState<AlumniSuggestions[]>([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 12;
+
   useEffect(() => {
     const fetchSuggestions = async () => {
       try {
@@ -92,6 +95,23 @@ export default function Suggestions() {
     };
     fetchSuggestions();
   }, []);
+
+  // Calculate pagination details
+  const totalPages = Math.ceil(suggestions.length / itemsPerPage);
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const paginatedSuggestions = suggestions.slice(
+    startIndex,
+    startIndex + itemsPerPage
+  );
+
+  // Handle page change
+  const handlePageChange = (page: number) => {
+    if (page >= 1 && page <= totalPages) {
+      setCurrentPage(page);
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+  };
+
   return (
     <section id="team" className="py-20 relative overflow-hidden">
       <div className="absolute inset-0 bg-gradient-to-b from-black via-black/50 to-black" />
@@ -113,9 +133,9 @@ export default function Suggestions() {
         </motion.div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-          {suggestions.map((member, index) => (
+          {paginatedSuggestions.map((member, index) => (
             <motion.div
-              key={index}
+              key={`${member.name}-${startIndex + index}`}
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, delay: index * 0.1 }}
@@ -125,6 +145,43 @@ export default function Suggestions() {
             </motion.div>
           ))}
         </div>
+
+        {/* Pagination Controls */}
+        {totalPages > 1 && (
+          <div className="mt-12 flex justify-center items-center gap-4">
+            <button
+              onClick={() => handlePageChange(currentPage - 1)}
+              disabled={currentPage === 1}
+              className="px-4 py-2 bg-white/10 text-white rounded-lg border border-white/20 hover:bg-white/20 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300"
+            >
+              Previous
+            </button>
+            <div className="flex gap-2">
+              {Array.from({ length: totalPages }, (_, i) => i + 1).map(
+                (page) => (
+                  <button
+                    key={page}
+                    onClick={() => handlePageChange(page)}
+                    className={`px-4 py-2 rounded-lg border border-white/20 transition-all duration-300 ${
+                      currentPage === page
+                        ? "bg-white/20 text-white"
+                        : "bg-white/10 text-gray-300 hover:bg-white/15"
+                    }`}
+                  >
+                    {page}
+                  </button>
+                )
+              )}
+            </div>
+            <button
+              onClick={() => handlePageChange(currentPage + 1)}
+              disabled={currentPage === totalPages}
+              className="px-4 py-2 bg-white/10 text-white rounded-lg border border-white/20 hover:bg-white/20 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300"
+            >
+              Next
+            </button>
+          </div>
+        )}
       </div>
 
       {/* Decorative Elements */}

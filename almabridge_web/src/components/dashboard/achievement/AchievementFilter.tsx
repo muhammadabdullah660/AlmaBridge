@@ -1,36 +1,34 @@
-import { useState } from "react"
-import { motion, AnimatePresence } from "framer-motion"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/Select"
-import { Input } from "@/components/ui/Input"
-import { Label } from "@/components/ui/Label"
-import { departments } from "@/data"
-import { AchievementFilterProps } from "@/types"
-
-
+import { useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/Select";
+import { Input } from "@/components/ui/Input";
+import { Label } from "@/components/ui/Label";
+import { departments } from "@/data";
+import { AchievementFilterProps } from "@/types";
 
 export default function AchievementFilter({
   onDepartmentChange,
   onSessionChange,
   onCategoryChange,
 }: AchievementFilterProps) {
-  const [departmentFilter, setDepartmentFilter] = useState<string>("")
-  const [sessionFilter, setSessionFilter] = useState<string>("")
-  const [categoryFilter, setCategoryFilter] = useState<"all" | "student" | "alumni" | "other">("all")
+  const [departmentFilter, setDepartmentFilter] = useState<string>("");
+  const [sessionFilter, setSessionFilter] = useState<string>("");
+  const [categoryFilter, setCategoryFilter] = useState<"all" | "student" | "alumni" | "other">("all");
 
   const handleDepartmentChange = (value: string) => {
-    setDepartmentFilter(value)
-    onDepartmentChange(value)
-  }
+    setDepartmentFilter(value);
+    onDepartmentChange(value);
+  };
 
   const handleSessionChange = (value: string) => {
-    setSessionFilter(value)
-    onSessionChange(value)
-  }
+    setSessionFilter(value);
+    onSessionChange(value);
+  };
 
   const handleCategoryChange = (value: "all" | "student" | "alumni" | "other") => {
-    setCategoryFilter(value)
-    onCategoryChange(value)
-  }
+    setCategoryFilter(value);
+    onCategoryChange(value);
+  };
 
   return (
     <AnimatePresence>
@@ -49,7 +47,7 @@ export default function AchievementFilter({
                 <SelectValue placeholder="Select department" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="all">All Departments</SelectItem>
+                <SelectItem value="all">All Departments</SelectItem> {/* Changed value to empty string for no filter */}
                 {departments.map((dept) => (
                   <SelectItem key={dept} value={dept}>
                     {dept}
@@ -69,10 +67,7 @@ export default function AchievementFilter({
           </div>
           <div className="flex-1 min-w-[200px]">
             <Label htmlFor="categoryFilter">Achiever Category</Label>
-            <Select
-              onValueChange={handleCategoryChange}
-              value={categoryFilter}
-            >
+            <Select onValueChange={handleCategoryChange} value={categoryFilter}>
               <SelectTrigger>
                 <SelectValue placeholder="Select category" />
               </SelectTrigger>
@@ -87,5 +82,5 @@ export default function AchievementFilter({
         </div>
       </motion.div>
     </AnimatePresence>
-  )
+  );
 }

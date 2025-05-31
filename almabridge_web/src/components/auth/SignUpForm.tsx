@@ -73,6 +73,7 @@ export default function SignUpForm() {
         localStorage.setItem("firstName", response.firstName);
         localStorage.setItem("lastName", response.lastName);
         localStorage.setItem("email", response.email);
+        localStorage.setItem("role", response.role);
         router.push("/account-auth")
       } catch (error) {
         if (axios.isAxiosError(error) && error.response) {

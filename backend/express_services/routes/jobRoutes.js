@@ -1,8 +1,11 @@
 const express = require('express');
-const {createJobPosting, getAllJobPosting, updateJobPosting, deleteJobPosting} = require('../controllers/jobPostingContoller')
+const {createJobPosting, getAllJobPosting, updateJobPosting, deleteJobPosting, submitJobApplication} = require('../controllers/jobPostingContoller')
 const {verifyToken} = require('../middlewares/authMiddleware'); 
 const rateLimit = require("express-rate-limit");
 const { check } = require("express-validator");
+const multer = require('multer');
+
+const upload = multer({ storage: multer.memoryStorage() });
 
 
 const router = express.Router();
@@ -49,5 +52,23 @@ router.delete(
     verifyToken,
     deleteJobPosting
 );
+
+
+router.post('/job/apply', limiter, upload.single('resume'), [
+    check('linkedin')
+      .optional()
+      .isURL()
+      .withMessage('Invalid LinkedIn URL'),
+    check('github')
+      .optional()
+      .isURL()
+      .withMessage('Invalid GitHub URL'),
+    check('description')
+      .notEmpty()
+      .withMessage('Description is required')
+      .isLength({ max: 5000 })
+      .withMessage('Description must not exceed 5000 characters'),
+  ], submitJobApplication);
+
 
 module.exports = router;

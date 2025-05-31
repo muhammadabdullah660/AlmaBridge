@@ -31,24 +31,18 @@ export const loginUser = async (
   }
 };
 
-export const RegisterUser = async (
-  credentials: RegisterCredentials
-): Promise<AuthResponse> => {
-  try {
-    const response = await axios.post(
-      `http://localhost:3001/api/register`,
-      credentials,
-      {
-        withCredentials: true,
-        headers: {
-          "Content-Type": "application/json",
-        },
-      }
-    );
-    return response.data;
-  } catch (error) {
-    throw error;
-  }
+export const RegisterUser = async (credentials: RegisterCredentials): Promise<AuthResponse> => {
+    try{
+        const response = await axios.post(`http://localhost:3001/api/register`, credentials, { 
+            withCredentials: true,
+            headers: {
+                'Content-Type': 'application/json'
+            } 
+        });
+        return response.data;
+    } catch (error) {
+        throw error;
+    }
 };
 
 export const UserAccountAuth = async (
