@@ -5,7 +5,7 @@ import "./globals.css";
 const spaceGrotesk = Space_Grotesk({
   subsets: ["latin"],
   variable: "--font-space-grotesk",
-})
+});
 
 export const metadata: Metadata = {
   title: "AlmaBridge",
@@ -19,11 +19,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className={`${spaceGrotesk.variable} dark`}>
-      <body
-        className={`${spaceGrotesk.variable} antialiased`}
-      >
-        {children}
-      </body>
+      <body className={`${spaceGrotesk.variable} antialiased`}>{children}</body>
     </html>
   );
 }

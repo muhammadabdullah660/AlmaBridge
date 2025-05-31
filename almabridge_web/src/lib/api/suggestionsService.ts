@@ -1,13 +1,29 @@
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { ProfileData, AlumniSuggestions } from "@/types";
 import axios from "axios";
+import { UserDataResponse } from "@/types";
 
-export const GetAllSuggestions = async (): // userData: ProfileData
-Promise<AlumniSuggestions[]> => {
+axios.defaults.withCredentials = true;
+
+const GetUserInfo = async (): Promise<UserDataResponse> => {
   try {
+    const response = await axios.get(`http://localhost:3001/api/profile`, {
+      withCredentials: true,
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
+export const GetAllSuggestions = async (): Promise<AlumniSuggestions[]> => {
+  try {
+    const userData: UserDataResponse = await GetUserInfo();
     const response = await axios.post(
       `http://127.0.0.1:5001/api/recommend`,
-      // JSON.stringify(userData),
+      userData, // ✅ send the raw object
       {
         headers: {
           "Content-Type": "application/json",
@@ -15,9 +31,9 @@ Promise<AlumniSuggestions[]> => {
       }
     );
     console.log(response.data.recommendations);
-
     return response.data.recommendations;
   } catch (error) {
+    console.error("Error fetching suggestions:", error);
     throw error;
   }
 };

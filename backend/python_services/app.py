@@ -7,7 +7,7 @@ from routes.matchmakingRoutes import recommendation_routes
 app = Flask(__name__)
 CORS(app)
 
-
+CORS(app, supports_credentials=True, origins=["http://localhost:3000"])
 app.register_blueprint(profile_routes, url_prefix="/api")
 app.register_blueprint(resume_routes, url_prefix="/api")
 app.register_blueprint(recommendation_routes, url_prefix="/api")
