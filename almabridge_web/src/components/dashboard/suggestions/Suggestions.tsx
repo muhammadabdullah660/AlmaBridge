@@ -96,7 +96,6 @@ export default function Suggestions() {
     fetchSuggestions();
   }, []);
 
-  // Calculate pagination details
   const totalPages = Math.ceil(suggestions.length / itemsPerPage);
   const startIndex = (currentPage - 1) * itemsPerPage;
   const paginatedSuggestions = suggestions.slice(
@@ -104,12 +103,47 @@ export default function Suggestions() {
     startIndex + itemsPerPage
   );
 
-  // Handle page change
   const handlePageChange = (page: number) => {
     if (page >= 1 && page <= totalPages) {
       setCurrentPage(page);
       window.scrollTo({ top: 0, behavior: "smooth" });
     }
+  };
+
+  const getPageNumbers = () => {
+    const maxPagesToShow = 5;
+    const pages: (number | string)[] = [];
+    
+    pages.push(1);
+
+    const sidePages = Math.floor(maxPagesToShow / 2);
+    let startPage = Math.max(2, currentPage - sidePages);
+    let endPage = Math.min(totalPages - 1, currentPage + sidePages);
+
+    if (currentPage <= sidePages + 1) {
+      endPage = Math.min(totalPages - 1, maxPagesToShow - 1);
+    }
+    if (currentPage >= totalPages - sidePages) {
+      startPage = Math.max(2, totalPages - maxPagesToShow + 1);
+    }
+
+    if (startPage > 2) {
+      pages.push("...");
+    }
+
+    for (let i = startPage; i <= endPage; i++) {
+      pages.push(i);
+    }
+
+    if (endPage < totalPages - 1) {
+      pages.push("...");
+    }
+
+    if (totalPages > 1) {
+      pages.push(totalPages);
+    }
+
+    return pages;
   };
 
   return (
@@ -157,21 +191,22 @@ export default function Suggestions() {
               Previous
             </button>
             <div className="flex gap-2">
-              {Array.from({ length: totalPages }, (_, i) => i + 1).map(
-                (page) => (
-                  <button
-                    key={page}
-                    onClick={() => handlePageChange(page)}
-                    className={`px-4 py-2 rounded-lg border border-white/20 transition-all duration-300 ${
-                      currentPage === page
-                        ? "bg-white/20 text-white"
-                        : "bg-white/10 text-gray-300 hover:bg-white/15"
-                    }`}
-                  >
-                    {page}
-                  </button>
-                )
-              )}
+              {getPageNumbers().map((page, index) => (
+                <button
+                  key={`${page}-${index}`}
+                  onClick={() => typeof page === "number" && handlePageChange(page)}
+                  disabled={typeof page !== "number"}
+                  className={`px-4 py-2 rounded-lg border border-white/20 transition-all duration-300 ${
+                    currentPage === page
+                      ? "bg-white/20 text-white"
+                      : typeof page === "number"
+                      ? "bg-white/10 text-gray-300 hover:bg-white/15"
+                      : "bg-white/10 text-gray-500 cursor-default"
+                  }`}
+                >
+                  {page}
+                </button>
+              ))}
             </div>
             <button
               onClick={() => handlePageChange(currentPage + 1)}

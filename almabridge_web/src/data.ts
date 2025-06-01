@@ -208,13 +208,13 @@ export const roleBasedMenuItems = {
         { icon: Trophy, label: "Achievements", href: "/dashboard/achievements" },
         { icon: Users, label: "Manage Users", href: "/dashboard/manage-users" },
         { icon: Lightbulb, label: "Admin Suggestions", href: "/dashboard/admin-suggestions" },
-        { icon: Briefcase, label: "Job Postings", href: "/dashboard/job-postings" },
+        { icon: Briefcase, label: "Job Postings", href: "/dashboard/jobs" },
       ],
     },
     {
       category: "SETTINGS",
       items: [
-        { icon: Settings, label: "Admin Settings", href: "/dashboard/admin-settings" },
+        { icon: Settings, label: "Admin Settings", href: "/dashboard/settings" },
         { icon: CreditCard, label: "Billing", href: "/dashboard/billing" },
         { icon: HelpCircle, label: "Help & Support", href: "/dashboard/help" },
       ],
@@ -259,16 +259,15 @@ export const roleBasedMenuItems = {
     {
       category: "FEATURES",
       items: [
-        { icon: Trophy, label: "Achievements", href: "/dashboard/team-achievements" },
-        { icon: Users, label: "Members", href: "/dashboard/team-members" },
-        { icon: Lightbulb, label: "Suggestions", href: "/dashboard/team-suggestions" },
-        { icon: Briefcase, label: "Jobs", href: "/dashboard/job-approvals" },
+        { icon: Trophy, label: "Achievements", href: "/dashboard/achievements" },
+        { icon: Briefcase, label: "Jobs", href: "/dashboard/jobs" },
+        { icon: Users, label: "People you Know", href: "/dashboard/suggestions" },
       ],
     },
     {
       category: "SETTINGS",
       items: [
-        { icon: Settings, label: "Settings", href: "/dashboard/team-settings" },
+        { icon: Settings, label: "Settings", href: "/dashboard/settings" },
         { icon: CreditCard, label: "Billing", href: "/dashboard/billing" },
         { icon: HelpCircle, label: "Help & Support", href: "/dashboard/help" },
       ],
@@ -278,11 +277,13 @@ export const roleBasedMenuItems = {
 
 
 export const performanceData = [
-  { name: "Mon", value: 65 },
-  { name: "Tue", value: 75 },
-  { name: "Wed", value: 85 },
-  { name: "Thu", value: 70 },
-  { name: "Fri", value: 90 },
+  { name: "Mon", value: 15 },
+  { name: "Tue", value: 45 },
+  { name: "Wed", value: 5 },
+  { name: "Thu", value: 30 },
+  { name: "Fri", value: 70 },
+  { name: "Sat", value: 20 },
+  { name: "Sun", value: 90 },
 ]
 
 export const pieData = [

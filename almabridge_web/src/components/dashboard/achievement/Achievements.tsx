@@ -11,19 +11,14 @@ import NoPlaceholder from "@/components/dashboard/NoPlaceholder";
 import { GetAllAchievements } from "@/lib/api/achievementService";
 import { toast } from "react-toastify";
 
-
-
-
-
-
 export default function Achievements() {
   const [userRole, setUserRole] = useState<"admin" | "student" | "alumni">("student");
   const isAdminOrAlumni = userRole === "admin" || userRole === "alumni";
   const [achievements, setAchievements] = useState<Achievement[]>([]);
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [editingAchievement, setEditingAchievement] = useState<Achievement | null>(null);
-  const [currentPage, setCurrentPage] = useState(1); // Pagination state
-  const achievementsPerPage = 6; // Number of achievements per page
+  const [currentPage, setCurrentPage] = useState(1);
+  const achievementsPerPage = 6;
 
   useEffect(() => {
     const fetchAchievements = async () => {
@@ -104,12 +99,47 @@ export default function Achievements() {
     category: (value: "all" | "student" | "alumni" | "other") => setCategoryFilter(value),
   };
 
-  // Pagination calculations
   const totalPages = Math.ceil(filteredAchievements.length / achievementsPerPage);
   const paginatedAchievements = filteredAchievements.slice(
     (currentPage - 1) * achievementsPerPage,
     currentPage * achievementsPerPage
   );
+
+  const getPageNumbers = () => {
+    const maxPagesToShow = 5;
+    const pages: (number | string)[] = [];
+    pages.push(1);
+
+    const sidePages = Math.floor(maxPagesToShow / 2);
+    let startPage = Math.max(2, currentPage - sidePages);
+    let endPage = Math.min(totalPages - 1, currentPage + sidePages);
+
+    // Adjust if we're near the start or end
+    if (currentPage <= sidePages + 1) {
+      endPage = Math.min(totalPages - 1, maxPagesToShow - 1);
+    }
+    if (currentPage >= totalPages - sidePages) {
+      startPage = Math.max(2, totalPages - maxPagesToShow + 1);
+    }
+
+    if (startPage > 2) {
+      pages.push("...");
+    }
+
+    for (let i = startPage; i <= endPage; i++) {
+      pages.push(i);
+    }
+
+    if (endPage < totalPages - 1) {
+      pages.push("...");
+    }
+
+    if (totalPages > 1) {
+      pages.push(totalPages);
+    }
+
+    return pages;
+  };
 
   return (
     <div className="space-y-6">
@@ -149,23 +179,41 @@ export default function Achievements() {
               onDelete={isAdminOrAlumni ? handleDelete : undefined}
             />
             {/* Pagination Controls */}
-            <div className="flex justify-between items-center mt-6">
-              <Button
-                disabled={currentPage === 1}
-                onClick={() => setCurrentPage((prev) => prev - 1)}
-              >
-                Previous
-              </Button>
-              <span>
-                Page {currentPage} of {totalPages}
-              </span>
-              <Button
-                disabled={currentPage === totalPages || totalPages === 0}
-                onClick={() => setCurrentPage((prev) => prev + 1)}
-              >
-                Next
-              </Button>
-            </div>
+            {totalPages > 1 && (
+              <div className="mt-6 flex justify-between items-center gap-4">
+                <Button
+                  disabled={currentPage === 1}
+                  onClick={() => setCurrentPage((prev) => prev - 1)}
+                >
+                  Previous
+                </Button>
+                <div className="flex gap-2">
+                  {getPageNumbers().map((page, index) => (
+                    <Button
+                      key={`${page}-${index}`}
+                      onClick={() => typeof page === "number" && setCurrentPage(page)}
+                      disabled={typeof page !== "number"}
+                      variant={currentPage === page ? "default" : "outline"}
+                      className={`px-4 py-2 transition-all duration-300 ${
+                        currentPage === page
+                          ? "bg-white/20 text-white"
+                          : typeof page === "number"
+                          ? "bg-white/10 text-gray-300 hover:bg-white/15"
+                          : "bg-white/10 text-gray-500 cursor-default"
+                      }`}
+                    >
+                      {page}
+                    </Button>
+                  ))}
+                </div>
+                <Button
+                  disabled={currentPage === totalPages || totalPages === 0}
+                  onClick={() => setCurrentPage((prev) => prev + 1)}
+                >
+                  Next
+                </Button>
+              </div>
+            )}
           </>
         ) : (
           <NoPlaceholder

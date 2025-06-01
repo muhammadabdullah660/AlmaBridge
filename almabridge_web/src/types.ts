@@ -357,3 +357,29 @@ export interface AchievementFilterProps {
   onSessionChange: (value: string) => void;
   onCategoryChange: (value: "all" | "student" | "alumni" | "other") => void;
 }
+
+
+export interface ProfileUserDataResponse {
+  firstName: string;
+  lastName: string;
+  email: string;
+  profile: {
+    profileImage: string;
+    address: string;
+    linkedin?: string;
+    bio?: string;
+    gender?: string;
+    secondaryEmail?: string;
+    portfolio?: string;
+    linktree?: string;
+    educations: Education[];
+    experiences: WorkExperience[];
+    skills: profileSkill[];
+    certificates: Certification[];
+  };
+}
+
+export interface profileSkill {
+  skillName: string;
+  rating: number;
+}

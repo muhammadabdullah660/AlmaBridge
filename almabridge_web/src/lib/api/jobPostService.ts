@@ -85,19 +85,20 @@ export const DeleteJob = async (id: string): Promise<string> => {
 export async function SubmitJobApplication(application: JobApplication): Promise<string> {
   const { jobId, resume, linkedin, github, description } = application;
 
-  if (!jobId || !resume) {
-    throw new Error("Job ID and resume are required")
+  if (!jobId || !resume || !description) {
+    throw new Error("Job ID and resume and Description are required")
   }
 
   try {
     const formData = new FormData();
     formData.append("jobId", jobId);
     formData.append("resume", resume);
+    formData.append("description", description);
     if (linkedin) formData.append("linkedin", linkedin);
     if (github) formData.append("github", github);
-    formData.append("description", description);
 
-    const response = await axios.post(`http://localhost:3001/api/job/apply`, 
+    const response = await axios.post(`http://localhost:3001/api/job/apply`,
+      formData, 
       {
         withCredentials: true,
         headers: {

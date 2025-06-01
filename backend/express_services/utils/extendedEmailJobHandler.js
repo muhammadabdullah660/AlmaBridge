@@ -137,12 +137,13 @@ const getEventAttendanceEmailTemplate = (eventTitle, eventId, attendeeName) => {
 };
 
 
-export const getJobApplicationEmailTemplate = (
+const getJobApplicationEmailTemplate = (
   jobName,
   applicantName,
   linkedin,
   github,
-  description
+  description,
+  jobProvider
 ) => {
   return `
     <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; background-color: #f9f9f9;">
@@ -151,7 +152,7 @@ export const getJobApplicationEmailTemplate = (
         <h1 style="color: #ffffff; font-size: 24px; margin: 10px 0;">🔔 New Job Application</h1>
       </div>
       <div style="padding: 20px; background-color: #ffffff; border-radius: 0 0 8px 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
-        <h2 style="color: #333; font-size: 20px;">Hello AlmaBridge User,</h2>
+        <h2 style="color: #333; font-size: 20px;">Hello Mr.${jobProvider},</h2>
         <p style="color: #555; font-size: 16px; line-height: 1.5;">
           A new application has been submitted for your job posting <strong>"${jobName}"</strong> by <strong>${applicantName}</strong>.
         </p>
@@ -175,8 +176,7 @@ export const getJobApplicationEmailTemplate = (
 
 
 const processEmail = async (job) => {
-  const { userId, email, type, eventId, eventTitle, attendeeId, jobName, applicantName, resume, linkedin, github, description } = job.data;
-
+  const { userId, email, type, eventId, eventTitle, attendeeId, providerName , jobName, applicantName, resume, linkedin, github, description } = job.data;
   try {
     if (type === 'verification' || type === 'password_reset') {
       return await originalProcessEmail(job);
@@ -187,7 +187,7 @@ const processEmail = async (job) => {
       case 'job_creation':
         emailContent = {
           subject: `Job Applicant Application`,
-          html: getJobApplicationEmailTemplate(jobName, applicantName, linkedin, github, description),
+          html: getJobApplicationEmailTemplate(jobName, applicantName, linkedin, github, description, providerName),
         };
         break;
       case 'event_creation':
@@ -222,15 +222,22 @@ const processEmail = async (job) => {
     const transporter = createTransporter();
     await transporter.verify();
 
+    // Convert resume object to Buffer if necessary
+    const resumeBuffer = resume && resume.type === 'Buffer' && Array.isArray(resume.data)
+      ? Buffer.from(resume.data)
+      : resume && Buffer.isBuffer(resume)
+      ? resume
+      : null;
+
     const mailOptions = {
       from: process.env.TITAN_SENDER_MAIL,
       to: email,
       attachments: [
-          ...(type === "job_application" && resume
+          ...(type === "job_creation" && resume
           ? [
               {
                 filename: `resume-${applicantName}.pdf`,
-                content: resume,
+                content: resumeBuffer,
                 contentType: "application/pdf",
               },
             ]
@@ -239,8 +246,8 @@ const processEmail = async (job) => {
       ...emailContent,
     };
 
+    logToFile(`Sending email to ${email} with subject: ${emailContent.subject}`);
     await transporter.sendMail(mailOptions);
-
     await logAction(
       `${type.charAt(0).toUpperCase() + type.slice(1)} Email Sent`,
       userId,

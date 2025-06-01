@@ -83,7 +83,7 @@ export default function Home() {
       )}
 
       {/* Charts Grid */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div className={userRole === 'alumni' || userRole === 'student' ? 'grid grid-cols-1 lg:grid-cols-1 gap-6' : 'grid grid-cols-1 lg:grid-cols-2 gap-6'}>
         {/* Performance Chart */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}

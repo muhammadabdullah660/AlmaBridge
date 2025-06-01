@@ -1,4 +1,5 @@
 const JobPosting = require("../models/JobPosting");
+const User = require("../models/User");
 const logAction = require("../utils/logService");
 const { validationResult } = require('express-validator');
 const { handleValidationErrors } = require('../utils/errorHandler');
@@ -125,59 +126,83 @@ const deleteJobPosting = async (req, res) => {
 
 
 const submitJobApplication = async (req, res) => {
-  try{
+  const { userId, jobId, linkedin, github, description } = req.body;
+  const resume = req.file;
+  try {
+    // Validate request
     const errors = validationResult(req);
-    if(!errors.isEmpty()) {
-      const { status, response } = handleValidationErrors(errors);
+    if (!errors.isEmpty()) {
+      const errorMessage = JSON.stringify(errors.array());
       await logAction(
-          "Job Application Submission Failed",
-          null,
-          `Validation errors: ${JSON.stringify(errors.array())}`,
-          "failure"
+        "Job Application Submission Failed",
+        userId || null,
+        `Validation errors: ${errorMessage}`,
+        "failure"
       );
-      return res.status(status).json(response);
+      return res.status(400).json({ errors: errors.array() });
     }
 
-    const { jobId, linkedin, github, description, userId } = req.body;
-    const resume = req.file;
-    
+    // Verify JobPosting exists
     const job = await JobPosting.findByPk(jobId, {
-      include: [{ model: User, as: "User" }],
+      include: [{ model: User, as: 'user' }],
     });
 
-    if (!job){
-      return res.status(400).json({ message: "This Job doesn't Exist" })
+    if (!job) {
+      await logAction(
+        "Job Application Submission Failed",
+        userId || null,
+        `Job not found: ${jobId}`,
+        "failure"
+      );
+      return res.status(404).json({ message: "This Job doesn't exist" });
     }
 
+    // Verify applicant exists
     const applicant = await User.findByPk(userId);
-
-    await emailQueue.add({ 
+    if (!applicant) {
+      await logAction(
+        "Job Application Submission Failed",
+        userId || null,
+        `User not found: ${userId}`,
+        "failure"
+      );
+      return res.status(404).json({ message: "User not found" });
+    }
+    // Add to email queue
+    await emailQueue.add({
       userId: job.userId,
-      email: job.User.email,
+      email: job.user.email,
       type: 'job_creation',
+      providerName: job.user.firstName,
       jobName: job.jobName,
       applicantName: `${applicant.firstName} ${applicant.lastName || ""}`,
-      resume: resume.buffer, // Send resume buffer for email attachment
+      resume: resume ? resume.buffer : null,
       linkedin: linkedin || null,
       github: github || null,
-      description,
-      });
+      description: description || '',
+    });
 
+    // Log successful action
     await logAction(
       "Job Application Submitted",
       userId,
-      `UserId: ${userId} submitted an application for jobId: ${jobId}`,
+      `User ${applicant.email} submitted an application for job ${jobId}: ${description}`,
       "success"
     );
 
-    res.status(200).json({ message: "Application Submit Successfully" });
-
-
-  } catch(error) {
-    await logAction("Job Post Deletion Fail", userId, error, "failure");
-    res.status(500).json({ message: "Error deleting job posting", error });
+    return res.status(201).json({ message: "Application submitted successfully" });
+  } catch (error) {
+    // Log error with string description
+    await logAction(
+      "Job Application Submission Failed",
+      userId || null,
+      `Error submitting application: ${error.message}`,
+      "failure"
+    );
+    console.error('Error in submitJobApplication:', error);
+    return res.status(500).json({ message: "Internal server error", error: error.message });
   }
-}
+};
 
 
 module.exports = {

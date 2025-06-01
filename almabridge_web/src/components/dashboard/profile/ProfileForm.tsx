@@ -9,18 +9,16 @@ import { Label } from "@/components/ui/Label"
 import Image from "next/image"
 import Link from "next/link"
 import type { Education, ProfileData, WorkExperience } from "@/types"
-import { getUserProfileData } from "@/lib/api/profileService"
+import { getUserProfileData, UpdateProfile } from "@/lib/api/profileService"
 import { gender } from "@/data"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/Select"
 import { Textarea } from "@/components/ui/Textarea"
-// import { useRouter } from "next/navigation"
 
 const ProfileForm: React.FC = () => {
-//   const router = useRouter()
-    const [token, setToken] = useState<string | null>("");
     const [isEditing, setIsEditing] = useState(false)
     const [isLoading, setIsLoading] = useState(false)
-    const [profilePicture, setProfilePicture] = useState("")
+    const [profilePicture, setProfilePicture] = useState("/assets/Default_pfp.jpg")
+    const [profileObject, setProfileObject] = useState<File>()
     const [profileData, setProfileData] = useState<ProfileData>({
         firstName: "",
         lastName: "",
@@ -39,18 +37,9 @@ const ProfileForm: React.FC = () => {
         linktree: "",
     });
 
-    useEffect(() => {
-        if (typeof window !== "undefined") {
-            const storedToken = localStorage.getItem("token");
-            setToken(storedToken);
-        }
-    }, []);
-
     const fetchUser = useCallback(async () => {
-        if (!token) return;
-    
         try {
-            const data = await getUserProfileData(token);
+            const data = await getUserProfileData();
     
             setProfileData((prev) => ({
                 ...prev,
@@ -82,7 +71,7 @@ const ProfileForm: React.FC = () => {
         } catch (error) {
             console.error("Failed to Load User Data:", error);
         }
-    }, [token]);
+    }, []);
     
     useEffect(() => {
         fetchUser();
@@ -103,6 +92,7 @@ const ProfileForm: React.FC = () => {
       const reader = new FileReader()
       reader.onloadend = () => {
         setProfilePicture(reader.result as string)
+        setProfileObject(file)
       }
       reader.readAsDataURL(file)
     }
@@ -110,6 +100,67 @@ const ProfileForm: React.FC = () => {
 
   const updateUserProfile = async () => {
     setIsLoading(true);
+    try{
+      const formData = new FormData()
+
+      // Append text fields
+      const textFields: (keyof ProfileData)[] = [
+          "firstName",
+          "lastName",
+          "address",
+          "aboutMe",
+          "linkedin",
+          "bio",
+          "gender",
+          "secondaryEmail",
+          "portfolio",
+          "linktree",
+      ]
+
+      textFields.forEach((field) => {
+          const value = profileData[field]
+          if (typeof value === "string") {
+            formData.append(field, value)
+          }
+      })
+
+      // Append arrays
+      profileData.education.forEach((edu, index) => {
+          Object.entries(edu).forEach(([key, value]) => {
+            formData.append(`education[${index}][${key}]`, value || "")
+          })
+      })
+
+      profileData.workExperience.forEach((exp, index) => {
+          Object.entries(exp).forEach(([key, value]) => {
+            formData.append(`experiences[${index}][${key}]`, value || "")
+          })
+      })
+
+      profileData.skills.forEach((skill, index) => {
+          formData.append(`skills[${index}][skillName]`, skill.name)
+          formData.append(`skills[${index}][rating]`, skill.rating.toString())
+      })
+
+      profileData.certification.forEach((cert, index) => {
+          Object.entries(cert).forEach(([key, value]) => {
+            formData.append(`certifications[${index}][${key}]`, value || "")
+          })
+      })
+
+      if (profileObject) {
+          formData.append("file", profileObject)
+      }
+
+      const message = await UpdateProfile(formData)
+      console.log(message)
+      setIsEditing(false)
+    } catch(error) {
+      console.error("Error updating user profile:", error)
+    } finally {
+      setIsLoading(false)
+    }
+
   }
 
 

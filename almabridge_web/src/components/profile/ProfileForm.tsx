@@ -78,9 +78,6 @@ const ProfileForm = memo(() => {
 
     setProfileData((prev) => ({
       ...prev,
-      firstName: parsedData.Name?.split(' ')[0] || prev.firstName,
-      lastName: parsedData.Name?.split(' ').slice(1).join(' ') || prev.lastName,
-      primaryEmail: parsedData.Email || prev.primaryEmail,
       address: parsedData.Address || prev.address,
       workExperience:
         parsedData['Work Experience']?.map((exp) => ({

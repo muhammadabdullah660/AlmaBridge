@@ -54,7 +54,7 @@ router.delete(
 );
 
 
-router.post('/job/apply', limiter, upload.single('resume'), [
+router.post('/job/apply', limiter, upload.single('resume'), verifyToken , [
     check('linkedin')
       .optional()
       .isURL()
@@ -66,7 +66,7 @@ router.post('/job/apply', limiter, upload.single('resume'), [
     check('description')
       .notEmpty()
       .withMessage('Description is required')
-      .isLength({ max: 5000 })
+      .isLength({ max: 10000 })
       .withMessage('Description must not exceed 5000 characters'),
   ], submitJobApplication);
 
