@@ -73,6 +73,14 @@ function TeamMemberCard({ member }: { member: PeopleType }) {
         <p className="text-xs text-gray-500 text-center line-clamp-6">
           {member.about}
         </p>
+
+
+        {/* Connect Button */}
+        <button className="bg-[#0077B5] text-white font-semibold px-4 py-2 rounded-full text-sm hover:bg-[#005f8b] transition duration-300">
+          Connect
+        </button>
+
+
       </div>
     </motion.div>
   );

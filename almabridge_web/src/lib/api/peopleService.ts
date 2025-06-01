@@ -22,7 +22,7 @@ export const GetAllPeople = async (): Promise<PeopleType[]> => {
   try {
     const userData: UserDataResponse = await GetUserInfo();
     const response = await axios.post(
-      `http://127.0.0.1:5001/api/recommend`,
+      `http://127.0.0.1:5001/api/people`,
       userData, // ✅ send the raw object
       {
         headers: {

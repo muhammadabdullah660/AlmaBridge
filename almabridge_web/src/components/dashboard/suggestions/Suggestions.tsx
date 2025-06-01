@@ -164,7 +164,7 @@ export default function Suggestions() {
           className="text-center mb-20"
         >
           <h2 className="text-3xl md:text-5xl font-bold mb-6 font-space-grotesk">
-            Meet Our <span className="text-glow">Alumni</span>
+            Meet Your <span className="text-glow">Suggested Alumni</span>
           </h2>
           <p className="text-gray-400 text-lg max-w-3xl mx-auto">
             Dedicated professionals committed to revolutionizing mentorship and
