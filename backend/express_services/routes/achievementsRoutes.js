@@ -7,6 +7,7 @@ const {
   getAllAchievements,
   updateAchievement,
   deleteAchievement,
+  getSpecificAchievements
 } = require("../controllers/achievementsController");
 const { check } = require("express-validator");
 
@@ -42,6 +43,13 @@ router.get(
   limiter,
   verifyToken,
   getAllAchievements
+);
+
+router.get(
+  "/specific-achievements",
+  limiter,
+  verifyToken,
+  getSpecificAchievements
 );
 
 // Update Achievement Route

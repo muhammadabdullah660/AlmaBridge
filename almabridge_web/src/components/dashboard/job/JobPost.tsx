@@ -22,32 +22,6 @@ export default function JobPost() {
   const [applyingJob, setApplyingJob] = useState<Job | null>(null);
   const [userRole, setUserRole] = useState<'admin' | 'student' | 'alumni'>('student');
 
-  useEffect(() => {
-    setUserRole(getUserRole());
-  }, []);
-
-
-  useEffect(() => {
-    const fetchJobs = async () => {
-      try {
-        if (userRole === 'alumni') {
-          const fetchedSpecificJobs = await GetSpecificAlumniJobs();
-          setJobs(fetchedSpecificJobs);
-        } else {
-          const fetchedJobs = await GetAllJobs();
-          setJobs(fetchedJobs);
-        }
-      } catch (error) {
-        console.error(error);
-        toast.error('Error Occurred While Loading Jobs');
-      }
-    };
-
-    fetchJobs();
-  }, [userRole]);
-
-  
-
   const getUserRole = (): 'admin' | 'student' | 'alumni' => {
     if (typeof window !== 'undefined') {
       const role = localStorage.getItem('role') ?? '';
@@ -56,10 +30,32 @@ export default function JobPost() {
     return 'student';
   };
 
+  useEffect(() => {
+    const fetchJobs = async () => {
+      try {
+        const role = getUserRole();
+        setUserRole(role);
+        let fetchedJobs: Job[] = [];
+        
+        if (role === 'alumni') {
+          fetchedJobs = await GetSpecificAlumniJobs();
+        } else {
+          fetchedJobs = await GetAllJobs();
+        }
+        setJobs(fetchedJobs);
+      } catch (error) {
+        console.error('Error fetching jobs:', error);
+        toast.error('Error Occurred While Loading Jobs');
+      }
+    };
+
+    fetchJobs();
+  }, []);
+
   const handleAddJob = (jobData: Job) => {
     setJobs((prev) => [jobData, ...prev]);
     setIsFormOpen(false);
-    setCurrentPage(1); // Reset to first page to show new job
+    setCurrentPage(1);
   };
 
   const handleUpdateJob = (jobData: Job) => {

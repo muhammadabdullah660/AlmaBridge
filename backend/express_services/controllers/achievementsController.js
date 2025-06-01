@@ -82,6 +82,22 @@ const getAllAchievements = async (req, res) => {
   }
 };
 
+const getSpecificAchievements = async (req, res) => {
+  const { userId } = req.body;
+  try {
+    const achievements = await Achievement.findAll({
+      where: {
+        userId: userId,
+      },
+    });
+    await logAction("Achievement Retrieval", userId, `All achievements retrieved successfully by user: ${userId}`);
+    res.status(200).json(achievements);
+  } catch (error) {
+    await logAction("Achievement Retrieval Fails", userId, `Failed to retrieve achievements for user: ${userId}. Error: ${error.message}`, "failure");
+    res.status(500).json({ message: "Error fetching achievements", error: error.message });
+  }
+};
+
 
 
 
@@ -158,4 +174,5 @@ module.exports = {
   getAllAchievements,
   updateAchievement,
   deleteAchievement,
+  getSpecificAchievements
 };

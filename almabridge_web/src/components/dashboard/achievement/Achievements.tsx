@@ -8,7 +8,7 @@ import AchievementFilter from "./AchievementFilter";
 import AchievementForm from "./AchievementForm";
 import AchievementList from "./AchievementList";
 import NoPlaceholder from "@/components/dashboard/NoPlaceholder";
-import { GetAllAchievements } from "@/lib/api/achievementService";
+import { GetAllAchievements, GetSpecificAchievements} from "@/lib/api/achievementService";
 import { toast } from "react-toastify";
 
 export default function Achievements() {
@@ -20,24 +20,6 @@ export default function Achievements() {
   const [currentPage, setCurrentPage] = useState(1);
   const achievementsPerPage = 6;
 
-  useEffect(() => {
-    const fetchAchievements = async () => {
-      try {
-        const fetchedAchievements = await GetAllAchievements();
-        setAchievements(fetchedAchievements);
-      } catch (error) {
-        console.log(error);
-        toast.error("Error Occurred While Loading Achievements");
-      }
-    };
-
-    fetchAchievements();
-  }, []);
-
-  useEffect(() => {
-    setUserRole(getUserRole());
-  }, []);
-
   const getUserRole = (): "admin" | "student" | "alumni" => {
     if (typeof window !== "undefined") {
       const role = localStorage.getItem("role") ?? "";
@@ -45,6 +27,28 @@ export default function Achievements() {
     }
     return "student";
   };
+
+  useEffect(() => {
+    const fetchAchievements = async () => {
+      try {
+        const role = getUserRole();
+        setUserRole(role);
+        let fetchedAchievements: Achievement[] = [];
+
+        if (role === "alumni") {
+          fetchedAchievements = await GetSpecificAchievements();
+        } else {
+          fetchedAchievements = await GetAllAchievements();
+        }
+        setAchievements(fetchedAchievements);
+      } catch (error) {
+        console.error("Error fetching achievements:", error);
+        toast.error("Error Occurred While Loading Achievements");
+      }
+    };
+
+    fetchAchievements();
+  }, []);
 
   // Filter states
   const [departmentFilter, setDepartmentFilter] = useState<string>("");
@@ -114,7 +118,6 @@ export default function Achievements() {
     let startPage = Math.max(2, currentPage - sidePages);
     let endPage = Math.min(totalPages - 1, currentPage + sidePages);
 
-    // Adjust if we're near the start or end
     if (currentPage <= sidePages + 1) {
       endPage = Math.min(totalPages - 1, maxPagesToShow - 1);
     }
@@ -178,7 +181,6 @@ export default function Achievements() {
               onEdit={isAdminOrAlumni ? handleEdit : () => {}}
               onDelete={isAdminOrAlumni ? handleDelete : undefined}
             />
-            {/* Pagination Controls */}
             {totalPages > 1 && (
               <div className="mt-6 flex justify-between items-center gap-4">
                 <Button

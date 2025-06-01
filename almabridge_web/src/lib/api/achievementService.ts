@@ -20,6 +20,23 @@ export const GetAllAchievements = async (): Promise<Achievement[]> => {
   }
 };
 
+export const GetSpecificAchievements = async (): Promise<Achievement[]> => {
+  try {
+    const response = await axios.get<ApiAchievement[]>("http://localhost:3001/api/specific-achievements", {
+      withCredentials: true,
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+    return response.data.map(transformApiAchievementToAchievement);
+  } catch (error) {
+    const errorMessage = error instanceof AxiosError && error.response?.data?.message
+      ? error.response.data.message
+      : "Failed to fetch achievements";
+    throw new Error(errorMessage);
+  }
+};
+
 export const CreateAchievement = async (formData: AchievementData): Promise<Achievement> => {
   try {
     const data = new FormData();
