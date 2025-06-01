@@ -8,3 +8,7 @@ recommendation_routes = Blueprint("recommendation_routes", __name__)
 recommendation_routes.add_url_rule(
     "/recommend", methods=["POST"], view_func=RecommendationController.recommend_profiles
 )
+
+recommendation_routes.add_url_rule(
+    "/people", methods=["POST"], view_func=RecommendationController.people_profiles
+)

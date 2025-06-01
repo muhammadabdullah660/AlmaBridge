@@ -29,3 +29,13 @@ class RecommendationController:
         except Exception as e:
             print("Error processing request:", str(e))  # Debugging line
             return jsonify({"error": str(e)}), 500
+    @staticmethod
+    def people_profiles():
+        try:
+            s = MatchmakingService()
+            # recommendations = s.get_recommendations(education, skills, bio)
+            recommendations = s.fetch_from_mongodb()
+            return jsonify({"recommendations": recommendations}), 200
+        except Exception as e:
+            print("Error processing request:", str(e))  # Debugging line
+            return jsonify({"error": str(e)}), 500

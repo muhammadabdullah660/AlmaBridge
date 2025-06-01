@@ -88,29 +88,29 @@ export interface Event {
   id: string; // Frontend uses string IDs
   title: string;
   description: string;
-  date: string,
-  eventLink: string,
-  status: 'pending' | 'approved' | 'cancelled';
-  targetAudience: 'students' | 'alumni' | 'both';
+  date: string;
+  eventLink: string;
+  status: "pending" | "approved" | "cancelled";
+  targetAudience: "students" | "alumni" | "both";
 }
 
 export interface ApiEvent {
   id: number; // Backend may use number IDs
   title: string;
   description: string;
-  date: string,
-  eventLink: string,
-  status: 'pending' | 'approved' | 'cancelled';
-  targetAudience: 'students' | 'alumni' | 'both';
+  date: string;
+  eventLink: string;
+  status: "pending" | "approved" | "cancelled";
+  targetAudience: "students" | "alumni" | "both";
 }
 
 export interface EventData {
   title: string;
   description: string;
-  date: string,
-  eventLink: string,
-  status: 'pending' | 'approved' | 'cancelled';
-  targetAudience: 'students' | 'alumni' | 'both';
+  date: string;
+  eventLink: string;
+  status: "pending" | "approved" | "cancelled";
+  targetAudience: "students" | "alumni" | "both";
 }
 
 export interface Achievement {
@@ -376,7 +376,17 @@ export interface AlumniSuggestions {
   headline: string;
   status: "alumni" | "student";
 }
-
+export interface PeopleType {
+  name: string;
+  title: string;
+  about: string;
+  image_url: string;
+  session: string;
+  department: string;
+  education: [];
+  headline: string;
+  status: "alumni" | "student";
+}
 
 export interface JobApplication {
   jobId: string;
@@ -393,15 +403,13 @@ export interface JobApplicationFormProps {
   isOpen: boolean;
 }
 
-export type UserRole = 'admin' | 'alumni' | 'student';
-
+export type UserRole = "admin" | "alumni" | "student";
 
 export interface AchievementFilterProps {
   onDepartmentChange: (value: string) => void;
   onSessionChange: (value: string) => void;
   onCategoryChange: (value: "all" | "student" | "alumni" | "other") => void;
 }
-
 
 export interface ProfileUserDataResponse {
   firstName: string;
