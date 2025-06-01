@@ -11,7 +11,7 @@ import JobPostingList from './JobList';
 import JobApplicationForm from './JobApplicationForm';
 import NoPlaceholder from '../NoPlaceholder';
 import { toast } from 'react-toastify';
-import { GetAllJobs, SubmitJobApplication } from '@/lib/api/jobPostService';
+import { GetAllJobs, GetSpecificAlumniJobs, SubmitJobApplication } from '@/lib/api/jobPostService';
 
 export default function JobPost() {
   const [jobs, setJobs] = useState<Job[]>([]);
@@ -23,10 +23,20 @@ export default function JobPost() {
   const [userRole, setUserRole] = useState<'admin' | 'student' | 'alumni'>('student');
 
   useEffect(() => {
+    setUserRole(getUserRole());
+  }, []);
+
+
+  useEffect(() => {
     const fetchJobs = async () => {
       try {
-        const fetchedJobs = await GetAllJobs();
-        setJobs(fetchedJobs);
+        if (userRole === 'alumni') {
+          const fetchedSpecificJobs = await GetSpecificAlumniJobs();
+          setJobs(fetchedSpecificJobs);
+        } else {
+          const fetchedJobs = await GetAllJobs();
+          setJobs(fetchedJobs);
+        }
       } catch (error) {
         console.error(error);
         toast.error('Error Occurred While Loading Jobs');
@@ -34,11 +44,9 @@ export default function JobPost() {
     };
 
     fetchJobs();
-  }, []);
+  }, [userRole]);
 
-  useEffect(() => {
-    setUserRole(getUserRole());
-  }, []);
+  
 
   const getUserRole = (): 'admin' | 'student' | 'alumni' => {
     if (typeof window !== 'undefined') {

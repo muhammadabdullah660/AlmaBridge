@@ -4,6 +4,7 @@ axios.defaults.withCredentials = true;
 
 export const UpdateProfile = async (formData: FormData): Promise<string> => {
     try{
+        console.log(formData);
         const response = await axios.post(
             `http://localhost:3001/api/profile`,
             formData,

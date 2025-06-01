@@ -65,6 +65,21 @@ const getAllJobPosting = async (req, res) => {
   }
 };
 
+const getSpecificUserJobPosting = async (req, res) => {
+  try {
+    const { userId } = req.body;
+    const jobs = await JobPosting.findAll({
+      where: {
+        userId: userId,
+      },
+    });
+    res.status(200).json(jobs);
+  } catch (error) {
+    console.error("Error fetching jobs:", error);
+    res.status(500).json({ message: "Error fetching jobs", error });
+  }
+};
+
 const updateJobPosting = async (req, res) => {
   const errors = validationResult(req);
   if(!errors.isEmpty()) {
@@ -210,5 +225,6 @@ module.exports = {
   getAllJobPosting,
   updateJobPosting,
   deleteJobPosting,
-  submitJobApplication
+  submitJobApplication,
+  getSpecificUserJobPosting
 };

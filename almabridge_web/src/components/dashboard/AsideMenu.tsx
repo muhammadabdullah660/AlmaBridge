@@ -24,7 +24,8 @@ export default function AsideMenu() {
   useEffect(() => {
     setUserRole(getUserRole());
   }, []);
-  // Function to get user role from localStorage (browser-only)
+
+  
   const getUserRole = (): "admin" | "student" | "alumni" => {
     if (typeof window !== "undefined") {
       const role = localStorage.getItem("role") ?? "";

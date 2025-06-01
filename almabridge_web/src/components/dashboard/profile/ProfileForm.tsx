@@ -179,11 +179,12 @@ const ProfileForm: React.FC = () => {
         field: keyof Education,
         value: string
     ) => {
-        const updatedEducation = [...profileData.education] ;
+        const updatedEducation = [...profileData.education];
         updatedEducation[index] = {
-        ...updatedEducation[index],
-        [field]: value,
-        }
+            ...updatedEducation[index],
+            [field]: value,
+        };
+        setProfileData({ ...profileData, education: updatedEducation });
     };
 
     const removeEducation = (index: number) => {

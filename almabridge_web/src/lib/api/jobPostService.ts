@@ -13,6 +13,16 @@ export const GetAllJobs = async (): Promise<Job[]>  => {
   }
 }
 
+
+export const GetSpecificAlumniJobs = async (): Promise<Job[]> => {
+  try {
+    const response = await axios.get<ApiJob[]>(`http://localhost:3001/api/specific-jobs`, { withCredentials: true, headers: { 'Content-Type': 'application/json' } });
+    return response.data.map(transformApiJobToJob);
+  } catch (error) {
+    throw error;
+  }
+}
+
 export const GetJobById = async (id: string): Promise<Job> => {
   try {
       const response = await axios.get<ApiJob>(`http://localhost:3001/api/job/${id}`, { withCredentials: true, headers: { 'Content-Type': 'application/json' } });

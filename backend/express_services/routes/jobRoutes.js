@@ -1,5 +1,5 @@
 const express = require('express');
-const {createJobPosting, getAllJobPosting, updateJobPosting, deleteJobPosting, submitJobApplication} = require('../controllers/jobPostingContoller')
+const {createJobPosting, getAllJobPosting, updateJobPosting, deleteJobPosting, submitJobApplication, getSpecificUserJobPosting} = require('../controllers/jobPostingContoller')
 const {verifyToken} = require('../middlewares/authMiddleware'); 
 const rateLimit = require("express-rate-limit");
 const { check } = require("express-validator");
@@ -32,6 +32,9 @@ router.post(
 
 // Get Job Posts Route
 router.get('/jobs',limiter, getAllJobPosting);
+
+// Get Specific User Jobs
+router.get('/specific-jobs', limiter, verifyToken, getSpecificUserJobPosting);
 
 // Update Job Post Route
 router.put(
