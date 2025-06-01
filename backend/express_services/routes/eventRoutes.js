@@ -8,6 +8,7 @@ const eventValidation = [
   check('title').notEmpty().withMessage('Title is required'),
   check('description').notEmpty().withMessage('Description is required'),
   check('date').isISO8601().withMessage('Valid date is required'),
+  check('eventLink').notEmpty().withMessage('Event Link is required'),
   check('targetAudience').isIn(['students', 'alumni', 'both']).withMessage('Invalid target audience'),
 ];
 
