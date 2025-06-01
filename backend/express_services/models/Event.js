@@ -19,6 +19,10 @@ const Event = sequelize.define('Event', {
     type: DataTypes.DATE,
     allowNull: false,
   },
+  eventLink: {
+    type: DataTypes.STRING,
+    allowNull: false,
+  },
   createdBy: {
     type: DataTypes.UUID,
     allowNull: false,

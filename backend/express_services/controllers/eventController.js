@@ -27,7 +27,7 @@ const createEvent = async (req, res) => {
     return res.status(status).json(response);
   }
 
-  const { title, description, date, targetAudience } = req.body;
+  const { title, description, date,eventLink, targetAudience } = req.body;
   const transaction = await sequelize.transaction();
 
   try {
@@ -36,6 +36,7 @@ const createEvent = async (req, res) => {
       title,
       description,
       date,
+      eventLink,
       createdBy: userId,
       status: 'pending',
       targetAudience,
@@ -72,6 +73,7 @@ const createEvent = async (req, res) => {
         title: event.title,
         description: event.description,
         date: event.date,
+        eventLink: event.eventLink,
         status: event.status,
         targetAudience: event.targetAudience,
       },
@@ -98,7 +100,7 @@ const updateEvent = async (req, res) => {
   }
 
   const { id } = req.params;
-  const { title, description, date, status, targetAudience } = req.body;
+  const { title, description, date, eventLink, status, targetAudience } = req.body;
   const transaction = await sequelize.transaction();
 
   try {
@@ -119,6 +121,7 @@ const updateEvent = async (req, res) => {
       title: title || event.title,
       description: description || event.description,
       date: date || event.date,
+      eventLink: eventLink || event.eventLink,
       status: status || event.status,
       targetAudience: targetAudience || event.targetAudience,
     }, { transaction });
@@ -153,6 +156,7 @@ const updateEvent = async (req, res) => {
         title: event.title,
         description: event.description,
         date: event.date,
+       eventLink: event.eventLink,
         status: event.status,
         targetAudience: event.targetAudience,
       },
@@ -220,7 +224,7 @@ const getEvents = async (req, res) => {
   const { userId } = req.body;
   try {
     const events = await Event.findAll({
-      attributes: ['id', 'title', 'description', 'date', 'status', 'targetAudience', 'createdBy'],
+      attributes: ['id', 'title', 'description', 'date', 'eventLink', 'status', 'targetAudience', 'createdBy'],
     });
 
     await logAction(

@@ -84,6 +84,35 @@ export interface Job {
   jobType?: string;
 }
 
+export interface Event {
+  id: string; // Frontend uses string IDs
+  title: string;
+  description: string;
+  date: string,
+  eventLink: string,
+  status: 'pending' | 'approved' | 'cancelled';
+  targetAudience: 'students' | 'alumni' | 'both';
+}
+
+export interface ApiEvent {
+  id: number; // Backend may use number IDs
+  title: string;
+  description: string;
+  date: string,
+  eventLink: string,
+  status: 'pending' | 'approved' | 'cancelled';
+  targetAudience: 'students' | 'alumni' | 'both';
+}
+
+export interface EventData {
+  title: string;
+  description: string;
+  date: string,
+  eventLink: string,
+  status: 'pending' | 'approved' | 'cancelled';
+  targetAudience: 'students' | 'alumni' | 'both';
+}
+
 export interface Achievement {
   id: string;
   achievementName: string;
@@ -242,6 +271,21 @@ export interface JobPostingFormProps {
   onCancel: () => void;
   isOpen: boolean;
   isUpdateForm: boolean;
+}
+
+export interface EventFormProps {
+  initialData: Event | null; // Initial event data for editing, null for new events
+  onSubmit: (eventData: Event) => Promise<void>; // Async callback for form submission
+  onCancel: () => void; // Callback for canceling the form
+  isUpdateForm: boolean; // Indicates if the form is in update mode
+}
+
+export interface EventListProps {
+  events: Event[];
+  onEdit?: (event: Event) => void;
+  onDelete?: (id: string) => Promise<void>;
+  isAdmin: boolean;
+  showApplyButton?: boolean;
 }
 
 export interface NoPlaceholderProps {

@@ -1,5 +1,7 @@
 import { Users, Briefcase, MessageSquare, Brain, BarChartIcon as ChartBar, Shield, Facebook, Twitter, LinkedinIcon as LinkedIn, Instagram, ThumbsUp, Network
-  ,Home, FileText, Activity, Trophy, Lightbulb, Settings, CreditCard, HelpCircle
+  ,Home, FileText, Activity, Trophy, Lightbulb, Settings, CreditCard, HelpCircle,
+  House,
+  CalendarMinus2
 } from "lucide-react"
 import { TeamMember, Notification } from "./types";
 
@@ -209,6 +211,7 @@ export const roleBasedMenuItems = {
         { icon: Users, label: "Manage Users", href: "/dashboard/manage-users" },
         { icon: Lightbulb, label: "Admin Suggestions", href: "/dashboard/admin-suggestions" },
         { icon: Briefcase, label: "Job Postings", href: "/dashboard/jobs" },
+        {icon: CalendarMinus2, label: "Events", href: "/dashboard/events"},
       ],
     },
     {
@@ -235,6 +238,7 @@ export const roleBasedMenuItems = {
         { icon: Users, label: "People you Know", href: "/dashboard/people" },
         { icon: Lightbulb, label: "Suggestions", href: "/dashboard/suggestions" },
         { icon: Briefcase, label: "Jobs", href: "/dashboard/jobs" },
+        {icon: CalendarMinus2, label: "Events", href: "/dashboard/events"},
       ],
     },
     {
@@ -262,6 +266,7 @@ export const roleBasedMenuItems = {
         { icon: Trophy, label: "Achievements", href: "/dashboard/achievements" },
         { icon: Briefcase, label: "Jobs", href: "/dashboard/jobs" },
         { icon: Users, label: "People you Know", href: "/dashboard/suggestions" },
+        {icon: CalendarMinus2, label: "Events", href: "/dashboard/events"},
       ],
     },
     {
