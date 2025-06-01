@@ -1,18 +1,18 @@
 import spacy
-from sklearn.metrics.pairwise import cosine_similarity
 import pandas as pd
 import numpy as np
 from pymongo import MongoClient
-
-# Load the pre-trained GloVe model from spaCy
-nlp = spacy.load("en_core_web_md")
-
+from sentence_transformers import SentenceTransformer
+from sklearn.metrics.pairwise import cosine_similarity
 
 class MatchmakingService:
     def __init__(self):
-        self.mongo_uri = "mongodb://almabridge-mongodb:c6fANRO9ma2J5kqgbgm0bENUsd10z4Tczf2etQgvVS6UNJ5tQtLpiZtu2Ctmj3mFC9JVif45MRLrACDb515UQA==@almabridge-mongodb.mongo.cosmos.azure.com:10255/?ssl=true&retrywrites=false&replicaSet=globaldb&maxIdleTimeMS=120000&appName=@almabridge-mongodb@" 
+        self.mongo_uri = "mongodb://almabridge-mongodb:c6fANRO9ma2J5kqgbgm0bENUsd10z4Tczf2etQgvVS6UNJ5tQtLpiZtu2Ctmj3mFC9JVif45MRLrACDb515UQA==@almabridge-mongodb.mongo.cosmos.azure.com:10255/?ssl=true&retrywrites=false&replicaSet=globaldb&maxIdleTimeMS=120000&appName=@almabridge-mongodb@"
         self.db_name = "almabridge_mongodb"
         self.collection_name = "scraped_profiles"
+        
+        # Load the sentence transformer model for AI-based embeddings
+        self.embedding_model = SentenceTransformer('all-MiniLM-L6-v2')
 
     def fetch_from_mongodb(self, query={}):
         """
@@ -23,9 +23,6 @@ class MatchmakingService:
             db = client[self.db_name]
             collection = db[self.collection_name]
             documents = list(collection.find(query))
-            for doc in documents:
-                doc["_id"] = str(doc["_id"])  # Convert ObjectId to string
-            
             return documents
         except Exception as e:
             print(f"Error fetching data from MongoDB: {e}")
@@ -51,92 +48,230 @@ class MatchmakingService:
             {
                 "name": profile.get("name", "N/A"),
                 "skills": ", ".join(profile.get("skills", [])),
-                "bio": profile.get("about", "N/A"),
-                "education": self.format_education(profile.get("education", [])),
+                "about": profile.get("about", "N/A"),
+                "headline" : profile.get("headline", "N/A"),
+                "education": self.format_education(profile.get("education", [])), 
             }
             for profile in profiles
         ]
         return formatted_profiles
 
-    @staticmethod
-    def compute_weighted_vector(row, weights):
+    def compute_profile_embeddings(self, profiles):
         """
-        Compute the weighted vector for a profile.
+        Compute sentence embeddings for profiles using a language model.
         """
-        skill_vector = nlp(row["skills"]).vector * weights["skills"]
-        bio_vector = nlp(row["bio"]).vector * weights["bio"]
-        education_vector = nlp(row["education"]).vector * weights["education"]
-        return skill_vector + bio_vector + education_vector
-
-    def calculate_similarity_matrix(self, profiles, weights):
-        """
-        Compute similarity matrix for all profiles.
-        """
-        # Create a DataFrame from profiles
-        df = pd.DataFrame(profiles)
-
-        # Compute weighted vectors
-        df["vector"] = df.apply(lambda row: self.compute_weighted_vector(row, weights), axis=1)
-
-        # Compute similarity matrix
-        vectors = np.stack(df["vector"].values)
-        similarity_matrix = cosine_similarity(vectors)
-        return df, similarity_matrix
-
-    @staticmethod
-    def recommend(user_index, df, similarity_matrix, threshold=0.85, top_n=3):
-        """
-        Generate recommendations for a given user.
-        """
-        scores = list(enumerate(similarity_matrix[user_index]))
-
-        # Filter by threshold and exclude self
-        filtered_scores = [
-            (i, score) for i, score in scores if score > threshold and i != user_index
+        profile_texts = [
+            f"{profile['about']} {profile['skills']} {profile['education']}"
+            for profile in profiles
         ]
+        embeddings = self.embedding_model.encode(profile_texts, convert_to_tensor=True)
+        return embeddings
 
-        # Sort by similarity
-        filtered_scores = sorted(filtered_scores, key=lambda x: x[1], reverse=True)
+    def recommend(self, user_embedding, all_embeddings, profiles, top_n=10):
+        """
+        AI-based recommendation based on learned embeddings.
+        Returns full profiles instead of just names.
+        """
+        # Compute cosine similarity between user and all profile embeddings
+        similarity_scores = cosine_similarity([user_embedding], all_embeddings)[0]
 
-        # Return top N recommendations
-        return [(df.iloc[i]["name"], score) for i, score in filtered_scores[:top_n]]
+        # Sort by similarity, excluding the user from the results
+        sorted_indices = np.argsort(similarity_scores)[::-1]
+
+        # Get top N recommendations (excluding self-recommendation)
+        recommendations = []
+        for idx in sorted_indices:
+            profile = profiles[idx]
+            if profile["name"] != "N/A":  # Or add better logic to exclude self
+                profile_copy = profile.copy()  # Avoid modifying the original data
+                profile_copy["similarity_score"] = float(similarity_scores[idx])
+                recommendations.append(profile_copy)
+
+            if len(recommendations) >= top_n:
+                break
+
+        return recommendations
+
+
+
 
     def get_recommendations(self, education, skills, bio):
         """
         Main function to get recommendations for a user.
         """
-
-        additional_profiles = None
         # Fetch profiles from MongoDB
         mongo_profiles = self.fetch_from_mongodb()
 
         # Separate and format data
         formatted_profiles = self.separate_profiles_data(mongo_profiles)
 
-        print(f"Student Education Data: {education}")
-        print(f"Alumni Data: {formatted_profiles}")
+        if not formatted_profiles:
+            return {"error": "No profiles found in the database."}
 
+        # Compute profile embeddings
+        embeddings = self.compute_profile_embeddings(formatted_profiles)
 
-        # Combine MongoDB profiles with additional profiles if provided
-        if additional_profiles:
-            formatted_profiles += additional_profiles
+        # Compute the user embedding
+        user_input_text = f"{bio} {skills} {education}"
+        user_embedding = self.embedding_model.encode(user_input_text, convert_to_tensor=True)
 
-        # Define weights for fields
-        weights = {
-            "skills": 0.6,
-            "bio": 0.3,
-            "education": 0.1,
-        }
+        # Get AI-based recommendations
+        recommendations = self.recommend(user_embedding, embeddings, formatted_profiles)
 
-        # Compute similarity matrix
-        df, similarity_matrix = self.calculate_similarity_matrix(formatted_profiles, weights)
-
-        # Find the index of the target user
-        try:
-            user_index = df[df["name"] == user_name].index[0]
-        except IndexError:
-            return {"error": "User not found in the profiles."}
-
-        # Get recommendations
-        recommendations = self.recommend(user_index, df, similarity_matrix)
         return recommendations
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# import spacy
+# from sklearn.metrics.pairwise import cosine_similarity
+# import pandas as pd
+# import numpy as np
+# from pymongo import MongoClient
+
+# # Load the pre-trained GloVe model from spaCy
+# nlp = spacy.load("en_core_web_md")
+
+
+# class MatchmakingService:
+#     def _init_(self):
+#         self.mongo_uri = "mongodb://almabridge-mongodb:c6fANRO9ma2J5kqgbgm0bENUsd10z4Tczf2etQgvVS6UNJ5tQtLpiZtu2Ctmj3mFC9JVif45MRLrACDb515UQA==@almabridge-mongodb.mongo.cosmos.azure.com:10255/?ssl=true&retrywrites=false&replicaSet=globaldb&maxIdleTimeMS=120000&appName=@almabridge-mongodb@" 
+#         self.db_name = "almabridge_mongodb"
+#         self.collection_name = "scraped_profiles"
+
+#     def fetch_from_mongodb(self, query={}):
+#         """
+#         Fetch profiles from MongoDB.
+#         """
+#         try:
+#             client = MongoClient(self.mongo_uri)
+#             db = client[self.db_name]
+#             collection = db[self.collection_name]
+#             documents = list(collection.find(query))
+#             for doc in documents:
+#                 doc["_id"] = str(doc["_id"])  # Convert ObjectId to string
+            
+#             return documents
+#         except Exception as e:
+#             print(f"Error fetching data from MongoDB: {e}")
+#             return []
+
+#     @staticmethod
+#     def format_education(education_list):
+#         """
+#         Format the education field for profiles.
+#         """
+#         if not education_list or not isinstance(education_list, list):
+#             return "N/A"
+#         return "; ".join(
+#             f"{entry.get('Degree', 'N/A')} from {entry.get('School', 'N/A')} ({entry.get('Duration', 'N/A')})"
+#             for entry in education_list
+#         )
+
+#     def separate_profiles_data(self, profiles):
+#         """
+#         Format profile data for processing.
+#         """
+#         formatted_profiles = [
+#             {
+#                 "name": profile.get("name", "N/A"),
+#                 "skills": ", ".join(profile.get("skills", [])),
+#                 "bio": profile.get("about", "N/A"),
+#                 "education": self.format_education(profile.get("education", [])),
+#             }
+#             for profile in profiles
+#         ]
+#         return formatted_profiles
+
+#     @staticmethod
+#     def compute_weighted_vector(row, weights):
+#         """
+#         Compute the weighted vector for a profile.
+#         """
+#         skill_vector = nlp(row["skills"]).vector * weights["skills"]
+#         bio_vector = nlp(row["bio"]).vector * weights["bio"]
+#         education_vector = nlp(row["education"]).vector * weights["education"]
+#         return skill_vector + bio_vector + education_vector
+
+#     def calculate_similarity_matrix(self, profiles, weights):
+#         """
+#         Compute similarity matrix for all profiles.
+#         """
+#         # Create a DataFrame from profiles
+#         df = pd.DataFrame(profiles)
+
+#         # Compute weighted vectors
+#         df["vector"] = df.apply(lambda row: self.compute_weighted_vector(row, weights), axis=1)
+
+#         # Compute similarity matrix
+#         vectors = np.stack(df["vector"].values)
+#         similarity_matrix = cosine_similarity(vectors)
+#         return df, similarity_matrix
+
+#     @staticmethod
+#     def recommend(user_index, df, similarity_matrix, threshold=0.85, top_n=10):
+#         """
+#         Generate recommendations for a given user.
+#         """
+#         scores = list(enumerate(similarity_matrix[user_index]))
+
+#         # Filter by threshold and exclude self
+#         filtered_scores = [
+#             (i, score) for i, score in scores if score > threshold and i != user_index
+#         ]
+
+#         # Sort by similarity
+#         filtered_scores = sorted(filtered_scores, key=lambda x: x[1], reverse=True)
+
+#         # Return top N recommendations
+#         return [(df.iloc[i]["name"], score) for i, score in filtered_scores[:top_n]]
+
+#     def get_recommendations(self, education, skills, bio):
+#         """
+#         Main function to get recommendations for a user.
+#         """
+
+#         additional_profiles = None
+#         # Fetch profiles from MongoDB
+#         mongo_profiles = self.fetch_from_mongodb()
+
+#         # Separate and format data
+#         formatted_profiles = self.separate_profiles_data(mongo_profiles)
+
+#         print(f"Student Education Data: {education}")
+#         print(f"Alumni Data: {formatted_profiles}")
+
+
+#         # Combine MongoDB profiles with additional profiles if provided
+#         if additional_profiles:
+#             formatted_profiles += additional_profiles
+
+#         # Define weights for fields
+#         weights = {
+#             "skills": 0.6,
+#             "bio": 0.3,
+#             "education": 0.1,
+#         }
+
+#         # Compute similarity matrix
+#         df, similarity_matrix = self.calculate_similarity_matrix(formatted_profiles, weights)
+
+#         # Find the index of the target user
+#         try:
+#             user_index = df[df["name"] == user_name].index[0]
+#         except IndexError:
+#             return {"error": "User not found in the profiles."}
+
+#         # Get recommendations
+#         recommendations = self.recommend(user_index, df, similarity_matrix)
+#         return recommendations

@@ -11,20 +11,43 @@ class RecommendationController:
             if not user_data:
                 return jsonify({"error": "Invalid input. User data is required."}), 400
 
-            # Validate required fields in user_data (add validation logic if necessary)
+            # Extract profile data safely
+            profile = user_data.get("data", {}).get("profile", {})
+            if not profile:
+                return jsonify({"error": "Profile data missing."}), 400
+
+            # Extract and process education
+            educations_list = profile.get("educations", [])
+            education_string = ", ".join(
+                [f"{edu.get('degree', '')} at {edu.get('institute', '')}" for edu in educations_list]
+            )
+            print("Education String:", education_string)  # Debugging line
+
+            # Extract and process skills
+            skills_list = profile.get("skills", [])
+            skills_string = ", ".join([skill.get("skillName", "") for skill in skills_list])
+            print("Skills String:", skills_string)  # Debugging line
+
+            # Extract bio directly
+            bio_string = profile.get("bio", "")
+            print("Bio String:", bio_string)  # Debugging line
+
+            # For additional fields like email/lastName if needed
+            email = user_data.get("data", {}).get("email", "")
+            last_name = user_data.get("data", {}).get("lastName", "")
+
+            print("Email:", email)  # Debugging line
+            print("Last Name:", last_name)  # Debugging line
             
             # Get recommendations
-            # experience = user_data.get("experiences")
-            education = user_data.get("educations")
-            skills = user_data.get("skills")
-            bio= user_data.get("bio")
+            
             # print("User experience:", experience)  # Debugging line
-            print("User education:", education)  # Debugging line
-            print("User skills:", skills)  # Debugging line
-            print("User bio:", bio)  # Debugging line
+            # print("User education:", education)  # Debugging line
+            # print("User skills:", skills)  # Debugging line
+            # print("User bio:", bio)  # Debugging line
             s = MatchmakingService()
-            # recommendations = s.get_recommendations(education, skills, bio)
-            recommendations = s.fetch_from_mongodb()
+            recommendations = s.get_recommendations(education_string, skills_string, bio_string)
+            # recommendations = s.fetch_from_mongodb()
             return jsonify({"recommendations": recommendations}), 200
         except Exception as e:
             print("Error processing request:", str(e))  # Debugging line
